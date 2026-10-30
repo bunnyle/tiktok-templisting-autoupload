@@ -1,0 +1,1658 @@
+// ==UserScript==
+// @name         TikTok LIVE 一鍵上架 / Quick Upload (Temporary listing)
+// @namespace    lok.laliquidation
+// @version      4.7
+// @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
+// @match        https://shop.tiktok.com/streamer/live/*
+// @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
+// @downloadURL  https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
+// @homepageURL  https://github.com/bunnyle/tiktok-templisting-autoupload
+// @grant        none
+// @run-at       document-idle
+// ==/UserScript==
+
+(function () {
+  'use strict';
+
+  /* ---------------- 基本工具 ---------------- */
+  const KEY = 'ttfill_queue_v1';
+  const LOG = (...a) => console.log('[TT填表]', ...a);
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const norm = (s) => (s || '').replace(/[*＊]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+  const visible = (el) => {
+    if (!el || !el.getClientRects().length) return false;
+    const cs = getComputedStyle(el);
+    return cs.visibility !== 'hidden' && cs.display !== 'none' && cs.opacity !== '0';
+  };
+  async function waitFor(fn, timeout = 5000, step = 100) {
+    const t = Date.now();
+    while (Date.now() - t < timeout) {
+      try { const r = fn(); if (r) return r; } catch (e) { /* 繼續等 */ }
+      await sleep(step);
+    }
+    return null;
+  }
+
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || { rows: [], idx: 0, auto: false }; }
+    catch (e) { return { rows: [], idx: 0, auto: false }; }
+  }
+  function saveState() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* 無所謂 */ } }
+  let state = loadState();
+  let busy = false;
+
+  /* ---------------- 語言 / Language ----------------
+     L('繁體', 'English')：简体由繁體自動轉換 */
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "問": "问", "單": "单", "嗎": "吗", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帶": "带", "庫": "库", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "會": "会", "棄": "弃", "構": "构", "標": "标", "樣": "样", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "沒": "没", "準": "准", "瀏": "浏", "為": "为", "無": "无", "爾": "尔", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紅": "红", "級": "级", "結": "结", "給": "给", "統": "统", "經": "经", "緊": "紧", "編": "编", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "記": "记", "設": "设", "診": "诊", "試": "试", "認": "认", "語": "语", "誤": "误", "請": "请", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "貼": "贴", "資": "资", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閉": "闭", "開": "开", "間": "间", "關": "关", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "頭": "头", "題": "题", "類": "类", "顯": "显", "體": "体", "麵": "面", "點": "点"};
+  const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击']];
+  const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
+  const lang = () => state.lang || 'hant';
+  const L = (hant, en) => (lang() === 'en' ? en : lang() === 'hans' ? toHans(hant) : hant);
+  const E = (hant, en, retry) => Object.assign(new Error(L(hant, en)), { retry: !!retry });
+
+  /* ---------------- 解析 Excel 貼上內容 ----------------
+     每行（Tab 分隔）: 名字 | 重量 | Height | Width | Length | Category
+     即 Excel 的 E:J 欄。若整行 A:J 一起複製（>=10 欄），自動取 E:J。 */
+  function parse(text) {
+    const rows = [];
+    for (const line of text.split(/\r?\n/)) {
+      if (!line.trim()) continue;
+      let c = line.split('\t').map((s) => s.trim());
+      if (c.length >= 10) c = c.slice(4, 10);
+      if (c.length < 5) continue;
+      const [name, weight, h, w, l, cat = ''] = c;
+      if (!name || isNaN(parseFloat(weight))) continue; // 表頭或空行
+      rows.push({ name, weight, h, w, l, cat, status: '待填' });
+    }
+    return rows;
+  }
+
+  /* ---------------- 頁面操作 ---------------- */
+  function setVal(input, val, { blur = true } = {}) {
+    input.focus();
+    const proto = input.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+    const setter = Object.getOwnPropertyDescriptor(proto, 'value').set;
+    setter.call(input, '');
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    setter.call(input, String(val));
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    if (blur) {
+      input.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+      input.blur();
+    }
+  }
+
+  // 模擬真實鍵盤輸入（某些數字輸入框只認這種）
+  function typeVal(input, val) {
+    input.focus();
+    input.select();
+    if (!document.execCommand('insertText', false, String(val))) setVal(input, val, { blur: false });
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    input.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    input.blur();
+  }
+
+  function realClick(el) {
+    el.scrollIntoView({ block: 'center' });
+    const r = el.getBoundingClientRect();
+    const o = { bubbles: true, cancelable: true, view: window, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 };
+    for (const t of ['pointerover', 'mouseover', 'mouseenter', 'pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click']) {
+      const Ev = t.startsWith('pointer') && window.PointerEvent ? PointerEvent : MouseEvent;
+      el.dispatchEvent(new Ev(t, o));
+    }
+  }
+
+  // 找「最深一層」文字剛好等於 text 的元素
+  function findByText(root, text, { exact = true } = {}) {
+    const T = norm(text);
+    const out = [];
+    for (const e of root.querySelectorAll('*')) {
+      if (e.closest('#ttfill-panel')) continue;
+      if (!visible(e)) continue;
+      const t = norm(e.innerText || e.textContent);
+      const ok = exact ? t === T : t.includes(T);
+      if (!ok) continue;
+      const childHas = [...e.children].some((c) => {
+        const ct = norm(c.innerText || c.textContent);
+        return exact ? ct === T : ct.includes(T);
+      });
+      if (!childHas) out.push(e);
+    }
+    return out;
+  }
+
+  // 彈窗裡的 Submit（可能是 <button>，也可能是 div/span）
+  function findSubmit(root) {
+    const t = findByText(root, 'Submit')[0];
+    if (!t) return null;
+    return t.closest('button, [role="button"]') || t;
+  }
+
+  // 標題可能帶「Auction guide」等字，所以用「包含」來找；再往上找同時有 Submit 和輸入框的容器
+  function getDialog() {
+    const heads = findByText(document.body, 'Create temporary listing', { exact: false });
+    for (const h of heads) {
+      let el = h;
+      while (el && el !== document.body && el !== document.documentElement) {
+        if (findSubmit(el) && el.querySelector('input, textarea')) return el;
+        el = el.parentElement;
+      }
+    }
+    return null;
+  }
+
+  // 診斷：把頁面結構摘要複製到剪貼板，方便發給 Claude
+  function diagnose() {
+    const d = [];
+    const brief = (e) => e ? `${e.tagName.toLowerCase()}.${String(e.className || '').slice(0, 60)} [${norm(e.innerText).slice(0, 60)}]` : 'null';
+    d.push('url: ' + location.href + (window.top === window ? '' : ' (在 iframe 內)'));
+    d.push('iframes: ' + [...document.querySelectorAll('iframe')].map((f) => f.src || '(無src)').join(' | '));
+    d.push('shadow hosts: ' + [...document.querySelectorAll('*')].filter((e) => e.shadowRoot).map((e) => e.tagName).join(','));
+    const heads = findByText(document.body, 'Create temporary listing', { exact: false });
+    d.push('標題元素: ' + heads.length + ' → ' + heads.slice(0, 3).map(brief).join(' || '));
+    const subs = findByText(document.body, 'Submit');
+    d.push('Submit 元素: ' + subs.length + ' → ' + subs.slice(0, 3).map((s) => brief(s) + ' closest=' + brief(s.closest('button,[role=button]'))).join(' || '));
+    if (heads[0]) {
+      const chain = []; let el = heads[0];
+      for (let i = 0; i < 12 && el; i++, el = el.parentElement) chain.push(`${i}:${el.tagName.toLowerCase()}.${String(el.className || '').slice(0, 40)} inputs=${el.querySelectorAll('input,textarea').length} submit=${!!findSubmit(el)}`);
+      d.push('標題往上:\n  ' + chain.join('\n  '));
+    }
+    const dlg = getDialog();
+    d.push('getDialog: ' + brief(dlg));
+    const root = dlg || document.body;
+    for (const lab of ['Product name', 'Category', 'Package weight', 'Package dimensions']) {
+      const labs = findByText(root, lab);
+      const box = fieldBox(root, lab);
+      d.push(`欄位 ${lab}: 標籤=${labs.length} ${labs[0] ? brief(labs[0]) : ''} 容器輸入框=${box ? textInputs(box).length : '無'}`);
+    }
+    const ins = [...document.querySelectorAll('input,textarea')].filter(visible);
+    d.push('可見輸入框 ' + ins.length + ': ' + ins.slice(0, 25).map((i) => `${i.tagName.toLowerCase()}[${i.type}|ph=${i.placeholder || ''}|v=${String(i.value).slice(0, 25)}${i.readOnly ? '|ro' : ''}]`).join(' '));
+    return d.join('\n');
+  }
+
+  // 由欄位標題往上找，第一個包含輸入框的容器
+  function fieldBox(root, label) {
+    const has = (el) => el.querySelector('input, textarea, [role="combobox"], [class*="select"], [class*="cascader"]');
+    for (const lab of findByText(root, label)) {
+      // TikTok 用的是 Arco Design 表單：每個欄位包在 .arco-form-item 裡
+      const item = lab.closest('.arco-form-item, [class*="form-item"]');
+      if (item && root.contains(item) && has(item)) return item;
+      let el = lab.parentElement;
+      for (let i = 0; i < 12 && el && el !== root; i++, el = el.parentElement) {
+        if (has(el)) return el;
+      }
+    }
+    return null;
+  }
+
+  function textInputs(box) {
+    return [...box.querySelectorAll('input, textarea')].filter((i) =>
+      visible(i) && !i.readOnly && !i.disabled && !['hidden', 'radio', 'checkbox'].includes(i.type));
+  }
+
+  const clickable = (e) => e.closest('button, [role="button"], [role="menuitem"], li, a, [class*="card"], [class*="item"]') || e;
+
+  // 彈窗打開後表單要等一下才出現：等到 Product name 輸入框真的可以用
+  const formReady = () => {
+    const d = getDialog(); if (!d) return null;
+    const b = fieldBox(d, 'Product name');
+    return b && textInputs(b)[0] ? d : null;
+  };
+
+  async function openDialog() {
+    if (getDialog()) {
+      const r = await waitFor(formReady, 10000);
+      if (r) return r;
+    }
+    let d;
+    setMsg(L('正在打開 Create temporary listing…', 'Opening Create temporary listing…'));
+    // A) 列表是空的時候，頁面中間有「Temporary auction」卡片
+    const card = findByText(document.body, 'Temporary auction')[0] || findByText(document.body, 'Temporary listing')[0];
+    if (card) {
+      realClick(clickable(card));
+      d = await waitFor(formReady, 12000);
+      if (d) return d;
+    }
+    // B) 點右上角「+ Add」→ 下拉菜單「Temporary product / Temporary auction」
+    const add = ([...findByText(document.body, 'Add'), ...findByText(document.body, '+ Add'), ...findByText(document.body, '+Add')])
+      .map((e) => e.closest('button, [role="button"]') || e).find(visible);
+    if (!add) throw E('找不到「+ Add」按鈕，請手動打開彈窗', 'Can\'t find the “+ Add” button — please open the listing window manually', true);
+    realClick(add);
+    const findItem = () => findByText(document.body, 'Temporary product')[0] ||
+      findByText(document.body, 'Temporary auction')[0] || findByText(document.body, 'Temporary listing')[0];
+    let item = await waitFor(findItem, 2500);
+    if (!item) { // 有些下拉是滑鼠移上去才出現
+      add.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
+      add.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+      item = await waitFor(findItem, 2500);
+    }
+    if (!item) throw E('點了 + Add 但沒看到 Temporary product，請手動打開彈窗', 'Clicked + Add but “Temporary product” didn\'t appear — please open the window manually', true);
+    realClick(clickable(item));
+    d = await waitFor(formReady, 12000);
+    if (!d) throw E('彈窗沒有打開，請手動打開後再按 ⌥F', 'The listing window didn\'t open — open it manually, then press ⌥F', true);
+    return d;
+  }
+
+  async function setCategory(dlg, cat) {
+    const parts = cat.split(/\s+[-–>]\s+/).map((s) => s.trim()).filter(Boolean);
+    const lastRaw = parts[parts.length - 1];
+    const last = norm(lastRaw);
+    const full = parts.length > 1 ? norm(parts.join(' - ')) : null;
+    const box = () => fieldBox(getDialog() || dlg, 'Category');
+    // 只鎖定「顯示目前類目的那一行」：矮（<60px）、有文字、裡面沒有搜索框；取最深一層
+    const getTrigger = (b) => {
+      const ok = (e) => {
+        if (!visible(e)) return false;
+        const r = e.getBoundingClientRect();
+        if (r.height > 60 || r.height < 10) return false;
+        if (!norm(e.innerText)) return false;
+        return ![...e.querySelectorAll('input')].some((i) => /search/i.test(i.placeholder || ''));
+      };
+      const c = [...b.querySelectorAll('[class*="select"], [class*="cascader"], [role="combobox"]')].filter(ok);
+      return c.find((e) => !c.some((o) => o !== e && e.contains(o))) || b;
+    };
+    // 只看選擇框本身顯示的文字（下拉列表可能也在同一容器裡）
+    const isSet = () => {
+      const b = box(); if (!b) return false;
+      const cur = norm(getTrigger(b).innerText);
+      return full ? cur === full || cur.endsWith(full) : cur === last || cur.endsWith(' - ' + last);
+    };
+    if (isSet()) return true;
+
+    // 1) Recent categories 快捷標籤（只寫了最後一段時）
+    if (!full) {
+      const recentLab = findByText(dlg, 'Recent categories')[0];
+      if (recentLab) {
+        const chip = findByText(recentLab.parentElement, lastRaw)[0];
+        if (chip) {
+          realClick(chip);
+          if (await waitFor(isSet, 1500)) return true;
+        }
+      }
+    }
+
+    // 2) 打開下拉 → 搜索 → 點結果
+    const b = box();
+    if (!b) throw E('找不到 Category 欄位', 'Can\'t find the Category field');
+    const trigger = getTrigger(b);
+    realClick(trigger);
+    const search = await waitFor(() => {
+      const all = [...document.querySelectorAll('input')].filter((i) =>
+        visible(i) && /search/i.test(i.placeholder || '') && !/product/i.test(i.placeholder || ''));
+      return all.find((i) => b.contains(i)) || all[0];
+    }, 3000);
+    if (!search) throw E('打不開 Category 搜索框', 'Couldn\'t open the Category search box');
+    setVal(search, lastRaw, { blur: false });
+
+    // 收集搜索結果（每行都是「A - B - C」這種路徑），取最深一層
+    const singular = (x) => x.replace(/(es|s)$/, '');
+    const key = singular(last);
+    const pick = () => {
+      const rows = [];
+      for (const e of document.querySelectorAll('li, [role="option"], [class*="option"], [class*="item"], div, span')) {
+        if (!visible(e) || trigger.contains(e) || e.contains(search) || e.closest('#ttfill-panel')) continue;
+        const t = norm(e.innerText);
+        if (!t || t.length > 300 || !t.includes(' - ')) continue;
+        if (!t.includes(key) && !(full && t === full)) continue;
+        rows.push(e);
+      }
+      const deep = rows.filter((e) => !rows.some((o) => o !== e && e.contains(o)));
+      if (!deep.length) return null;
+      const seg = (e) => { const p = norm(e.innerText).split(' - '); return p[p.length - 1]; };
+      // 排序：完整路徑一樣 > 最後一段一樣 > 單複數差別 > 最後一段開頭一樣 > 第一個結果
+      const tiers = [
+        (e) => full && norm(e.innerText) === full,
+        (e) => seg(e) === last,
+        (e) => singular(seg(e)) === key,
+        (e) => seg(e).startsWith(key) || key.startsWith(singular(seg(e))),
+        (e) => seg(e).includes(key),
+        () => true,
+      ];
+      for (let i = 0; i < tiers.length; i++) {
+        const hit = deep.find(tiers[i]);
+        if (hit) return { el: hit, exact: i <= 1 || (!full && i === 2) };
+      }
+      return null;
+    };
+    // 等搜索結果穩定一點再選
+    let res = await waitFor(pick, 4000);
+    if (res && !res.exact) { await sleep(600); res = pick() || res; }
+    if (!res) throw E('Category 搜索沒有找到: ' + cat, 'Category not found in search: ' + cat);
+    const option = res.el;
+    const chosen = norm(option.innerText);
+    const isChosen = () => {
+      const bx = box(); if (!bx) return false;
+      const cur = norm(getTrigger(bx).innerText);
+      return cur === chosen || chosen.startsWith(cur.replace(/\.{3}$|…$/, '')) && cur.length > 10;
+    };
+    realClick(option);
+    if (!(await waitFor(isChosen, 1500))) {
+      realClick(option.closest('li, [role="option"], [class*="option"]') || option.parentElement);
+      if (!(await waitFor(isChosen, 2000))) throw E('Category 沒有選上: ' + cat, 'Category didn\'t get selected: ' + cat);
+    }
+    return res.exact ? true : option.innerText.trim();
+  }
+
+  async function fillRow(row) {
+    const dlg = await openDialog();
+
+    // 1. 名字
+    const nameInput = await waitFor(() => { const b = fieldBox(getDialog() || dlg, 'Product name'); return b && textInputs(b)[0]; }, 8000);
+    if (!nameInput) throw E('找不到 Product name 輸入框', 'Can\'t find the Product name field', true);
+    setVal(nameInput, row.name);
+    await sleep(300);
+
+    // 2. 類目（選完類目 TikTok 會自動改重量/尺寸，所以放在重量前面）
+    if (row.cat) {
+      const r = await setCategory(dlg, resolveCat(row.cat));
+      row.catNote = typeof r === 'string' ? r : '';
+      row.catMissing = false;
+      await sleep(900);
+    } else {
+      row.catNote = L('這個商品沒有設定類目', 'This product has no category set');
+      row.catMissing = true;
+    }
+
+    // 3+4. 重量和尺寸：TikTok 選完類目後會延遲寫入「建議尺寸」，
+    //       所以反覆核對，被蓋掉就重填，直到連續兩輪都正確
+    const d2 = getDialog() || dlg;
+    const hasDims = await waitFor(() => {
+      const bx = fieldBox(getDialog() || d2, 'Package dimensions');
+      return bx && textInputs(bx).length >= 3;
+    }, 3000);
+    if (!hasDims && !row.cat) {
+      // 沒有類目、尺寸欄也還沒出現：只填重量，等你手動選類目
+      const wb = fieldBox(getDialog() || d2, 'Package weight');
+      const wi = wb && textInputs(wb).pop();
+      if (wi) setVal(wi, row.weight);
+      row.catNote = L(`沒有設定類目：請手動選類目，再填尺寸 H${row.h} × W${row.w} × L${row.l}`, `No category set: pick the category manually, then enter H${row.h} × W${row.w} × L${row.l}`);
+      row.catMissing = true;
+      return getDialog() || d2;
+    }
+    await sleep(800);
+
+    const getFields = () => {
+      const dd = getDialog() || d2;
+      const wBox = fieldBox(dd, 'Package weight');
+      const dimBox = fieldBox(dd, 'Package dimensions');
+      const f = {};
+      if (wBox) f.weight = textInputs(wBox).pop();
+      const qBox = fieldBox(dd, 'Quantity');
+      if (qBox && row.qty) f.qty = textInputs(qBox)[0];
+      if (dimBox) {
+        const ins = textInputs(dimBox).slice(-3);
+        const byPh = (re) => ins.find((i) => re.test(i.placeholder || '') || re.test(i.getAttribute('aria-label') || ''));
+        f.l = byPh(/length|長|长/i) || ins[0];
+        f.w = byPh(/width|寬|宽/i) || ins[1];
+        f.h = byPh(/height|高/i) || ins[2];
+      }
+      return f;
+    };
+    const same = (inp, v) => inp && Math.abs(parseFloat(inp.value) - parseFloat(v)) < 1e-6;
+    let okRounds = 0;
+    for (let round = 0; round < 12 && okRounds < 2; round++) {
+      const f = getFields();
+      if (!f.weight) throw E('找不到 Package weight 輸入框', 'Can\'t find the Package weight field');
+      if (row.qty && !f.qty) throw E('找不到 Quantity 欄位', 'Can\'t find the Quantity field');
+      if (!f.l || !f.w || !f.h) throw E('找不到 Package dimensions（Category 選了嗎？）', 'Can\'t find Package dimensions (is a Category selected?)');
+      let allOk = true;
+      for (const k of ['weight', 'l', 'w', 'h', ...(row.qty ? ['qty'] : [])]) {
+        if (same(f[k], row[k])) continue;
+        allOk = false;
+        if (round < 3) setVal(f[k], row[k]);
+        else typeVal(f[k], row[k]); // 備用方法：模擬鍵盤輸入
+        await sleep(150);
+      }
+      okRounds = allOk ? okRounds + 1 : 0;
+      await sleep(500);
+    }
+    if (okRounds < 2) {
+      const f = getFields();
+      throw E(`重量/尺寸填不進去（現在是 ${f.weight && f.weight.value} / ${f.h && f.h.value}×${f.w && f.w.value}×${f.l && f.l.value}）`, `Weight/dimensions won't stick (now ${f.weight && f.weight.value} / ${f.h && f.h.value}×${f.w && f.w.value}×${f.l && f.l.value})`);
+    }
+
+    // 5. Product compliance：含電池 → 選鋰電池選項；不含 → None of the above
+    await setCompliance(getDialog() || d2, row.battery ? BATTERY_OPT : 'None of the above');
+    return getDialog() || d2;
+  }
+
+  /* ---------------- TikTok 類目庫：讀取、儲存、搜尋 ---------------- */
+  const CAT_KEY = 'ttfill_cats_v1';
+  function loadCats() {
+    try { const c = JSON.parse(localStorage.getItem(CAT_KEY)); if (c && Array.isArray(c.paths)) return c; } catch (e) { /* 空 */ }
+    return { paths: [], done: {}, updated: 0 };
+  }
+  let cats = loadCats();
+  let catSet = new Set(cats.paths.map(norm));
+  function saveCats() {
+    try { localStorage.setItem(CAT_KEY, JSON.stringify(cats)); return true; }
+    catch (e) { LOG('類目庫保存失敗', e); return false; }
+  }
+  function addCatPath(path) {
+    const k = norm(path);
+    if (catSet.has(k)) return false;
+    catSet.add(k); cats.paths.push(path); return true;
+  }
+
+  // 搜尋類目：每個關鍵字都要出現；最後一段吻合的排前面
+  function searchCats(q, limit = 30) {
+    const toks = norm(q).split(' ').filter(Boolean);
+    if (!toks.length) return [];
+    const res = [];
+    for (const p of cats.paths) {
+      const n = norm(p);
+      if (!toks.every((t) => n.includes(t))) continue;
+      const last = norm(lastSegOf(p));
+      const k = toks.join(' ');
+      const score = last === k ? 0 : last.startsWith(k) ? 1 : last.includes(k) ? 2 : toks.every((t) => last.includes(t)) ? 3 : 4;
+      res.push([score, p.length, p]);
+    }
+    res.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    return res.slice(0, limit).map((x) => x[2]);
+  }
+  const lastSegOf = (c) => (c || '').split(/\s+-\s+/).pop();
+
+  // 簡寫類目（例如 "Patio Heater"）→ 類目庫裡唯一對得上的完整路徑
+  function resolveCat(cat) {
+    if (!cat || / - /.test(cat) || !cats.paths.length) return cat;
+    const k = norm(cat), ks = k.replace(/(es|s)$/, '');
+    const hits = cats.paths.filter((p) => { const l = norm(lastSegOf(p)); return l === k || l.replace(/(es|s)$/, '') === ks; });
+    return hits.length === 1 ? hits[0] : cat;
+  }
+
+  /* ---- 備份檔：下載 / 讀取 ---- */
+  const stamp = () => { const d = new Date(); return d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0'); };
+  function downloadJSON(obj, filename) {
+    const blob = new Blob([JSON.stringify(obj)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  }
+  // 合併類目：已有的跳過；回傳新增數
+  function mergeCats(c) {
+    if (!c || !Array.isArray(c.paths)) return -1;
+    let n = 0;
+    for (const p of c.paths) if (typeof p === 'string' && addCatPath(p)) n++;
+    Object.assign(cats.done, c.done || {});
+    cats.updated = Math.max(cats.updated || 0, c.updated || 0) || Date.now();
+    saveCats();
+    return n;
+  }
+  // 合併商品庫：同名的更新，沒有的新增
+  function mergeLib(lib) {
+    if (!Array.isArray(lib)) return { added: 0, updated: 0 };
+    let added = 0, updated = 0;
+    for (const it of lib) {
+      if (!it || !it.name) continue;
+      const ex = state.lib.find((x) => norm(x.name) === norm(it.name));
+      if (ex) { Object.assign(ex, { ...it, id: ex.id }); updated++; } else { state.lib.push({ ...it, id: uid() }); added++; }
+    }
+    saveState();
+    return { added, updated };
+  }
+
+  /* ---- 讀取 TikTok 類目下拉（逐層展開） ---- */
+  const catView = (b) => {
+    const ok = (e) => {
+      if (!visible(e)) return false;
+      const r = e.getBoundingClientRect();
+      if (r.height > 60 || r.height < 10) return false;
+      if (!norm(e.innerText)) return false;
+      return ![...e.querySelectorAll('input')].some((i) => /search/i.test(i.placeholder || ''));
+    };
+    const c = [...b.querySelectorAll('[class*="select"], [class*="cascader"], [role="combobox"]')].filter(ok);
+    return c.find((e) => !c.some((o) => o !== e && e.contains(o))) || b;
+  };
+  const catSearchInput = (b) => {
+    const all = [...document.querySelectorAll('input')].filter((i) => visible(i) && /search/i.test(i.placeholder || '') && !/product/i.test(i.placeholder || ''));
+    return all.find((i) => b.contains(i)) || all[0];
+  };
+  // 下拉面板 = 搜尋框往上、夠高、裡面有清單的那一層
+  function catPopup(search) {
+    let el = search && search.parentElement;
+    while (el && el !== document.body) {
+      if (el.getBoundingClientRect().height > 150 && catColumns(el).length) return el;
+      el = el.parentElement;
+    }
+    return null;
+  }
+  // 一個「欄」：所有子元素都是一行一行的選項（高 18~70px、有文字、垂直排列）
+  const isItem = (e) => {
+    if (!visible(e) || e.querySelector('input')) return false;
+    const r = e.getBoundingClientRect();
+    return r.height >= 18 && r.height <= 70 && r.width > 60 && !!(e.innerText || '').trim();
+  };
+  const isDisabled = (el) => /disabled/i.test(el.className || '') || el.getAttribute('aria-disabled') === 'true';
+  function catColumns(popup) {
+    // TikTok 真實結構：每一層是 ul.core-cascader-list（或 arco-cascader-list），選項是 li
+    const real = [...popup.querySelectorAll('ul[class*="cascader-list"]')].filter((u) => visible(u) && u.querySelector('li'));
+    if (real.length) return real.sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left);
+    const cols = [];
+    for (const el of popup.querySelectorAll('*')) {
+      const kids = [...el.children].filter(visible);
+      if (!kids.length || !kids.every(isItem)) continue;
+      if (kids.length >= 2) {
+        const l0 = kids[0].getBoundingClientRect().left;
+        if (!kids.every((k) => Math.abs(k.getBoundingClientRect().left - l0) < 3)) continue; // 橫排（例如麵包屑）不算
+      } else if (el.getBoundingClientRect().width < 120) continue;
+      if (/all categories/i.test(el.innerText) && kids.length < 8 && kids.some((k) => /all categories/i.test(k.innerText))) continue;
+      cols.push(el);
+    }
+    // 去掉包在別的欄裡面的
+    const out = cols.filter((c) => !cols.some((o) => o !== c && o.contains(c)));
+    return out.sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left);
+  }
+  const colItems = (col) => {
+    const lis = [...col.children].filter((e) => e.tagName === 'LI' && /cascader-list-item/.test(e.className || ''));
+    const els = lis.length ? lis : [...col.children].filter(isItem);
+    return els.map((el) => ({
+      el,
+      label: (el.innerText || el.textContent || '').split('\n')[0].trim(),
+      kids: !!el.querySelector('.arco-icon-right, svg[class*="icon-right"], [class*="arrow"], [class*="expand"]') || (!lis.length && !!el.querySelector('svg')),
+      disabled: isDisabled(el),
+    })).filter((x) => x.label);
+  };
+  const colSig = (col) => colItems(col).map((x) => x.label).join('|');
+
+  let catStop = false;
+  async function crawlCats(full, progress) {
+    catStop = false;
+    if (full) cats.done = {};
+    const dlg = await openDialog();
+    const box = fieldBox(dlg, 'Category');
+    if (!box) throw E('找不到 Category 欄位', 'Can\'t find the Category field');
+    realClick(catView(box));
+    const search = await waitFor(() => catSearchInput(box), 4000);
+    if (!search) throw E('打不開 Category 下拉', 'Couldn\'t open the Category dropdown');
+    if (search.value) { setVal(search, '', { blur: false }); await sleep(500); }
+    const pop = () => catPopup(catSearchInput(box) || search);
+    if (!(await waitFor(pop, 4000))) throw E('找不到類目清單（請按「類目診斷」並把結果發給 Claude）', 'Can\'t find the category list (press “Category diagnostics” and send the result to Claude)');
+    // 回到最上層
+    const goRoot = async () => {
+      const p = pop(); if (!p) return;
+      const a = findByText(p, 'All categories')[0] ||
+        [...p.querySelectorAll('*')].find((e) => visible(e) && /^all categories\b/.test(norm(e.textContent)) && norm(e.textContent).length < 22);
+      if (a) { realClick(a); await sleep(700); }
+    };
+    await goRoot();
+
+    let found = 0, visitedParents = 0, expandFails = 0, anyExpanded = false;
+    const findCol = (labels) => (pop() ? catColumns(pop()) : []).find((c) => { const s = new Set(colItems(c).map((x) => x.label)); return labels.every((l) => s.has(l)); });
+
+    // 確保「這一層」的欄位在畫面上（欄位被擠掉時，用麵包屑回去）
+    async function ensureCol(prefix, labels) {
+      let col = findCol(labels);
+      if (col) return col;
+      // 從最上層一路點回來
+      await goRoot();
+      for (let d = 0; d < prefix.length; d++) {
+        const c = (pop() ? catColumns(pop()) : []).find((cc) => colItems(cc).some((x) => x.label === prefix[d]));
+        const it = c && colItems(c).find((x) => x.label === prefix[d]);
+        if (!it) break;
+        realClick(it.el);
+        await waitFor(() => (pop() ? catColumns(pop()) : []).some((cc) => colItems(cc).length && !colItems(cc).some((x) => x.label === prefix[d]) && cc.getBoundingClientRect().left > c.getBoundingClientRect().left), 3000);
+        await sleep(250);
+      }
+      return await waitFor(() => findCol(labels), 2000);
+    }
+
+    let where = '';
+    async function dfs(prefix, labelsHint) {
+      where = prefix.join(' › ') || 'All categories';
+      const col = labelsHint ? await ensureCol(prefix, labelsHint) : (pop() ? catColumns(pop())[0] : null);
+      if (!col) throw E(`讀到「${where}」時找不到這一層的清單`, `Lost the category list at “${where}”`);
+      const list = colItems(col).map((x) => ({ label: x.label, kids: x.kids, disabled: x.disabled }));
+      const labels = list.map((x) => x.label);
+      for (const it of list) {
+        if (catStop) return;
+        const path = [...prefix, it.label];
+        const key = path.join(' - ');
+        if (it.disabled) continue; // 灰色不可選的類目（例如 Pre-Owned）跳過
+        if (!it.kids) { if (addCatPath(key)) found++; continue; }
+        if (cats.done[key]) continue; // 已讀過的整個分支跳過
+        const c = await ensureCol(prefix, labels);
+        const el = c && colItems(c).find((x) => x.label === it.label);
+        if (!el) continue;
+        const before = new Set((pop() ? catColumns(pop()) : []).map(colSig));
+        const parentSig = colSig(c);
+        visitedParents++;
+        progress(found, cats.paths.length, path.join(' › '));
+        // 子欄 = 父欄右邊緊接的那一欄；被點的項目會亮起（class 含 active）
+        const colsNow = () => (pop() ? catColumns(pop()) : []);
+        const parentCol = () => colsNow().find((cc) => colSig(cc) === parentSig);
+        const rightOf = () => { const cs = colsNow(); const i = cs.findIndex((cc) => colSig(cc) === parentSig); return i >= 0 ? cs[i + 1] : null; };
+        const myLi = () => { const pc = parentCol(); const x = pc && colItems(pc).find((y) => y.label === it.label); return x && x.el; };
+        const isActive = () => { const li = myLi(); return !!li && /active/i.test(li.className || ''); };
+        const prevRight = rightOf();
+        const prevSig = prevRight ? colSig(prevRight) : '';
+        const waitStable = async (ms) => {
+          let last = '', stable = 0;
+          return (await waitFor(() => {
+            const r = rightOf(); const g = r ? colSig(r) : '';
+            const ok = g && (g !== prevSig || isActive());
+            if (ok && g === last) stable++; else { last = ok ? g : ''; stable = 0; }
+            return ok && stable >= 2 ? g : null;
+          }, ms, 120)) || '';
+        };
+        let sig = '';
+        if (isActive() && prevRight) sig = prevSig; // 打開時已經展開的那一路
+        else {
+          const tries = [
+            (li) => realClick(li.querySelector('[class*="list-item-label"] > div') || li),
+            (li) => (li.querySelector('[class*="list-item-label"]') || li).click(),
+            (li) => realClick(li),
+            (li) => li.click(),
+          ];
+          for (const t of tries) {
+            const li = myLi() || el.el;
+            t(li);
+            sig = await waitStable(2500);
+            if (sig) break;
+          }
+        }
+        if (!sig) {
+          expandFails++;
+          LOG('點不開：', key);
+          if (expandFails >= 3 && !anyExpanded) throw E('TikTok 的類目點不開（請按「類目診斷」並把結果發給 Claude）', 'Couldn\'t expand TikTok categories (press “Category diagnostics” and send the result to Claude)');
+          continue; // 不當成末級類目保存，下次更新會再試
+        }
+        anyExpanded = true;
+        await dfs(path, sig.split('|'));
+        if (catStop) return;
+        cats.done[key] = true;
+        if (visitedParents % 5 === 0) { cats.updated = Date.now(); saveCats(); }
+      }
+    }
+    let failed = null;
+    try {
+      await dfs([], null);
+    } catch (e) {
+      failed = e;
+    }
+    cats.updated = Date.now();
+    const saved = saveCats();
+    if (failed) { // 出錯時不關彈窗，方便看停在哪裡；已讀到的都保存了
+      failed.message += L(`（已保存 ${cats.paths.length} 個，下次會接著讀）`, ` (${cats.paths.length} saved; the next run continues from here)`);
+      throw failed;
+    }
+    document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    await sleep(300);
+    await closeDialog();
+    if (!saved) throw E('類目太多，瀏覽器存不下', 'Too many categories to store in the browser');
+    return { found, total: cats.paths.length, stopped: catStop };
+  }
+
+  // 類目診斷：把下拉的結構摘要複製給 Claude
+  async function catDiagnose() {
+    const out = [];
+    const dlg = getDialog();
+    if (!dlg) return 'Open “Create temporary listing” first.';
+    const box = fieldBox(dlg, 'Category');
+    out.push('box: ' + !!box);
+    if (!box) return out.join('\n');
+    const v = catView(box);
+    out.push('view: ' + v.tagName + '.' + String(v.className).slice(0, 80) + ' [' + norm(v.innerText).slice(0, 60) + ']');
+    realClick(v);
+    const s = await waitFor(() => catSearchInput(box), 3000);
+    out.push('search: ' + !!s + (s ? ' ph=' + s.placeholder : ''));
+    await sleep(800);
+    const p = s && catPopup(s);
+    out.push('popup: ' + (p ? p.tagName + '.' + String(p.className).slice(0, 80) + ' h=' + Math.round(p.getBoundingClientRect().height) : 'null'));
+    let el = s && s.parentElement;
+    for (let i = 0; i < 8 && el; i++, el = el.parentElement) out.push(`  up${i}: ${el.tagName}.${String(el.className).slice(0, 60)} h=${Math.round(el.getBoundingClientRect().height)} kids=${el.children.length}`);
+    if (p) {
+      const cols = catColumns(p);
+      out.push('columns: ' + cols.length);
+      cols.forEach((c, i) => {
+        const it = colItems(c);
+        out.push(`  col${i}: ${c.tagName}.${String(c.className).slice(0, 60)} items=${it.length} left=${Math.round(c.getBoundingClientRect().left)}`);
+        it.slice(0, 4).forEach((x) => out.push(`    - ${x.label} kids=${x.kids} <${x.el.tagName}.${String(x.el.className).slice(0, 50)}> html=${x.el.innerHTML.replace(/\s+/g, ' ').slice(0, 160)}`));
+      });
+    }
+    document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    return out.join('\n');
+  }
+
+  const BATTERY_OPT = 'Rechargeable (lithium ion) batteries installed in or packed with equipment';
+  async function setCompliance(dlg, target) {
+    const box = fieldBox(dlg, 'Does your product contain the following?');
+    if (!box) { if (target === 'None of the above') return; throw E('找不到 Product compliance（電池）欄位', 'Can\'t find the Product compliance (battery) field'); }
+    const T = norm(target);
+    const view = () => {
+      const c = [...box.querySelectorAll('[class*="select"], [role="combobox"]')].filter((e) => {
+        if (!visible(e)) return false;
+        const r = e.getBoundingClientRect();
+        return r.height >= 10 && r.height <= 80;
+      });
+      return c.find((e) => !c.some((o) => o !== e && e.contains(o) && norm(o.innerText))) || c[0] || box;
+    };
+    const isSet = () => {
+      const t = norm(view().innerText);
+      if (!t.includes(T.slice(0, 40))) return false;
+      // 選電池時，None of the above 不應同時存在
+      return target === 'None of the above' || !t.includes('none of the above');
+    };
+    if (isSet()) return;
+    for (let attempt = 0; attempt < 2 && !isSet(); attempt++) {
+      realClick(view());
+      const opt = await waitFor(() => {
+        const c = [];
+        for (const e of document.querySelectorAll('li, [role="option"], [class*="option"], div, span, label')) {
+          if (!visible(e) || box.contains(e) && view().contains(e) || e.closest('#ttfill-panel')) continue;
+          if (norm(e.innerText) === T) c.push(e);
+        }
+        return c.find((e) => !c.some((o) => o !== e && e.contains(o)));
+      }, 3000);
+      if (!opt) continue;
+      realClick(opt.closest('li, [role="option"], [class*="option"], label') || opt);
+      await sleep(400);
+      // 如果是多選，而且「None of the above」還在，就把它取消
+      if (target !== 'None of the above' && norm(view().innerText).includes('none of the above')) {
+        const none = [...document.querySelectorAll('li, [role="option"], [class*="option"], label')]
+          .find((e) => visible(e) && norm(e.innerText) === 'none of the above');
+        if (none) { realClick(none); await sleep(300); }
+      }
+      // 關掉下拉
+      document.activeElement && document.activeElement.blur && document.activeElement.blur();
+      document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+      await sleep(300);
+    }
+    if (!isSet()) throw (target === 'None of the above' ? E('電池欄沒能改回 None of the above', 'Couldn\'t reset the battery field to None of the above') : E('電池選項沒有選上（Product compliance）', 'Battery option didn\'t get selected (Product compliance)'));
+  }
+
+  /* ---------------- 提交判斷 ---------------- */
+  // 先等彈窗關閉，再看有沒有「Product submitted」提示（避免把上一次殘留的提示當成這次的）
+  // 監看某一行的提交結果。用「行物件」而不是序號，重新生成清單後舊的監看不會寫錯行。
+  // 回傳 'ok' | 'cancel' | 'timeout' | 'stale'
+  async function watchSubmit(row, timeout) {
+    const token = (row._w = (row._w || 0) + 1);
+    const toastSeen = () => findByText(document.body, 'product submitted', { exact: false }).length > 0;
+    const res = await waitFor(() => (!getDialog() ? 'closed' : null), timeout, 300);
+    if (row._w !== token || !state.rows.includes(row)) return 'stale';
+    const i = state.rows.indexOf(row);
+    let out;
+    if (res === 'closed' && (await waitFor(toastSeen, 3000))) {
+      row.status = '✅ 已提交';
+      if (state.idx === i) state.idx = nextPending(i + 1);
+      out = 'ok';
+    } else if (res === 'closed') {
+      row.status = '已取消';
+      out = 'cancel';
+    } else {
+      out = 'timeout';
+    }
+    saveState(); render();
+    return out;
+  }
+  // 背景監看：你手動按 Submit 後，自動標記成功並跳到下一個
+  function watchLater(row, okMsg) {
+    watchSubmit(row, 15 * 60 * 1000).then((r) => { if (r === 'ok') setMsg(okMsg || L('已提交', 'Submitted'), 'ok'); });
+  }
+
+  // 下一個還沒提交的行（從 from 開始找，找不到就從頭找）
+  function nextPending(from) {
+    const n = state.rows.length;
+    for (let k = 0; k < n; k++) { const j = (from + k) % n; if (!state.rows[j].status.startsWith('✅')) return j; }
+    return n;
+  }
+
+  // 關掉 TikTok 的彈窗（自動上架時跳過有問題的商品用）
+  async function closeDialog() {
+    const d = getDialog();
+    if (!d) return true;
+    document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); // 先收起打開的下拉
+    await sleep(200);
+    const c = findByText(d, 'Cancel')[0];
+    const btn = c && (c.closest('button, [role="button"]') || c);
+    if (btn) realClick(btn);
+    else { const x = d.querySelector('.arco-drawer-close-icon, [class*="close-icon"], [aria-label="Close"]'); if (x) realClick(x); }
+    // TikTok 會問「Discard your changes?」→ 按 Discard
+    const confirmBtn = () => {
+      for (const t of ['Discard', 'Leave', 'Confirm', 'OK', 'Yes', 'Exit']) {
+        const cands = findByText(document.body, t).map((e) => e.closest('button, [role="button"]') || e).filter(visible);
+        const inModal = cands.find((e) => e.closest('[class*="modal"], [class*="Modal"], [role="dialog"], [class*="popconfirm"]'));
+        if (inModal || cands.length) return inModal || cands[cands.length - 1];
+      }
+      return null;
+    };
+    const r = await waitFor(() => (!getDialog() ? 'closed' : confirmBtn()), 3000);
+    if (r === 'closed') return true;
+    if (r) { realClick(r); }
+    return !!(await waitFor(() => !getDialog(), 4000));
+  }
+
+  // 填一行。submit=true 自動按 Submit；defer=true（全部自動上架）時，有問題的先關掉彈窗跳過。
+  // 回傳 'ok' 已提交 | 'defer' 已跳過、稍後手動處理 | 'wait' 等你手動 | 'fail' 卡住了
+  async function fillOne(i, submit, defer) {
+    const row = state.rows[i];
+    if (!row) return 'fail';
+    if (row.status.startsWith('✅')) return 'ok'; // 已提交過的不重複上
+    const CONT = () => L('已提交，按「上架剩下的」繼續', 'Submitted — press “Upload remaining” to continue');
+    const skip = async (status, msg, type) => {
+      row.status = status; saveState(); render();
+      if (!defer) { setMsg(msg, type || 'warn'); if (getDialog()) watchLater(row, CONT()); return 'wait'; }
+      setMsg(L('跳過：', 'Skipped: ') + baseName(row.name) + ' (' + status.replace(/^❌\s*|^待確認：/, '') + ')', 'warn');
+      if (await closeDialog()) return 'defer';
+      setMsg(L('出錯：TikTok 彈窗關不掉，自動上架停在這裡。請手動處理這一個再按「上架剩下的」', 'Error: couldn\'t close the TikTok window, so auto-upload stopped here. Handle this one manually, then press “Upload remaining”'), 'err');
+      if (getDialog()) watchLater(row, CONT());
+      return 'fail';
+    };
+    setMsg(L('填寫中：', 'Filling: ') + row.name);
+    row.status = '填寫中';
+    render();
+    let dlg;
+    try {
+      try {
+        dlg = await fillRow(row);
+      } catch (e) {
+        // 只有「彈窗還沒準備好」這類問題才重試；類目找不到之類的重試也沒用
+        if (!e.retry) throw e;
+        LOG('第一次失敗，重試', e);
+        await sleep(1000);
+        dlg = await fillRow(row);
+      }
+    } catch (e) {
+      LOG(e);
+      return skip('❌ ' + e.message, L('出錯：', 'Error: ') + e.message + (getDialog() ? L('（可以手動改好後按 Submit，會自動記錄）', ' (fix it in TikTok and press Submit — it will be recorded automatically)') : ''), 'err');
+    }
+    if (row.catNote) {
+      return skip(row.catMissing ? '待確認：' + L('沒有設定類目', 'no category set') : '待確認：' + L('類目選了最接近的「' + lastSeg(row.catNote) + '」', 'closest category picked: “' + lastSeg(row.catNote) + '”'),
+        row.catMissing ? L(`⚠️ ${row.catNote}，請手動選類目後按 Submit。之後在商品庫補上類目就不用每次手動選。`, `⚠️ ${row.catNote} — pick the category manually, then press Submit. Add the category in the Library to skip this next time.`)
+                       : L(`⚠️ 類目沒有完全對上，選了最接近的「${row.catNote}」，請確認後手動按 Submit`, `⚠️ No exact category match — picked the closest: “${row.catNote}”. Check it, then press Submit manually.`));
+    }
+    row.status = '已填好'; saveState(); render();
+    if (!submit) {
+      setMsg(L('已填好，請檢查後按 Submit', 'Filled — check it, then press Submit'));
+      watchLater(row, L('已提交', 'Submitted'));
+      return 'wait';
+    }
+    const btn = findSubmit(dlg);
+    if (!btn) return skip('❌ ' + L('找不到 Submit 按鈕', 'Can\'t find the Submit button'), L('出錯：找不到 Submit 按鈕', 'Error: can\'t find the Submit button'), 'err');
+    await sleep(400);
+    realClick(btn);
+    setMsg(L('已按 Submit，等待結果…', 'Submit pressed, waiting for the result…'));
+    const r = await watchSubmit(row, 45000);
+    if (r === 'ok') { setMsg(L('已提交', 'Submitted'), 'ok'); return 'ok'; }
+    if (r === 'timeout') return skip('❌ ' + L('按了 Submit 但彈窗沒關（可能有欄位標紅）', 'Submit pressed but the window stayed open (a field may be flagged red)'),
+      L('⚠️ 按了 Submit 但彈窗沒關：請看 TikTok 彈窗裡哪一欄標紅，改好後手動按 Submit', '⚠️ Submit pressed but the window stayed open: check which field is flagged red in TikTok, fix it, then press Submit'));
+    // 彈窗關了但沒看到成功提示：不要自動重試，避免重複上架
+    row.status = '待確認：' + L('沒看到「提交成功」，請在 TikTok 列表確認', 'no “submitted” confirmation — check the TikTok list');
+    saveState(); render();
+    setMsg(L('⚠️ 彈窗關了但沒看到「提交成功」，請在 TikTok 列表確認這一個有沒有上去', '⚠️ The window closed but no “submitted” confirmation appeared — check the TikTok list to see if it went up'), 'warn');
+    return defer ? 'defer' : 'wait';
+  }
+
+  async function fillNext() {
+    if (busy) return;
+    if (!state.rows[state.idx]) { setMsg(L('全部完成 🎉（或先生成今天的清單）', 'All done 🎉 (or generate today\'s list first)'), 'ok'); return; }
+    busy = true; setRunning(true, false);
+    try { await fillOne(state.idx, !!state.auto, false); } finally { busy = false; setRunning(false); }
+  }
+
+  let stopFlag = false;
+  // 全部自動上架：依序上所有還沒提交的；有問題的先跳過，最後集中提示
+  async function runAll() {
+    if (busy) return;
+    const todo = state.rows.filter((r) => !r.status.startsWith('✅'));
+    if (!todo.length) { setMsg(L('全部完成 🎉', 'All done 🎉'), 'ok'); return; }
+    busy = true; stopFlag = false; setRunning(true, true);
+    let n = 0, failed = false;
+    const deferred = [];
+    try {
+      for (const row of todo) {
+        if (stopFlag || !state.rows.includes(row)) break;
+        state.idx = state.rows.indexOf(row); saveState(); render();
+        const r = await fillOne(state.idx, true, true);
+        if (r === 'ok') n++;
+        else if (r === 'defer') deferred.push(row);
+        else { failed = true; break; }
+        await sleep(1200);
+      }
+    } finally {
+      busy = false; setRunning(false);
+    }
+    if (failed) return; // fillOne 已經寫了提示
+    const left = state.rows.filter((r) => !r.status.startsWith('✅'));
+    if (left.length) { state.idx = state.rows.indexOf(left[0]); saveState(); render(); }
+    if (stopFlag) setMsg(L(`已停止（這次上了 ${n} 個，還剩 ${left.length} 個）`, `Stopped (uploaded ${n} this run, ${left.length} left)`), 'warn');
+    else if (!left.length) setMsg(L(`全部完成 🎉 這次上了 ${n} 個`, `All done 🎉 Uploaded ${n} this run`), 'ok');
+    else setMsg(L(`⚠️ 自動上架完成 ${n} 個。還有 ${left.length} 個需要你手動處理（橙色＝待確認，紅色＝出錯）：點那一行 → 按「填這個」，檢查後在 TikTok 按 Submit。`,
+      `⚠️ Auto-uploaded ${n}. ${left.length} need your attention (orange = check, red = error): click the row → press “Fill this”, check it, then press Submit in TikTok.`), 'warn');
+  }
+
+  /* ---------------- 商品庫 ----------------
+     每個商品存一個名字模板：{PT} 和 {DATE} 會在生成清單時換成當天的值 */
+  // 預設商品庫：公開版是空的，每個人自己新增或從 Excel 匯入。{PT} = 場次，{DATE} = 日期
+  const DEFAULT_LIB = [];
+  const OLD_DEFAULTS = [];
+  const uid = () => Math.random().toString(36).slice(2, 9);
+  function mergeDefaults() {
+    let added = 0;
+    for (const d of DEFAULT_LIB) {
+      if (state.lib.some((x) => norm(x.name) === norm(d.name))) continue;
+      state.lib.push({ id: uid(), ...d });
+      added++;
+    }
+    saveState();
+    return added;
+  }
+  state.lib = (state.lib || []).map((x) => ({ ...x, name: x.name.replace(/PT\{PT\}/g, '{PT}') })); // 舊版格式升級
+  if (!state.seeded) { mergeDefaults(); state.seeded = 2; saveState(); }
+  else if (state.seeded === 1) {
+    const old = new Set(OLD_DEFAULTS.map(norm));
+    state.lib = state.lib.filter((x) => !old.has(norm(x.name)));
+    state.seeded = 2; saveState();
+  }
+  if (state.batMig !== 2) { state.batMig = 2; saveState(); }
+  state.pt = state.pt || 'PT1';
+  const today = () => { const d = new Date(); return String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0'); };
+  const ptLabel = () => { const v = String(state.pt || '').trim(); return /^\d+$/.test(v) ? 'PT' + v : v.toUpperCase(); };
+  // 去掉名稱結尾的場次和日期（例如「 - PT1 - 1027」「 -  - 1022」「 - PT2」），再統一接上 {PT} 和 {DATE}
+  const stripPtDate = (name) => {
+    let n = String(name).trim();
+    n = n.replace(/\s*-\s*\{PT\}\s*(-\s*\{DATE\})?\s*$/i, '');
+    n = n.replace(/\s*-\s*(PT\s*\d+)?\s*-\s*(\d{3,4})?\s*$/i, '');
+    n = n.replace(/\s*-\s*PT\s*\d+\s*$/i, '');
+    return n.trim();
+  };
+  const toTemplate = (name) => stripPtDate(name) + '  - {PT} - {DATE}';
+  const applyTpl = (tpl) => tpl.trim().replace(/\{PT\}/g, ptLabel()).replace(/\{DATE\}/g, $('ttf-date').value.trim() || today());
+  function importToLib(text) {
+    const rows = parse(text);
+    let added = 0, updated = 0;
+    for (const r of rows) {
+      const tpl = toTemplate(r.name);
+      const ex = state.lib.find((x) => norm(x.name) === norm(tpl));
+      const item = { name: tpl, cat: r.cat, weight: r.weight, h: r.h, w: r.w, l: r.l };
+      if (ex) { Object.assign(ex, item); updated++; } else { state.lib.push({ id: uid(), sel: true, ...item }); added++; }
+      if (ex) ex.sel = true;
+    }
+    saveState(); renderLib();
+    return { added, updated };
+  }
+
+  /* ---------------- 浮動面板（Shadow DOM，不受 TikTok 頁面樣式影響） ---------------- */
+  const host = document.createElement('div');
+  host.id = 'ttfill-panel';
+  host.style.cssText = 'position:fixed;left:16px;bottom:16px;z-index:2147483647;';
+  const root = host.attachShadow({ mode: 'open' });
+  document.body.appendChild(host);
+  const $ = (id) => root.getElementById(id);
+  const CSS = `
+    :host{all:initial}
+    *{box-sizing:border-box}
+    .card{--ink:#161823;--muted:#8a8b91;--line:#ececee;--soft:#f6f6f8;--accent:#fe2c55;--accent-soft:#fff0f3;
+      --ok:#12a150;--ok-soft:#e9f7ef;--warn:#b26a00;--warn-soft:#fff6e5;--err:#e5322d;--err-soft:#fdeceb;--info:#3b6bdc;--info-soft:#eef3fe;
+      width:372px;max-height:min(86vh,760px);display:flex;flex-direction:column;background:#fff;color:var(--ink);
+      font:13px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang TC","Helvetica Neue",sans-serif;
+      border-radius:14px;box-shadow:0 12px 40px rgba(22,24,35,.18),0 0 0 1px rgba(22,24,35,.06);overflow:hidden}
+    button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+    button:disabled{opacity:.35;cursor:default}
+    input,textarea{font:inherit;color:var(--ink)}
+
+    .hd{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--ink);color:#fff;cursor:grab;user-select:none;flex:none}
+    .hd:active{cursor:grabbing}
+    .logo{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#25f4ee 0 45%,#fe2c55 55%);flex:none}
+    .ttl{font-weight:650;font-size:14px;letter-spacing:.2px}
+    .sub{font-size:11px;color:#a9aab0}
+    .grow{flex:1;min-width:0}
+    .pill{font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.14)}
+    .pill:empty{display:none}
+    .iconbtn{width:26px;height:26px;border-radius:7px;color:#fff;display:grid;place-items:center;font-size:14px}
+    .iconbtn:hover{background:rgba(255,255,255,.12)}
+    .bar{height:3px;background:#2a2c38;flex:none}
+    .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+
+    .tabs{display:flex;gap:4px;margin:10px 14px 0;padding:3px;background:var(--soft);border-radius:9px;flex:none}
+    .tabs button{flex:1;padding:6px 0;border-radius:7px;color:var(--muted);font-weight:600;font-size:12.5px}
+    .tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+    .bd{padding:10px 14px 14px;overflow:auto;flex:1}
+    .hide{display:none!important}
+
+    .sec{display:flex;align-items:center;gap:8px;margin:14px 0 6px;font-size:11.5px;font-weight:650;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+    .sec:first-child{margin-top:4px}
+    .sec .grow{font-weight:500;text-transform:none;letter-spacing:0}
+    .link{color:var(--info);font-size:12px;font-weight:500;text-transform:none;letter-spacing:0;padding:0 2px}
+    .link:hover{text-decoration:underline}
+
+    .fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .field{display:flex;flex-direction:column;gap:3px}
+    .field span{font-size:11px;color:var(--muted)}
+    .inp{width:100%;height:32px;padding:0 10px;border:1px solid var(--line);border-radius:8px;background:#fff;outline:none;transition:border-color .15s,box-shadow .15s}
+    .inp:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+    textarea{width:100%;height:72px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;resize:vertical;outline:none;font:11.5px/1.4 ui-monospace,Menlo,monospace}
+
+    .list{border:1px solid var(--line);border-radius:10px;max-height:210px;overflow:auto}
+    .row{display:flex;align-items:center;gap:10px;padding:7px 10px;border-top:1px solid var(--line)}
+    .row:first-child{border-top:0}
+    label.row{cursor:pointer}
+    label.row:hover{background:var(--soft)}
+    .row .txt{flex:1;min-width:0}
+    .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:550}
+    .meta{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .chk{appearance:none;width:17px;height:17px;border:1.5px solid #c9cad0;border-radius:5px;flex:none;display:grid;place-items:center;margin:0;cursor:pointer}
+    .chk:checked{background:var(--accent);border-color:var(--accent)}
+    .chk:checked::after{content:"";width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+    .tag{font-size:10.5px;font-weight:600;padding:1px 6px;border-radius:99px;white-space:nowrap;flex:none}
+    .t-muted{background:var(--soft);color:var(--muted)} .t-ok{background:var(--ok-soft);color:var(--ok)}
+    .t-warn{background:var(--warn-soft);color:var(--warn)} .t-err{background:var(--err-soft);color:var(--err)}
+    .t-info{background:var(--info-soft);color:var(--info)}
+    .empty{padding:18px;text-align:center;color:var(--muted);font-size:12px}
+
+    .btn{height:34px;padding:0 14px;border-radius:9px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:background .15s,transform .05s}
+    .btn:active:not(:disabled){transform:translateY(1px)}
+    .primary{background:var(--accent);color:#fff} .primary:hover:not(:disabled){background:#e9254b}
+    .dark{background:var(--ink);color:#fff} .dark:hover:not(:disabled){background:#2b2d3a}
+    .ghost{background:var(--soft);color:var(--ink)} .ghost:hover:not(:disabled){background:#ececf0}
+    .block{width:100%;margin-top:8px}
+    .big{height:40px;font-size:14px}
+    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
+    .grid4 .btn{height:30px;padding:0 4px;font-size:12px;font-weight:550}
+    kbd{font:10px ui-monospace,Menlo,monospace;color:var(--muted);margin-left:2px}
+
+    .switch{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none}
+    .switch input{appearance:none;width:30px;height:18px;border-radius:99px;background:#d6d7dc;position:relative;margin:0;cursor:pointer;transition:background .2s;flex:none}
+    .switch input::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+    .switch input:checked{background:var(--accent)} .switch input:checked::after{left:14px}
+
+    .msg{white-space:pre-line;margin-top:10px;padding:8px 10px;border-radius:8px;font-size:12px;line-height:1.45;background:var(--info-soft);color:var(--info)}
+    .msg:empty{display:none}
+    .msg.ok{background:var(--ok-soft);color:var(--ok)} .msg.warn{background:var(--warn-soft);color:var(--warn)} .msg.err{background:var(--err-soft);color:var(--err)}
+
+    .q .idx{width:20px;text-align:right;color:var(--muted);font-size:11px;flex:none}
+    .q.cur{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+    .q{cursor:pointer}
+
+    .tools{margin-top:10px;border:1px solid var(--line);border-radius:10px}
+    .tools summary{padding:8px 10px;cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);list-style:none}
+    .tools summary::-webkit-details-marker{display:none}
+    .tools summary::before{content:"▸ ";} .tools[open] summary::before{content:"▾ ";}
+    .tools .in{padding:0 10px 10px}
+    .btnrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+    .btnrow .btn{height:28px;padding:0 10px;font-size:12px;font-weight:550}
+    .hint{font-size:11px;color:var(--muted);margin-top:6px}
+
+    .item{border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-top:8px}
+    .item.edit{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+    .item .top{display:flex;align-items:center;gap:6px}
+    .acts{display:flex;gap:2px;flex:none}
+    .acts button{height:24px;min-width:24px;padding:0 6px;border-radius:6px;font-size:12px;color:var(--muted)}
+    .acts button:hover{background:var(--soft);color:var(--ink)}
+    .acts .del.confirm{background:var(--err);color:#fff}
+    .form{display:grid;grid-template-columns:64px 1fr;gap:6px 8px;align-items:center;margin-top:4px}
+    .form label{font-size:11.5px;color:var(--muted)}
+    .form .inp{height:30px}
+    .dims{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .err{color:var(--err);font-size:12px;margin-left:6px}
+    .fields.f3{grid-template-columns:1fr 1fr 1fr}
+    .catcard{margin-top:10px;border:1px solid var(--line);border-radius:10px;padding:9px 10px}
+    .acwrap{position:relative}
+    .ac{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:5;background:#fff;border:1px solid var(--line);border-radius:10px;
+      box-shadow:0 10px 30px rgba(22,24,35,.16);max-height:240px;overflow:auto;display:none}
+    .ac.on{display:block}
+    .ac div{padding:7px 10px;font-size:12px;cursor:pointer;border-top:1px solid var(--line);line-height:1.35}
+    .ac div:first-child{border-top:0}
+    .ac div:hover,.ac div.hl{background:var(--accent-soft)}
+    .ac b{color:var(--accent);font-weight:650}
+    .ac .path{color:var(--muted)}
+    .ac .none{color:var(--muted);cursor:default}
+    .list.tall{max-height:300px}
+    .search{height:30px;margin-bottom:6px;background:var(--soft);border-color:transparent}
+    .search:focus{background:#fff}
+    .grid3{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:6px;margin-top:6px}
+    .grid3 .btn{height:30px;padding:0 4px;font-size:12px;font-weight:550}
+    .summary{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;margin:4px 0 10px;background:var(--soft);border-radius:10px}
+    .sum-t{font-weight:650;font-size:13.5px}
+    .stats{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+    .btn.stop{background:var(--ink);color:#fff}
+    .q.busy .tag{animation:pulse 1s infinite}
+    @keyframes pulse{50%{opacity:.4}}
+
+    .bodywrap{display:grid;grid-template-rows:1fr;min-height:0;transition:grid-template-rows .38s cubic-bezier(.4,0,.2,1)}
+    .min .bodywrap{grid-template-rows:0fr}
+    .body{display:flex;flex-direction:column;min-height:0;max-height:calc(min(86vh,760px) - 70px);overflow:hidden;transition:opacity .3s ease}
+    .min .body{opacity:0}
+    .min .bar{opacity:.6}
+    .langsel{appearance:none;-webkit-appearance:none;height:24px;padding:0 8px;border-radius:7px;border:0;background:rgba(255,255,255,.12);color:#fff;
+      font:600 11px/24px -apple-system,BlinkMacSystemFont,sans-serif;cursor:pointer;outline:none}
+    .langsel:hover{background:rgba(255,255,255,.2)}
+    .langsel option{color:#161823}
+    .langsel:disabled{opacity:.4}
+`;
+
+  function escapeHtml(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+  function setMsg(m, type) { const el = $('ttf-msg'); if (!el) return; el.textContent = m; el.className = 'msg ' + (type || ''); }
+  function alertMsg(m, type) { const el = $('ttf-libmsg'); if (!el) return; el.textContent = m; el.className = 'msg ' + (type || 'ok'); }
+  const lastSeg = (c) => (c || '').split(/\s+-\s+/).pop();
+
+  // 狀態在資料裡用固定的中文代碼，顯示時才翻譯
+  function chip(st) {
+    if (st.startsWith('✅')) return ['t-ok', L('已提交', 'Submitted')];
+    if (st.startsWith('❌')) return ['t-err', L('出錯', 'Error')];
+    if (st.startsWith('待確認') || st === '等你手動選類目' || st === '已填好（類目請確認）') return ['t-warn', L('待確認', 'Check')];
+    if (st === '已填好') return ['t-info', L('已填好', 'Filled')];
+    if (st === '填寫中') return ['t-info', L('填寫中', 'Filling')];
+    if (st === '已取消') return ['t-muted', L('已取消', 'Cancelled')];
+    return ['t-muted', L('待上架', 'To do')];
+  }
+
+  const SUFFIX = '  - {PT} - {DATE}';
+  const baseName = (tpl) => tpl.replace(/\s*-\s*\{PT\}\s*-\s*\{DATE\}\s*$/, '').trim();
+  const toTpl = (base) => toTemplate(base);
+  let editing = null; // 正在編輯的商品 id，或 'new'
+  let showSetup = false;
+  let curTab = 'go';
+  let dateVal = today();
+
+  function html() {
+    return `<style>${CSS}</style>
+  <div class="card" id="card">
+    <div class="hd" id="hd">
+      <div class="logo"></div>
+      <div class="grow"><div class="ttl">${L('一鍵上架', 'Quick Upload')}</div><div class="sub">TikTok LIVE · Temporary listing</div></div>
+      <span class="pill" id="ttf-count"></span>
+      <select class="langsel" id="ttf-lang" title="Language">
+        <option value="hant">繁</option><option value="hans">简</option><option value="en">EN</option>
+      </select>
+      <button class="iconbtn" id="ttf-min" title="${L('收起 / 展開（也可以雙擊標題列）', 'Collapse / expand (or double-click the title bar)')}">–</button>
+    </div>
+    <div class="bar"><i id="ttf-bar"></i></div>
+    <div class="bodywrap"><div class="body" id="body">
+    <div class="tabs"><button data-t="go">${L('今天上架', 'Today')}</button><button data-t="lib">${L('商品庫', 'Library')}</button></div>
+
+    <div class="bd" id="tab-go">
+      <div id="view-setup">
+        <div class="fields f3" style="margin-top:4px">
+          <label class="field"><span>${L('場次', 'Session (PT)')}</span><input class="inp" type="text" id="ttf-pt" placeholder="PT1"></label>
+          <label class="field"><span>${L('日期 (MMDD)', 'Date (MMDD)')}</span><input class="inp" type="text" id="ttf-date" placeholder="1027"></label>
+          <label class="field"><span>${L('預設數量', 'Default qty')}</span><input class="inp" type="text" inputmode="numeric" id="ttf-qty" placeholder="500"></label>
+        </div>
+        <div class="sec">${L('商品', 'Products')} <span class="grow" id="ttf-selcount"></span><button class="link" id="ttf-all">${L('全選', 'All')}</button><button class="link" id="ttf-none">${L('清空', 'None')}</button></div>
+        <input class="inp search" type="text" id="ttf-q" placeholder="${L('搜尋商品…', 'Search products…')}">
+        <div class="list tall" id="ttf-pick"></div>
+        <button class="btn primary block big" id="ttf-gen">${L('生成上架清單 →', 'Create upload list →')}</button>
+      </div>
+
+      <div id="view-run" class="hide">
+        <div class="summary">
+          <div class="grow">
+            <div class="sum-t" id="ttf-sumt"></div>
+            <div class="stats" id="ttf-stats"></div>
+          </div>
+          <button class="link" id="ttf-edit">${L('← 重新選商品', '← Change products')}</button>
+        </div>
+        <button class="btn primary block big" id="ttf-run"></button>
+        <div class="grid3">
+          <button class="btn ghost" id="ttf-back" title="${L('回到上一個', 'Go to previous')}">${L('‹ 上一個', '‹ Prev')}</button>
+          <button class="btn ghost" id="ttf-go" title="${L('只填目前這一個', 'Fill only the current one')}">${L('填這個', 'Fill this')}<kbd>⌥F</kbd></button>
+          <button class="btn ghost" id="ttf-skip" title="${L('跳過目前這一個', 'Skip the current one')}">${L('跳過 ›', 'Skip ›')}<kbd>⌥N</kbd></button>
+        </div>
+        <label class="switch"><input type="checkbox" id="ttf-auto">${L('「填這個」也自動按 Submit', 'Auto-Submit after “Fill this”')}</label>
+        <div class="msg" id="ttf-msg"></div>
+        <div class="list tall" id="ttf-list" style="margin-top:10px"></div>
+        <div class="hint">${L('點清單裡任何一行，可以從那一行開始。', 'Click any row to start from it.')}</div>
+      </div>
+    </div>
+
+    <div class="bd hide" id="tab-lib">
+      <button class="btn primary block" id="ttf-add" style="margin-top:4px">${L('＋ 新增商品', '＋ Add product')}</button>
+      <div class="catcard">
+        <div class="top"><div class="grow"><div class="nm">${L('TikTok 類目庫', 'TikTok category list')}</div><div class="meta" id="ttf-catinfo"></div></div></div>
+        <div class="btnrow">
+          <button class="btn dark" id="ttf-catup">${L('讀取 / 更新', 'Read / update')}</button>
+          <button class="btn ghost" id="ttf-catfull">${L('全部重新讀取', 'Full re-read')}</button>
+          <button class="btn ghost" id="ttf-catdiag">${L('類目診斷', 'Category diagnostics')}</button>
+        </div>
+        <div class="btnrow">
+          <button class="btn ghost" id="ttf-catexp">${L('⬇ 匯出類目庫', '⬇ Export categories')}</button>
+          <button class="btn ghost" id="ttf-catimp">${L('⬆ 匯入類目庫', '⬆ Import categories')}</button>
+        </div>
+        <div class="msg" id="ttf-catmsg"></div>
+      </div>
+      <details class="tools">
+        <summary>${L('匯入 · 備份 · 工具', 'Import · Backup · Tools')}</summary>
+        <div class="in">
+          <textarea id="ttf-in" placeholder="${L('Excel 選 E:J 複製後貼上（名稱、重量、H、W、L、類目）&#10;舊的 PT 和日期會自動換成今天的', 'Copy columns E:J in Excel and paste here (name, weight, H, W, L, category)&#10;Old PT and dates are replaced with today’s')}"></textarea>
+          <div class="btnrow">
+            <button class="btn dark" id="ttf-imp">${L('匯入', 'Import')}</button>
+            ${DEFAULT_LIB.length ? `<button class="btn ghost" id="ttf-def">${L('補回預設', 'Restore defaults')}</button>` : ''}
+            <button class="btn ghost" id="ttf-fullexp">${L('⬇ 下載完整備份', '⬇ Download full backup')}</button>
+            <button class="btn ghost" id="ttf-fullimp">${L('⬆ 匯入備份檔', '⬆ Import backup file')}</button>
+            <button class="btn ghost" id="ttf-exp">${L('複製備份', 'Copy backup')}</button>
+            <button class="btn ghost" id="ttf-restore">${L('從備份還原', 'Restore backup')}</button>
+            <button class="btn ghost" id="ttf-diag">${L('診斷', 'Diagnose')}</button>
+          </div>
+          <div class="hint">${L('資料存在這台電腦的 Chrome 裡。「下載完整備份」會把商品庫、類目庫和設定存成一個檔案，在別的電腦按「匯入備份檔」就能搬過去。', 'Data is stored in this computer’s Chrome. “Download full backup” saves products, categories and settings in one file — use “Import backup file” on another computer to move everything.')}</div>
+        </div>
+      </details>
+      <div class="msg" id="ttf-libmsg"></div>
+      <input type="file" id="ttf-file" accept=".json,application/json" style="display:none">
+      <input class="inp search" type="text" id="ttf-lq" placeholder="${L('搜尋商品庫…', 'Search library…')}" style="margin-top:10px">
+      <div id="ttf-lib"></div>
+    </div>
+    </div></div>
+  </div>`;
+  }
+
+  function render() {
+    const list = $('ttf-list');
+    if (!list) return;
+    list.innerHTML = '';
+    list.classList.toggle('hide', !state.rows.length);
+    state.rows.forEach((r, i) => {
+      const [cls, label] = chip(r.status);
+      const d = document.createElement('div');
+      d.className = 'row q' + (i === state.idx ? ' cur' : '') + (r.status === '填寫中' ? ' busy' : '');
+      const detail = r.status.startsWith('❌') ? r.status.slice(2) : r.status.startsWith('待確認：') ? r.status.slice(4)
+        : `${lastSeg(r.cat) || L('沒有類目', 'no category')} · ${r.weight} lb · H${r.h} W${r.w} L${r.l}${r.qty ? ' · ×' + r.qty : ''}${r.battery ? ' · 🔋' : ''}`;
+      d.innerHTML = `<span class="idx">${i + 1}</span><div class="txt"><div class="nm" title="${escapeHtml(r.name)}">${escapeHtml(r.name)}</div><div class="meta" title="${escapeHtml(detail)}">${escapeHtml(detail)}</div></div><span class="tag ${cls}">${label}</span>`;
+      d.onclick = () => { if (busy) return; state.idx = i; saveState(); render(); };
+      list.appendChild(d);
+    });
+    const done = state.rows.filter((r) => r.status.startsWith('✅')).length;
+    const warn = state.rows.filter((r) => chip(r.status)[0] === 't-warn').length;
+    const err = state.rows.filter((r) => r.status.startsWith('❌')).length;
+    const left = state.rows.length - done;
+    $('ttf-sumt').textContent = state.rows.length ? [state.runPt, state.runDate, L(`共 ${state.rows.length} 個`, `${state.rows.length} items`)].filter(Boolean).join(' · ') : '';
+    $('ttf-stats').innerHTML = `<span class="tag t-ok">${L('已提交', 'Submitted')} ${done}</span><span class="tag t-muted">${L('剩', 'Left')} ${left}</span>` +
+      (warn ? `<span class="tag t-warn">${L('待確認', 'Check')} ${warn}</span>` : '') + (err ? `<span class="tag t-err">${L('出錯', 'Error')} ${err}</span>` : '');
+    if (!busy) {
+      const rb = $('ttf-run');
+      rb.className = 'btn primary block big';
+      rb.disabled = !left;
+      rb.textContent = !left ? L('✓ 全部完成', '✓ All done') : done || warn || err ? L(`▶ 上架剩下的 ${left} 個`, `▶ Upload remaining ${left}`) : L(`▶ 全部自動上架（${left} 個）`, `▶ Auto-upload all (${left})`);
+    }
+    showView();
+    $('ttf-count').textContent = state.rows.length ? `${done} / ${state.rows.length}` : '';
+    $('ttf-bar').style.width = state.rows.length ? (done / state.rows.length * 100) + '%' : '0';
+    $('ttf-auto').checked = !!state.auto;
+    const cur = list.querySelector('.cur');
+    if (cur && !$('card').classList.contains('min')) cur.scrollIntoView({ block: 'nearest' });
+  }
+
+  function renderPick() {
+    const box = $('ttf-pick');
+    if (!box) return;
+    box.innerHTML = state.lib.length ? '' : `<div class="empty">${L('商品庫是空的，到「商品庫」新增或匯入', 'The library is empty — add or import products in “Library”')}</div>`;
+    const q = norm($('ttf-q').value);
+    state.lib.forEach((it) => {
+      if (q && !norm(it.name + ' ' + it.cat).includes(q)) return;
+      const lab = document.createElement('label');
+      lab.className = 'row';
+      lab.innerHTML = `<input class="chk" type="checkbox" ${it.sel ? 'checked' : ''}><div class="txt"><div class="nm" title="${escapeHtml(baseName(it.name))}">${escapeHtml(baseName(it.name))}</div><div class="meta">${it.cat ? escapeHtml(lastSeg(it.cat)) + ' · ' : ''}${escapeHtml(it.weight)} lb${it.qty ? ' · ×' + escapeHtml(it.qty) : ''}</div></div>${it.battery ? '<span class="tag t-info">🔋</span>' : ''}${it.cat ? '' : `<span class="tag t-warn">${L('沒類目', 'No cat.')}</span>`}`;
+      lab.querySelector('input').onchange = (e) => { it.sel = e.target.checked; saveState(); updSel(); };
+      box.appendChild(lab);
+    });
+    updSel();
+  }
+  function updSel() {
+    $('ttf-selcount').textContent = state.lib.length ? L(`已選 ${state.lib.filter((x) => x.sel).length} / ${state.lib.length}`, `${state.lib.filter((x) => x.sel).length} / ${state.lib.length} selected`) : '';
+  }
+
+  function formHtml(it) {
+    return `
+      <div class="form">
+        <label>${L('名稱', 'Name')}</label><input class="inp" type="text" data-f="name" value="${escapeHtml(baseName(it.name || ''))}" placeholder="(Heater) item Shown on Screen - No Cancellation">
+        <span></span><span class="hint" style="margin:0">${L('場次和日期會自動加在後面，例如 … - PT1 - 1027', 'Session and date are added automatically, e.g. … - PT1 - 1027')}</span>
+        <label>${L('類目', 'Category')}</label><div class="acwrap"><input class="inp" type="text" data-f="cat" autocomplete="off" value="${escapeHtml(it.cat || '')}" placeholder="${cats.paths.length ? L('輸入關鍵字，從清單選', 'Type a keyword, pick from the list') : L('完整路徑最準（可先讀取類目庫）', 'Full path is best (read the category list first)')}"><div class="ac"></div></div>
+        <label>${L('數量', 'Quantity')}</label><input class="inp" type="text" inputmode="numeric" data-f="qty" value="${escapeHtml(it.qty || '')}" placeholder="${L('留空＝用「今天上架」的預設數量', 'Blank = use the default qty on “Today”')}">
+        <label>${L('重量 lb', 'Weight lb')}</label><input class="inp" type="text" data-f="weight" value="${escapeHtml(it.weight || '')}" placeholder="1.5">
+        <label>${L('電池', 'Battery')}</label><label class="switch" style="margin:0;color:var(--ink)"><input type="checkbox" data-b="battery" ${it.battery ? 'checked' : ''}>${L('含鋰電池（裝在產品內）', 'Contains lithium-ion battery (installed)')}</label>
+        <label>H · W · L</label><div class="dims"><input class="inp" type="text" data-f="h" placeholder="H" value="${escapeHtml(it.h || '')}"><input class="inp" type="text" data-f="w" placeholder="W" value="${escapeHtml(it.w || '')}"><input class="inp" type="text" data-f="l" placeholder="L" value="${escapeHtml(it.l || '')}"></div>
+      </div>
+      <div style="margin-top:10px;display:flex;align-items:center;gap:6px">
+        <button class="btn primary" data-a="save" style="height:30px">${L('保存', 'Save')}</button>
+        <button class="btn ghost" data-a="cancel" style="height:30px">${L('取消', 'Cancel')}</button>
+        <span class="err"></span>
+      </div>`;
+  }
+
+  // 類目輸入框的自動完成
+  function attachCatAC(d) {
+    const inp = d.querySelector('input[data-f=cat]');
+    const ac = d.querySelector('.ac');
+    if (!inp || !ac) return;
+    let hl = -1, items = [];
+    const hi = (p, q) => {
+      const segs = p.split(' - ');
+      const last = segs.pop();
+      const mark = (t) => { let r = escapeHtml(t); for (const w of norm(q).split(' ').filter(Boolean)) r = r.replace(new RegExp('(' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig'), '<b>$1</b>'); return r; };
+      return `${mark(last)}<div class="path" style="padding:0;border:0">${mark(segs.join(' › '))}</div>`;
+    };
+    const show = () => {
+      const q = inp.value;
+      if (!cats.paths.length) { ac.classList.remove('on'); return; }
+      items = q.trim().length >= 2 ? searchCats(q) : [];
+      hl = -1;
+      if (!q.trim() || q.includes(' - ') && catSet.has(norm(q))) { ac.classList.remove('on'); return; }
+      ac.innerHTML = items.length ? items.map((p, i) => `<div data-i="${i}">${hi(p, q)}</div>`).join('') : `<div class="none">${L('沒有符合的類目', 'No matching category')}</div>`;
+      ac.classList.add('on');
+      ac.querySelectorAll('[data-i]').forEach((el) => el.addEventListener('mousedown', (e) => { e.preventDefault(); pick(+el.dataset.i); }));
+    };
+    const pick = (i) => { if (!items[i]) return; inp.value = items[i]; ac.classList.remove('on'); };
+    const mark = () => ac.querySelectorAll('[data-i]').forEach((el, i) => { el.classList.toggle('hl', i === hl); if (i === hl) el.scrollIntoView({ block: 'nearest' }); });
+    inp.addEventListener('input', show);
+    inp.addEventListener('focus', show);
+    inp.addEventListener('blur', () => setTimeout(() => ac.classList.remove('on'), 120));
+    inp.addEventListener('keydown', (e) => {
+      if (!ac.classList.contains('on') || !items.length) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); hl = Math.min(items.length - 1, hl + 1); mark(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); hl = Math.max(0, hl - 1); mark(); }
+      else if (e.key === 'Enter') { e.preventDefault(); pick(hl < 0 ? 0 : hl); }
+      else if (e.key === 'Escape') ac.classList.remove('on');
+    });
+  }
+
+  function readForm(d) {
+    const v = {};
+    d.querySelectorAll('input[data-f]').forEach((i) => (v[i.dataset.f] = i.value.trim()));
+    const b = d.querySelector('input[data-b=battery]'); v.battery = !!(b && b.checked);
+    if (!v.name) return L('請填名稱', 'Please enter a name');
+    for (const k of ['weight', 'h', 'w', 'l']) if (!(parseFloat(v[k]) > 0)) return L('重量和長寬高要填正數', 'Weight and dimensions must be positive numbers');
+    if (v.qty && !/^\d+$/.test(v.qty)) return L('數量要填整數，或留空', 'Quantity must be a whole number, or blank');
+    if (v.qty && +v.qty < 1) return L('數量至少 1', 'Quantity must be at least 1');
+    v.name = toTpl(v.name);
+    return v;
+  }
+
+  function renderLib() {
+    renderPick();
+    const box = $('ttf-lib');
+    if (!box) return;
+    box.innerHTML = '';
+    if (editing === 'new') {
+      const d = document.createElement('div');
+      d.className = 'item edit';
+      d.innerHTML = `<div class="nm" style="margin-bottom:4px">${L('新增商品', 'New product')}</div>` + formHtml({});
+      attachCatAC(d);
+      d.querySelector('[data-a=save]').onclick = () => {
+        const v = readForm(d);
+        if (typeof v === 'string') { d.querySelector('.err').textContent = v; return; }
+        if (state.lib.some((x) => norm(x.name) === norm(v.name))) { d.querySelector('.err').textContent = L('已有同名商品', 'A product with this name already exists'); return; }
+        state.lib.unshift({ id: uid(), sel: true, ...v });
+        editing = null; saveState(); renderLib();
+        alertMsg(L('已保存，並在「今天上架」裡勾選了', 'Saved and selected in “Today”'));
+      };
+      d.querySelector('[data-a=cancel]').onclick = () => { editing = null; renderLib(); };
+      box.appendChild(d);
+      setTimeout(() => d.querySelector('input').focus(), 0);
+    }
+    if (!state.lib.length && editing !== 'new') box.innerHTML = `<div class="empty">${L('還沒有商品，按上面「新增商品」', 'No products yet — press “Add product” above')}</div>`;
+    const lq = norm($('ttf-lq').value);
+    state.lib.forEach((it, k) => {
+      if (!it.id) it.id = uid();
+      if (lq && editing !== it.id && !norm(it.name + ' ' + it.cat).includes(lq)) return;
+      const d = document.createElement('div');
+      d.className = 'item';
+      if (editing === it.id) {
+        d.classList.add('edit');
+        d.innerHTML = formHtml(it);
+        attachCatAC(d);
+        d.querySelector('[data-a=save]').onclick = () => {
+          const v = readForm(d);
+          if (typeof v === 'string') { d.querySelector('.err').textContent = v; return; }
+          Object.assign(it, v);
+          editing = null; saveState(); renderLib();
+          alertMsg(L('已保存', 'Saved'));
+        };
+        d.querySelector('[data-a=cancel]').onclick = () => { editing = null; renderLib(); };
+      } else {
+        d.innerHTML = `
+          <div class="top">
+            <div class="txt grow"><div class="nm" title="${escapeHtml(baseName(it.name))}">${escapeHtml(baseName(it.name))}</div></div>
+            <div class="acts">
+              <button data-a="up" title="${L('上移', 'Move up')}">↑</button><button data-a="down" title="${L('下移', 'Move down')}">↓</button>
+              <button data-a="edit">${L('編輯', 'Edit')}</button><button data-a="del" class="del">${L('刪除', 'Delete')}</button>
+            </div>
+          </div>
+          <div class="meta" title="${escapeHtml(it.cat || '')}">${it.cat ? escapeHtml(it.cat) + (cats.paths.length && !catSet.has(norm(resolveCat(it.cat))) ? ` <span class="tag t-warn">${L('不在類目庫', 'Not in list')}</span>` : '') : `<span class="tag t-warn">${L('沒有類目', 'No category')}</span>`}</div>
+          <div class="meta">${escapeHtml(it.weight)} lb · H${escapeHtml(it.h)} × W${escapeHtml(it.w)} × L${escapeHtml(it.l)}${it.qty ? ' · ' + L('數量', 'Qty') + ' ' + escapeHtml(it.qty) : ''}${it.battery ? ` · <span class="tag t-info">🔋 ${L('含電池', 'Battery')}</span>` : ''}</div>`;
+        d.querySelector('[data-a=edit]').onclick = () => { editing = it.id; renderLib(); };
+        const del = d.querySelector('[data-a=del]');
+        del.onclick = () => {
+          if (del.classList.contains('confirm')) { state.lib.splice(k, 1); saveState(); renderLib(); }
+          else { del.classList.add('confirm'); del.textContent = L('確認刪除', 'Confirm'); setTimeout(() => { del.classList.remove('confirm'); del.textContent = L('刪除', 'Delete'); }, 3000); }
+        };
+        d.querySelector('[data-a=up]').onclick = () => { if (k > 0) { [state.lib[k - 1], state.lib[k]] = [state.lib[k], state.lib[k - 1]]; saveState(); renderLib(); } };
+        d.querySelector('[data-a=down]').onclick = () => { if (k < state.lib.length - 1) { [state.lib[k + 1], state.lib[k]] = [state.lib[k], state.lib[k + 1]]; saveState(); renderLib(); } };
+      }
+      box.appendChild(d);
+    });
+  }
+
+  function showView() {
+    const setup = !state.rows.length || showSetup;
+    $('view-setup').classList.toggle('hide', !setup);
+    $('view-run').classList.toggle('hide', setup);
+  }
+  function setRunning(on, isAll) {
+    const rb = $('ttf-run');
+    ['ttf-go', 'ttf-skip', 'ttf-back', 'ttf-edit', 'ttf-lang'].forEach((id) => ($(id).disabled = on));
+    if (on && isAll) { rb.disabled = false; rb.className = 'btn stop block big'; rb.textContent = L('■ 停止（做完這一個就停）', '■ Stop (after the current one)'); }
+    else if (on) { rb.disabled = true; }
+    else render();
+  }
+
+  /* ---- 位置：以「左下角」為錨點，展開時向上長 ---- */
+  function place(x, b) {
+    const w = host.offsetWidth || 372, h = host.offsetHeight || 60;
+    x = Math.max(8, Math.min(window.innerWidth - w - 8, x));
+    b = Math.max(8, Math.min(window.innerHeight - 56, b));
+    host.style.left = x + 'px'; host.style.bottom = b + 'px'; host.style.top = 'auto';
+    return { x, b };
+  }
+  function keepInView() { // 展開後如果頂部超出螢幕，往下挪
+    const r = host.getBoundingClientRect();
+    if (r.top < 8 && state.pos) { state.pos = place(state.pos.x, Math.max(8, state.pos.b - (8 - r.top))); saveState(); }
+  }
+  function setMin(v) {
+    $('card').classList.toggle('min', v);
+    $('ttf-min').textContent = v ? '+' : '–';
+    state.min = v; saveState();
+    if (!v) setTimeout(keepInView, 380);
+  }
+
+  /* ---- 建立整個面板（切換語言時重建） ---- */
+  function buildUI() {
+    root.innerHTML = html();
+    $('ttf-lang').value = lang();
+    $('card').classList.toggle('min', !!state.min);
+    $('ttf-min').textContent = state.min ? '+' : '–';
+
+    // 分頁
+    const tabs = root.querySelectorAll('.tabs button');
+    const selTab = (t) => {
+      curTab = t;
+      tabs.forEach((x) => x.classList.toggle('on', x.dataset.t === t));
+      $('tab-go').classList.toggle('hide', t !== 'go');
+      $('tab-lib').classList.toggle('hide', t !== 'lib');
+    };
+    tabs.forEach((t) => (t.onclick = () => selTab(t.dataset.t)));
+    selTab(curTab);
+
+    // 收起 / 展開、語言
+    $('ttf-min').onclick = (e) => { e.stopPropagation(); setMin(!state.min); };
+    $('ttf-lang').onchange = (e) => { if (busy) return; state.lang = e.target.value; saveState(); buildUI(); };
+
+    // 拖動標題列移動面板；雙擊收起 / 展開
+    const hd = $('hd');
+    hd.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button, select')) return;
+      const r = host.getBoundingClientRect(), ox = e.clientX - r.left, ob = r.bottom - e.clientY;
+      hd.setPointerCapture(e.pointerId);
+      const move = (ev) => { state.pos = place(ev.clientX - ox, window.innerHeight - ev.clientY - ob); };
+      const up = () => { hd.removeEventListener('pointermove', move); hd.removeEventListener('pointerup', up); saveState(); };
+      hd.addEventListener('pointermove', move); hd.addEventListener('pointerup', up);
+    });
+    hd.addEventListener('dblclick', (e) => { if (!e.target.closest('button, select')) setMin(!state.min); });
+
+    // 今天上架
+    $('ttf-pt').value = state.pt;
+    $('ttf-pt').onchange = (e) => { state.pt = e.target.value.trim() || 'PT1'; e.target.value = ptLabel(); saveState(); };
+    $('ttf-date').value = dateVal;
+    $('ttf-qty').value = state.qty == null ? '500' : state.qty;
+    $('ttf-qty').onchange = (e) => {
+      const v = e.target.value.trim();
+      if (v && !/^\d+$/.test(v)) { e.target.value = state.qty || ''; return; }
+      state.qty = v; saveState();
+    };
+    $('ttf-date').oninput = (e) => { dateVal = e.target.value; };
+    const inFilter = (x) => { const q = norm($('ttf-q').value); return !q || norm(x.name + ' ' + x.cat).includes(q); };
+    $('ttf-all').onclick = () => { state.lib.filter(inFilter).forEach((x) => (x.sel = true)); saveState(); renderPick(); };
+    $('ttf-none').onclick = () => { state.lib.filter(inFilter).forEach((x) => (x.sel = false)); saveState(); renderPick(); };
+    $('ttf-q').oninput = renderPick;
+    $('ttf-lq').oninput = renderLib;
+    $('ttf-edit').onclick = () => { showSetup = true; showView(); };
+    $('ttf-gen').onclick = () => {
+      const sel = state.lib.filter((x) => x.sel);
+      if (!sel.length) { $('ttf-selcount').textContent = L('⚠️ 先勾選要上的商品', '⚠️ Select products first'); return; }
+      if (busy) return;
+      state.runPt = ptLabel(); state.runDate = $('ttf-date').value.trim() || today();
+      showSetup = false;
+      const dq = String(state.qty || '').trim();
+      state.rows = sel.map((x) => ({ name: applyTpl(x.name), cat: x.cat, weight: x.weight, h: x.h, w: x.w, l: x.l, battery: !!x.battery, qty: x.qty || dq, status: '待填' }));
+      state.idx = 0; saveState(); render();
+      setMsg(L(`已生成 ${sel.length} 個，按「全部自動上架」開始`, `${sel.length} items ready — press “Auto-upload all” to start`));
+    };
+    $('ttf-run').onclick = () => {
+      if (busy) { stopFlag = true; const rb = $('ttf-run'); rb.disabled = true; rb.textContent = L('停止中…做完這一個就停', 'Stopping after the current one…'); return; }
+      runAll();
+    };
+    $('ttf-go').onclick = fillNext;
+    $('ttf-skip').onclick = () => { if (busy) return; if (state.idx < state.rows.length) state.idx = Math.min(state.idx + 1, state.rows.length); saveState(); render(); };
+    $('ttf-back').onclick = () => { if (busy) return; if (state.idx > 0) state.idx--; saveState(); render(); };
+    $('ttf-auto').onchange = (e) => { state.auto = e.target.checked; saveState(); };
+
+    // 商品庫
+    $('ttf-imp').onclick = () => {
+      const r = importToLib($('ttf-in').value);
+      if (!r.added && !r.updated) { alertMsg(L('⚠️ 沒讀到內容：請在 Excel 選 E:J 這 6 欄複製', '⚠️ Nothing read: copy columns E:J (6 columns) in Excel'), 'warn'); return; }
+      $('ttf-in').value = '';
+      alertMsg(L(`匯入完成：新增 ${r.added} 個，更新 ${r.updated} 個`, `Imported: ${r.added} added, ${r.updated} updated`));
+    };
+    $('ttf-add').onclick = () => { editing = 'new'; renderLib(); };
+    if ($('ttf-def')) $('ttf-def').onclick = () => { const n = mergeDefaults(); renderLib(); alertMsg(n ? L(`補回了 ${n} 個預設商品`, `Restored ${n} default products`) : L('預設商品都在，沒有缺少的', 'All default products are already there')); };
+    $('ttf-exp').onclick = async () => {
+      const txt = JSON.stringify(state.lib);
+      try { await navigator.clipboard.writeText(txt); alertMsg(L('備份已複製，可以貼到備忘錄保存', 'Backup copied — paste it into Notes to keep it')); }
+      catch (e) { $('ttf-in').value = txt; alertMsg(L('備份在上面輸入框裡，全選複製保存', 'The backup is in the box above — select all and copy it'), 'warn'); }
+    };
+    $('ttf-restore').onclick = () => {
+      try {
+        const lib = JSON.parse($('ttf-in').value);
+        if (!Array.isArray(lib)) throw new Error();
+        state.lib = lib; saveState(); renderLib(); $('ttf-in').value = '';
+        alertMsg(L(`已還原 ${lib.length} 個商品`, `Restored ${lib.length} products`));
+      } catch (e) { alertMsg(L('還原失敗：請把備份內容貼到上面輸入框再按', 'Restore failed: paste the backup into the box above first'), 'err'); }
+    };
+    $('ttf-diag').onclick = async () => {
+      const txt = diagnose();
+      LOG(txt);
+      $('ttf-in').value = txt;
+      try { await navigator.clipboard.writeText(txt); alertMsg(L('診斷結果已複製，直接貼給 Claude', 'Diagnostics copied — paste them to Claude')); }
+      catch (e) { alertMsg(L('診斷結果在上面輸入框裡，全選複製後貼給 Claude', 'Diagnostics are in the box above — copy and paste them to Claude'), 'warn'); }
+    };
+
+    // 類目庫
+    const catInfo = () => {
+      $('ttf-catinfo').textContent = cats.paths.length
+        ? L(`已存 ${cats.paths.length} 個類目 · 更新於 ${new Date(cats.updated).toLocaleDateString()}`, `${cats.paths.length} categories saved · updated ${new Date(cats.updated).toLocaleDateString()}`)
+        : L('還沒讀取。讀取一次之後，新增商品時輸入關鍵字就能選到最準的類目。', 'Not read yet. After one read, you can pick exact categories by keyword when adding products.');
+    };
+    catInfo();
+    const catMsg = (m, t) => { const el = $('ttf-catmsg'); el.textContent = m; el.className = 'msg ' + (t || ''); };
+    let catBusy = false;
+    const runCrawl = async (full) => {
+      if (catBusy) { catStop = true; catMsg(L('停止中…', 'Stopping…'), 'warn'); return; }
+      if (busy) { catMsg(L('正在上架，請等上架完成再讀取類目', 'Uploading in progress — read categories after it finishes'), 'warn'); return; }
+      catBusy = true; busy = true;
+      const btn = full ? $('ttf-catfull') : $('ttf-catup');
+      const other = full ? $('ttf-catup') : $('ttf-catfull');
+      const oldTxt = btn.textContent;
+      btn.textContent = L('■ 停止', '■ Stop'); other.disabled = true;
+      const t0 = Date.now();
+      catMsg(L('正在打開 TikTok 類目清單…（讀取期間請不要操作 TikTok 頁面）', 'Opening the TikTok category list… (don’t use the TikTok page while reading)'));
+      try {
+        const r = await crawlCats(full, (found, total, where) => {
+          const min = Math.round((Date.now() - t0) / 60000);
+          catMsg(L(`讀取中… 新增 ${found} 個 · 共 ${total} 個 · ${min} 分鐘\n${where}`, `Reading… ${found} new · ${total} total · ${min} min\n${where}`));
+        });
+        catMsg(r.stopped ? L(`已停止：新增 ${r.found} 個，共 ${r.total} 個。下次按「讀取 / 更新」會從沒讀完的地方繼續。`, `Stopped: ${r.found} new, ${r.total} total. “Read / update” will continue where it left off.`)
+                         : L(`完成 🎉 新增 ${r.found} 個，共 ${r.total} 個類目`, `Done 🎉 ${r.found} new, ${r.total} categories in total`), r.stopped ? 'warn' : 'ok');
+      } catch (e) {
+        LOG(e);
+        catMsg(L('出錯：', 'Error: ') + e.message, 'err');
+      } finally {
+        catBusy = false; busy = false;
+        btn.textContent = oldTxt; other.disabled = false;
+        catInfo(); renderLib();
+      }
+    };
+    // 匯出 / 匯入
+    let fileMode = '';
+    const pickFile = (mode) => { fileMode = mode; $('ttf-file').value = ''; $('ttf-file').click(); };
+    $('ttf-catexp').onclick = () => {
+      if (!cats.paths.length) { catMsg(L('類目庫是空的，先讀取一次', 'The category list is empty — read it first'), 'warn'); return; }
+      downloadJSON({ type: 'ttfill-categories', version: 1, ...cats }, `tiktok-categories-${stamp()}.json`);
+      catMsg(L(`已下載 ${cats.paths.length} 個類目。在別的電腦按「匯入類目庫」選這個檔案。`, `Downloaded ${cats.paths.length} categories. On another computer, press “Import categories” and pick this file.`), 'ok');
+    };
+    $('ttf-catimp').onclick = () => { if (!busy) pickFile('cats'); };
+    $('ttf-fullexp').onclick = () => {
+      downloadJSON({ type: 'ttfill-backup', version: 1, lib: state.lib, cats, settings: { pt: state.pt, qty: state.qty, lang: state.lang, auto: state.auto } }, `tiktok-upload-backup-${stamp()}.json`);
+      alertMsg(L(`已下載完整備份：${state.lib.length} 個商品、${cats.paths.length} 個類目`, `Full backup downloaded: ${state.lib.length} products, ${cats.paths.length} categories`));
+    };
+    $('ttf-fullimp').onclick = () => { if (!busy) pickFile('full'); };
+    $('ttf-file').onchange = async (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      let data;
+      try { data = JSON.parse(await f.text()); } catch (err) { (fileMode === 'cats' ? catMsg : alertMsg)(L('這個檔案讀不了（不是備份檔）', 'Can’t read this file (not a backup file)'), 'err'); return; }
+      const c = data.type === 'ttfill-categories' ? data : data.cats;
+      const lib = data.type === 'ttfill-backup' ? data.lib : Array.isArray(data) ? data : null;
+      if (fileMode === 'cats') {
+        const n = mergeCats(c);
+        if (n < 0) { catMsg(L('這個檔案裡沒有類目庫', 'This file has no category list'), 'err'); return; }
+        catMsg(L(`匯入完成：新增 ${n} 個類目，已有的跳過，共 ${cats.paths.length} 個`, `Imported: ${n} new categories (existing ones skipped), ${cats.paths.length} total`), 'ok');
+      } else {
+        if (!lib && !c) { alertMsg(L('這個檔案裡沒有可匯入的資料', 'Nothing to import in this file'), 'err'); return; }
+        const r = mergeLib(lib);
+        const n = c ? mergeCats(c) : 0;
+        if (data.settings) { for (const k of ['pt', 'qty', 'lang', 'auto']) if (data.settings[k] !== undefined) state[k] = data.settings[k]; saveState(); }
+        curTab = 'lib'; buildUI();
+        alertMsg(L(`匯入完成：商品新增 ${r.added} 個、更新 ${r.updated} 個；類目新增 ${Math.max(n, 0)} 個`, `Imported: ${r.added} products added, ${r.updated} updated; ${Math.max(n, 0)} categories added`));
+        return;
+      }
+      catInfo(); renderLib();
+    };
+
+    $('ttf-catup').onclick = () => runCrawl(false);
+    $('ttf-catfull').onclick = () => runCrawl(true);
+    $('ttf-catdiag').onclick = async () => {
+      if (!getDialog()) { catMsg(L('請先手動打開 Create temporary listing 彈窗，再按「類目診斷」', 'Open “Create temporary listing” manually first, then press “Category diagnostics”'), 'warn'); return; }
+      const txt = await catDiagnose();
+      LOG(txt);
+      try { await navigator.clipboard.writeText(txt); catMsg(L('類目診斷已複製，直接貼給 Claude', 'Category diagnostics copied — paste them to Claude'), 'ok'); }
+      catch (e) { $('ttf-in').value = txt; root.querySelector('details.tools').open = true; catMsg(L('診斷結果在「匯入 · 備份 · 工具」的輸入框裡，複製後貼給 Claude', 'Diagnostics are in the box under “Import · Backup · Tools” — copy and paste them to Claude'), 'warn'); }
+    };
+
+    render();
+    renderLib();
+  }
+
+  // 位置（舊版存的是 top，換算成 bottom）
+  if (state.pos && state.pos.b === undefined && state.pos.y !== undefined) state.pos = { x: state.pos.x, b: Math.max(8, window.innerHeight - state.pos.y - 500) };
+  buildUI();
+  if (state.pos) requestAnimationFrame(() => { state.pos = place(state.pos.x, state.pos.b); });
+  window.addEventListener('resize', () => { if (state.pos) place(state.pos.x, state.pos.b); });
+
+  document.addEventListener('keydown', (e) => {
+    if (!e.altKey || e.metaKey || e.ctrlKey) return;
+    if (e.code === 'KeyF') { e.preventDefault(); fillNext(); }
+    if (e.code === 'KeyN') { e.preventDefault(); $('ttf-skip').click(); }
+  }, true);
+
+  LOG('已載入');
+})();
