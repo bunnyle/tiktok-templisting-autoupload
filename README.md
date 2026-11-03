@@ -1,4 +1,4 @@
-# TikTok LIVE 一鍵上架
+# TikTok Live小助手
 
 在 TikTok LIVE Manager 自動填寫並上架 Temporary listing 的 Tampermonkey 腳本。
 

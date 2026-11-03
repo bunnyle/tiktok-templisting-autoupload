@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         TikTok LIVE 一鍵上架 / Quick Upload (Temporary listing)
+// @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      5.2
+// @version      5.3
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -1420,7 +1420,7 @@
   <div class="card" id="card">
     <div class="hd" id="hd">
       <div class="logo"></div>
-      <div class="grow"><div class="ttl">${L('一鍵上架', 'Quick Upload')}</div><div class="sub">TikTok LIVE · Temporary listing</div></div>
+      <div class="grow"><div class="ttl">${L('TikTok Live小助手', 'TikTok Live Helper')}</div><div class="sub">${L('一鍵上架 · Temporary listing', 'Quick upload · Temporary listing')}</div></div>
       <span class="pill" id="ttf-count"></span>
       <select class="langsel" id="ttf-lang" title="Language">
         <option value="hant">繁</option><option value="hans">简</option><option value="en">EN</option>
