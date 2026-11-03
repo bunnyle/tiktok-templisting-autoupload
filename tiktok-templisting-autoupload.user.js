@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      6.0
+// @version      6.1
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -1355,7 +1355,8 @@
 
   let liveTimer = null, liveObs = null, primed = false, wonSeen = null;
   // 每個 listing 開始檢測時已經到第幾號；聊天區比這更早的編號都是舊單，不補成新單
-  const listingKey = (t) => norm(String(t || '').replace(/(\.\.\.|…)\s*$/, '')).slice(0, 14);
+  // listing 比對用完整名稱（被截斷的用「開頭相同」比對），不同場次的同類 listing 不會混在一起
+  const listingKey = (t) => norm(String(t || '').replace(/(\.\.\.|…)\s*$/, ''));
   function baseFor(listing) {
     const k = listingKey(listing); let b = -1;
     for (const [kk, n] of Object.entries(live.base || {})) if (kk && k && (kk.startsWith(k) || k.startsWith(kk))) b = Math.max(b, n);
