@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      5.4
+// @version      5.5
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -1230,7 +1230,18 @@
   const xp = (expr, ctx) => { const r = document.evaluate(expr, ctx || document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null); const a = []; for (let i = 0; i < r.snapshotLength; i++) a.push(r.snapshotItem(i)); return a; };
   const inPanel = (e) => !!(e && e.closest && e.closest('#ttfill-panel'));
   const cleanName = (t) => String(t || '').replace(/\s+/g, ' ').trim();
-  const sameName = (a, b) => { a = norm(a); b = norm(b); return !!a && !!b && (a === b || (a.length > 4 && b.startsWith(a.replace(/(\.\.\.|…)$/, ''))) || (b.length > 4 && a.startsWith(b.replace(/(\.\.\.|…)$/, '')))); };
+  // 比對名字時去掉裝飾：表情、旗幟、✨♥💜、「No. 1 customer」這類標籤
+  const nameKey = (t) => norm(String(t || '')
+    .replace(/No\.\s*\d+\s*customer/gi, ' ').replace(/\b(top fan|moderator|host)\b/gi, ' ')
+    .replace(/(\.\.\.|…)\s*$/, '')
+    .replace(/[\p{Extended_Pictographic}\p{Regional_Indicator}‍️⃣]/gu, ' ')
+    .replace(/[^\p{L}\p{N}_.\-' ]/gu, ' '));
+  const sameName = (a, b) => {
+    const x = nameKey(a), y = nameKey(b);
+    if (!x || !y) return false;
+    return x === y || x.startsWith(y + ' ') || y.startsWith(x + ' ') ||
+      (/(\.\.\.|…)\s*$/.test(a) && y.startsWith(x)) || (/(\.\.\.|…)\s*$/.test(b) && x.startsWith(y));
+  };
   // listing 名稱可能被截斷：用今天上架清單 / 左邊 listing 卡片補全
   function fullListing(name) {
     const n = String(name || '').trim();
@@ -1261,7 +1272,7 @@
         const p = w.parentElement; winner = cleanName((p ? p.innerText : '').replace(/won!\s*$/i, ''));
       }
       const price = (t.match(/bids?:\s*\$?\s*([\d.,]+)/i) || [])[1] || '';
-      if (!winner) continue;
+      if (!winner || /no bids|is winning/i.test(winner)) continue;
       return { no: m[1], listing: fullListing(m[2].trim()), winner: cleanName(winner), price };
     }
     return null;
@@ -1322,7 +1333,7 @@
     const { comments, system } = chatLists();
     // 付款確認：「X won auction item 47 (Shoes)… $13.00」
     for (const s of newItems(system)) {
-      const m = s.text.replace(/\n/g, ' ').match(/^(.*?)\s+won auction item\s+(\d+)\s+(.*?)(?:\s+\$\s*([\d.,]+))?\s*$/i);
+      const m = s.text.replace(/\n/g, ' ').replace(/\s*\|\s*/g, ' ').match(/^(.*?)\s+won auction item\s+(\d+)\s+(.*?)(?:\s+\$\s*([\d.,]+))?\s*$/i);
       if (!m || !primed) continue;
       const name = cleanName(m[1]), no = m[2];
       let o = live.orders.find((x) => x.no === no && sameName(x.winner, name));
