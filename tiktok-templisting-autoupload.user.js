@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok LIVE 一鍵上架 / Quick Upload (Temporary listing)
 // @namespace    lok.laliquidation
-// @version      4.8
+// @version      4.9
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -241,17 +241,7 @@
     const full = parts.length > 1 ? norm(parts.join(' - ')) : null;
     const box = () => fieldBox(getDialog() || dlg, 'Category');
     // 只鎖定「顯示目前類目的那一行」：矮（<60px）、有文字、裡面沒有搜索框；取最深一層
-    const getTrigger = (b) => {
-      const ok = (e) => {
-        if (!visible(e)) return false;
-        const r = e.getBoundingClientRect();
-        if (r.height > 60 || r.height < 10) return false;
-        if (!norm(e.innerText)) return false;
-        return ![...e.querySelectorAll('input')].some((i) => /search/i.test(i.placeholder || ''));
-      };
-      const c = [...b.querySelectorAll('[class*="select"], [class*="cascader"], [role="combobox"]')].filter(ok);
-      return c.find((e) => !c.some((o) => o !== e && e.contains(o))) || b;
-    };
+    const getTrigger = (b) => cascaderView(b);
     // 只看選擇框本身顯示的文字（下拉列表可能也在同一容器裡）
     const isSet = () => {
       const b = box(); if (!b) return false;
@@ -413,8 +403,11 @@
     }
 
     // 5. Product compliance：含電池 → 選鋰電池選項；不含 → None of the above
+    { const li0 = state.lib.find((x) => x.id === row.libId); if (li0) row.battery = !!li0.battery; }
     await setCompliance(getDialog() || d2, row.battery ? BATTERY_OPT : 'None of the above');
-    // 6. 圖片
+    // 6. 圖片（用商品庫裡「現在」的設定，生成清單後才改的圖片也會生效）
+    const li = state.lib.find((x) => x.id === row.libId) || state.lib.find((x) => row.tpl && norm(x.name) === norm(row.tpl));
+    if (li) row.img = li.img || '';
     await setImage(getDialog() || d2, row);
     return getDialog() || d2;
   }
@@ -496,17 +489,7 @@
   }
 
   /* ---- 讀取 TikTok 類目下拉（逐層展開） ---- */
-  const catView = (b) => {
-    const ok = (e) => {
-      if (!visible(e)) return false;
-      const r = e.getBoundingClientRect();
-      if (r.height > 60 || r.height < 10) return false;
-      if (!norm(e.innerText)) return false;
-      return ![...e.querySelectorAll('input')].some((i) => /search/i.test(i.placeholder || ''));
-    };
-    const c = [...b.querySelectorAll('[class*="select"], [class*="cascader"], [role="combobox"]')].filter(ok);
-    return c.find((e) => !c.some((o) => o !== e && e.contains(o))) || b;
-  };
+  const catView = (b) => cascaderView(b);
   const catSearchInput = (b) => {
     const all = [...document.querySelectorAll('input')].filter((i) => visible(i) && /search/i.test(i.placeholder || '') && !/product/i.test(i.placeholder || ''));
     return all.find((i) => b.contains(i)) || all[0];
@@ -717,6 +700,24 @@
     return out.join('\n');
   }
 
+  // 類目選擇框：按 TikTok / Arco 的元件名稱找，框是空白的也找得到
+  function cascaderView(b) {
+    const pref = [...b.querySelectorAll('[class*="cascader-view"], [class*="select-view"]')].filter((e) => {
+      if (!visible(e) || [...e.querySelectorAll('input')].some((i) => /search/i.test(i.placeholder || ''))) return false;
+      const h = e.getBoundingClientRect().height;
+      return h <= 64;
+    });
+    if (pref.length) return pref.find((e) => !pref.some((o) => o !== e && o.contains(e))); // 最外層那個
+    const ok = (e) => {
+      if (!visible(e)) return false;
+      const r = e.getBoundingClientRect();
+      if (r.height > 60 || r.height < 10) return false;
+      return ![...e.querySelectorAll('input')].some((i) => /search/i.test(i.placeholder || ''));
+    };
+    const c = [...b.querySelectorAll('[class*="select"], [class*="cascader"], [role="combobox"]')].filter(ok);
+    return c.find((e) => !c.some((o) => o !== e && e.contains(o))) || b;
+  }
+
   /* ---------------- 圖片庫：圖片存在瀏覽器的 IndexedDB ---------------- */
   state.imgs = state.imgs || []; // [{ id, name, w, h }]
   function idb() {
@@ -786,7 +787,10 @@
     if (!box) return; // 這個表單沒有圖片欄
     const done = () => !!box.querySelector('img[src]') || /\(\s*1\s*\/\s*1\s*\)/.test(box.innerText);
     if (done()) return;
-    const required = !!box.querySelector('[class*="symbol"], [class*="required"], [class*="asterisk"]') ||
+    const lab = findByText(box, 'Images')[0];
+    const near = lab ? [lab, lab.parentElement, lab.parentElement && lab.parentElement.parentElement].filter(Boolean).flatMap((e) => [e, ...e.children]) : [];
+    const pseudoStar = near.some((e) => /\*/.test(getComputedStyle(e, '::before').content || '') || /\*/.test(getComputedStyle(e, '::after').content || ''));
+    const required = pseudoStar || !!box.querySelector('[class*="symbol"], [class*="required"], [class*="asterisk"]') ||
       /^\s*\*/.test(box.textContent || '') || /at least 1 product image/i.test(box.innerText);
     const id = row.img && state.imgs.some((x) => x.id === row.img) ? row.img : (required ? state.defImg : null);
     if (!id) {
@@ -961,15 +965,46 @@
       watchLater(row, L('已提交', 'Submitted'));
       return 'wait';
     }
-    const btn = findSubmit(dlg);
-    if (!btn) return skip('❌ ' + L('找不到 Submit 按鈕', 'Can\'t find the Submit button'), L('出錯：找不到 Submit 按鈕', 'Error: can\'t find the Submit button'), 'err');
-    await sleep(400);
-    realClick(btn);
-    setMsg(L('已按 Submit，等待結果…', 'Submit pressed, waiting for the result…'));
-    const r = await watchSubmit(row, 45000);
+    // TikTok 標紅的錯誤文字
+    const isRed = (e) => { const c = (getComputedStyle(e).color.match(/\d+/g) || []).map(Number); return c.length >= 3 && c[0] > 170 && c[1] < 120 && c[2] < 120; };
+    const errNow = () => {
+      const d = getDialog(); if (!d) return null;
+      const t = [...new Set([...d.querySelectorAll('[class*="error"], [class*="explain"], [role="alert"]')]
+        .filter((e) => visible(e) && isRed(e)).map((e) => (e.innerText || '').trim()).filter((x) => x && x.length < 200 && !x.includes('\n')))];
+      return t.length ? t : null;
+    };
+    let r = '', errs = null;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const d = getDialog() || dlg;
+      const btn = findSubmit(d);
+      if (!btn) return skip('❌ ' + L('找不到 Submit 按鈕', 'Can\'t find the Submit button'), L('出錯：找不到 Submit 按鈕', 'Error: can\'t find the Submit button'), 'err');
+      const errBefore = (errNow() || []).join('|');
+      await sleep(400);
+      realClick(btn);
+      setMsg(L('已按 Submit，等待結果…', 'Submit pressed, waiting for the result…'));
+      const early = await waitFor(() => (!getDialog() ? 'closed' : ((errNow() || []).join('|') !== errBefore && errNow()) ? 'invalid' : null), 45000, 300);
+      if (early === 'closed') { r = await watchSubmit(row, 3000); break; }
+      await sleep(700);
+      errs = errNow();
+      if (!errs) { r = 'timeout'; break; }
+      // 缺圖片 → 補上圖片再提交一次
+      const imgId = row.img || state.defImg;
+      if (attempt === 0 && errs.some((t) => /image|圖片|图片/i.test(t)) && imgId && state.imgs.some((x) => x.id === imgId)) {
+        setMsg(L('TikTok 要求圖片，正在補上傳…', 'TikTok requires an image — uploading it…'));
+        try { await setImage(getDialog() || d, { ...row, img: imgId }); continue; } catch (e) { errs.push(e.message); }
+      }
+      r = 'invalid'; break;
+    }
     if (r === 'ok') { setMsg(L('已提交', 'Submitted'), 'ok'); return 'ok'; }
+    if (r === 'invalid') {
+      const why = errs.join('；');
+      const needImg = errs.some((t) => /image|圖片|图片/i.test(t)) && !(row.img || state.defImg);
+      return skip('❌ ' + L('TikTok 不接受：', 'TikTok rejected: ') + why + (needImg ? L('（到圖片庫上傳圖片並設 ★ 預設）', ' (upload an image and set a ★ default in the image library)') : ''),
+        L('⚠️ TikTok 不接受：', '⚠️ TikTok rejected: ') + why + L('。改好後手動按 Submit', '. Fix it, then press Submit manually'));
+    }
     if (r === 'timeout') return skip('❌ ' + L('按了 Submit 但彈窗沒關（可能有欄位標紅）', 'Submit pressed but the window stayed open (a field may be flagged red)'),
       L('⚠️ 按了 Submit 但彈窗沒關：請看 TikTok 彈窗裡哪一欄標紅，改好後手動按 Submit', '⚠️ Submit pressed but the window stayed open: check which field is flagged red in TikTok, fix it, then press Submit'));
+    if (r === 'stale') return 'ok';
     // 彈窗關了但沒看到成功提示：不要自動重試，避免重複上架
     row.status = '待確認：' + L('沒看到「提交成功」，請在 TikTok 列表確認', 'no “submitted” confirmation — check the TikTok list');
     saveState(); render();
@@ -1685,7 +1720,7 @@
       state.runPt = ptLabel(); state.runDate = $('ttf-date').value.trim() || today();
       showSetup = false;
       const dq = String(state.qty || '').trim();
-      state.rows = sel.map((x) => ({ name: applyTpl(x.name), cat: x.cat, weight: x.weight, h: x.h, w: x.w, l: x.l, battery: !!x.battery, qty: x.qty || dq, img: x.img || '', status: '待填' }));
+      state.rows = sel.map((x) => ({ name: applyTpl(x.name), cat: x.cat, weight: x.weight, h: x.h, w: x.w, l: x.l, battery: !!x.battery, qty: x.qty || dq, img: x.img || '', libId: x.id, tpl: x.name, status: '待填' }));
       state.idx = 0; saveState(); render();
       setMsg(L(`已生成 ${sel.length} 個，按「全部自動上架」開始`, `${sel.length} items ready — press “Auto-upload all” to start`));
     };
