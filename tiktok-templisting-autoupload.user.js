@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      5.3
+// @version      5.4
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -43,7 +43,7 @@
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "問": "问", "單": "单", "嗎": "吗", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帶": "带", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "會": "会", "桿": "杆", "棄": "弃", "構": "构", "標": "标", "樣": "样", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "沒": "没", "準": "准", "瀏": "浏", "為": "为", "無": "无", "爾": "尔", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "給": "给", "統": "统", "經": "经", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "記": "记", "設": "设", "診": "诊", "試": "试", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "貼": "贴", "資": "资", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閉": "闭", "開": "开", "間": "间", "關": "关", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "頭": "头", "題": "题", "類": "类", "顯": "显", "體": "体", "麵": "面", "點": "点"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "單": "单", "嗎": "吗", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帶": "带", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "會": "会", "桿": "杆", "條": "条", "棄": "弃", "構": "构", "標": "标", "樣": "样", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "沒": "没", "測": "测", "準": "准", "瀏": "浏", "為": "为", "無": "无", "爾": "尔", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "給": "给", "統": "统", "經": "经", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "訊": "讯", "記": "记", "設": "设", "診": "诊", "試": "试", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閉": "闭", "開": "开", "間": "间", "關": "关", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "頭": "头", "題": "题", "類": "类", "顯": "显", "體": "体", "麵": "面", "點": "点"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   const lang = () => state.lang || 'hant';
@@ -1219,6 +1219,168 @@
     return { added, updated };
   }
 
+  /* ================= 直播檢測：得標 + 客人回覆 ================= */
+  const LIVE_KEY = 'ttfill_live_v1';
+  function loadLive() {
+    try { const v = JSON.parse(localStorage.getItem(LIVE_KEY)); if (v && Array.isArray(v.orders)) return v; } catch (e) { /* 空 */ }
+    return { orders: [], on: false, mins: 3 };
+  }
+  const live = loadLive();
+  const saveLive = () => { try { localStorage.setItem(LIVE_KEY, JSON.stringify(live)); } catch (e) { LOG('live save fail', e); } };
+  const xp = (expr, ctx) => { const r = document.evaluate(expr, ctx || document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null); const a = []; for (let i = 0; i < r.snapshotLength; i++) a.push(r.snapshotItem(i)); return a; };
+  const inPanel = (e) => !!(e && e.closest && e.closest('#ttfill-panel'));
+  const cleanName = (t) => String(t || '').replace(/\s+/g, ' ').trim();
+  const sameName = (a, b) => { a = norm(a); b = norm(b); return !!a && !!b && (a === b || (a.length > 4 && b.startsWith(a.replace(/(\.\.\.|…)$/, ''))) || (b.length > 4 && a.startsWith(b.replace(/(\.\.\.|…)$/, '')))); };
+  // listing 名稱可能被截斷：用今天上架清單 / 左邊 listing 卡片補全
+  function fullListing(name) {
+    const n = String(name || '').trim();
+    if (!/(\.\.\.|…)$/.test(n)) return n;
+    const head = norm(n.replace(/(\.\.\.|…)$/, ''));
+    const pool = [...state.rows.map((r) => r.name), ...xp("//*[starts-with(normalize-space(text()),'#')]").filter((e) => !inPanel(e)).map((e) => (e.textContent || '').replace(/^#\d+\s*/, '').trim())];
+    const hit = pool.find((p) => norm(p).startsWith(head) && !/(\.\.\.|…)$/.test(p));
+    return hit || n;
+  }
+
+  // 1) 畫面下方的拍賣卡片：「#49 (Shoes) item … / Bids: $19.00 / Brittany Lynne won!」
+  function readWonCard() {
+    const wons = xp("//*[contains(normalize-space(text()),'won!')]").filter((e) => !inPanel(e) && visible(e));
+    for (const w of wons) {
+      let card = w;
+      for (let i = 0; i < 8 && card; i++) {
+        card = card.parentElement;
+        const t = card && card.innerText || '';
+        if (/#\d+/.test(t) && /bids?:/i.test(t)) break;
+      }
+      if (!card) continue;
+      const t = card.innerText || '';
+      const m = t.match(/#(\d+)\s+([^\n]+)/);
+      if (!m) continue;
+      const line = t.split('\n').map((x) => x.trim()).find((x) => /won!\s*$/i.test(x)) || '';
+      let winner = line.replace(/won!\s*$/i, '').replace(/^.*?bids?:\s*\$?[\d.,]+\s*/i, '').trim();
+      if (!winner) { // 名字和 won! 分在不同元素
+        const p = w.parentElement; winner = cleanName((p ? p.innerText : '').replace(/won!\s*$/i, ''));
+      }
+      const price = (t.match(/bids?:\s*\$?\s*([\d.,]+)/i) || [])[1] || '';
+      if (!winner) continue;
+      return { no: m[1], listing: fullListing(m[2].trim()), winner: cleanName(winner), price };
+    }
+    return null;
+  }
+
+  // 2) 聊天區
+  function chatLists() {
+    const input = [...document.querySelectorAll('input, textarea')].find((i) => /type something/i.test(i.placeholder || '') && !inPanel(i));
+    if (!input) return {};
+    let panel = input;
+    for (let i = 0; i < 10 && panel; i++) { panel = panel.parentElement; if (panel && /all comments/i.test(panel.innerText || '')) break; }
+    if (!panel) return {};
+    const ir = input.getBoundingClientRect();
+    const filt = xp(".//*[normalize-space(text())='All comments']", panel)[0];
+    const fr = filt ? filt.getBoundingClientRect() : null;
+    const scrolls = [...panel.querySelectorAll('*')].filter((e) => { const s = getComputedStyle(e); return /(auto|scroll)/.test(s.overflowY) && e.clientHeight > 40 && visible(e); });
+    const outer = (arr) => arr.filter((e) => !arr.some((o) => o !== e && o.contains(e)));
+    const comments = outer(scrolls.filter((e) => { const r = e.getBoundingClientRect(); return r.bottom <= ir.top + 8 && (!fr || r.top >= fr.bottom - 8); }))[0];
+    const system = fr ? outer(scrolls.filter((e) => e.getBoundingClientRect().bottom <= fr.top + 8))[0] : null;
+    return { comments, system };
+  }
+  // 把一個清單拆成一條條訊息（往下找到真正有多個子元素的那層）
+  function listItems(box) {
+    if (!box) return [];
+    let el = box;
+    for (let i = 0; i < 6 && el && el.children.length === 1; i++) el = el.children[0];
+    return [...(el ? el.children : [])].filter((c) => visible(c) && (c.innerText || '').trim());
+  }
+  const seen = new WeakMap();
+  function newItems(box) {
+    const out = [];
+    for (const it of listItems(box)) {
+      const t = (it.innerText || '').trim();
+      if (seen.get(it) === t) continue;
+      seen.set(it, t);
+      out.push({ el: it, text: t });
+    }
+    return out;
+  }
+  function parseComment(t) {
+    const lines = t.split('\n').map((x) => x.trim()).filter(Boolean);
+    if (lines.length < 2) return null;
+    return { name: cleanName(lines[0]), msg: lines.slice(1).join(' ') };
+  }
+
+  let liveTimer = null, liveObs = null, primed = false;
+  function liveTick() {
+    if (!live.on) return;
+    const now = Date.now();
+    let changed = false;
+    // 得標
+    const w = readWonCard();
+    if (w && !live.orders.some((o) => o.no === w.no && sameName(o.winner, w.winner))) {
+      live.orders.push({ no: w.no, listing: w.listing, winner: w.winner, price: w.price, at: now, paid: false, replies: [] });
+      changed = true;
+      LOG('得標', w);
+    }
+    const { comments, system } = chatLists();
+    // 付款確認：「X won auction item 47 (Shoes)… $13.00」
+    for (const s of newItems(system)) {
+      const m = s.text.replace(/\n/g, ' ').match(/^(.*?)\s+won auction item\s+(\d+)\s+(.*?)(?:\s+\$\s*([\d.,]+))?\s*$/i);
+      if (!m || !primed) continue;
+      const name = cleanName(m[1]), no = m[2];
+      let o = live.orders.find((x) => x.no === no && sameName(x.winner, name));
+      if (!o) { // 開始檢測前沒看到 won! 卡片：用聊天記錄補上
+        o = { no, listing: fullListing(m[3]), winner: name, price: m[4] || '', at: now, paid: false, replies: [], fromChat: true };
+        live.orders.push(o);
+      }
+      if (!o.paid) { o.paid = true; o.paidAt = now; changed = true; }
+    }
+    // 留言 → 放進該客人得標後 N 分鐘內的每一單
+    const win = Math.max(0.5, +live.mins || 3) * 60000;
+    for (const c of newItems(comments)) {
+      if (!primed) continue; // 開始之前的舊留言不算
+      const pc = parseComment(c.text);
+      if (!pc) continue;
+      for (const o of live.orders) {
+        if (now >= o.at && now - o.at <= win && sameName(o.winner, pc.name)) {
+          o.replies.push({ t: now, msg: pc.msg }); changed = true;
+        }
+      }
+    }
+    if (!primed) { primed = true; } // 第一次只把畫面上已有的訊息標記為「看過」
+    if (changed) { saveLive(); renderLive(); } else updLiveTimers();
+  }
+  function startLive() {
+    live.on = true; primed = false; saveLive();
+    liveTick();
+    liveObs = new MutationObserver(() => { if (!liveTimer) liveTimer = setTimeout(() => { liveTimer = null; liveTick(); }, 250); });
+    liveObs.observe(document.body, { childList: true, subtree: true, characterData: true });
+    live._iv = setInterval(liveTick, 1000);
+    renderLive();
+  }
+  function stopLive() {
+    live.on = false; saveLive();
+    if (liveObs) liveObs.disconnect(); liveObs = null;
+    clearInterval(live._iv);
+    renderLive();
+  }
+  const hhmmss = (t) => new Date(t).toLocaleTimeString([], { hour12: false });
+  function liveCSV() {
+    const esc = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+    const head = ['No', 'Listing', 'Customer', 'Price', 'Won time', 'Paid', 'Replies'];
+    const rows = live.orders.map((o) => [o.no, o.listing, o.winner, o.price, new Date(o.at).toLocaleString(), o.paid ? 'Y' : '', o.replies.map((r) => `[${hhmmss(r.t)}] ${r.msg}`).join(' | ')]);
+    return '﻿' + [head, ...rows].map((r) => r.map(esc).join(',')).join('\n');
+  }
+  function liveDiagnose() {
+    const out = [];
+    const wons = xp("//*[contains(normalize-space(text()),'won!')]").filter((e) => !inPanel(e));
+    out.push('won! nodes: ' + wons.length);
+    wons.slice(0, 2).forEach((w) => { let c = w; for (let i = 0; i < 5 && c.parentElement; i++) c = c.parentElement; out.push('  card: ' + c.tagName + '.' + String(c.className).slice(0, 60) + ' text=' + JSON.stringify((c.innerText || '').slice(0, 200))); });
+    out.push('parsed card: ' + JSON.stringify(readWonCard()));
+    const { comments, system } = chatLists();
+    const d = (n, b) => { out.push(n + ': ' + (b ? b.tagName + '.' + String(b.className).slice(0, 60) : 'null')); listItems(b).slice(-3).forEach((it) => out.push('    item <' + it.tagName + '.' + String(it.className).slice(0, 40) + '> ' + JSON.stringify((it.innerText || '').slice(0, 120)) + ' html=' + it.innerHTML.replace(/\s+/g, ' ').slice(0, 200))); };
+    d('comments list', comments); d('system list', system);
+    return out.join('\n');
+  }
+  let renderLive = () => {}; let updLiveTimers = () => {};
+
   /* ---------------- 浮動面板（Shadow DOM，不受 TikTok 頁面樣式影響） ---------------- */
   const host = document.createElement('div');
   host.id = 'ttfill-panel';
@@ -1356,6 +1518,15 @@
     .th.none{display:grid;place-items:center;font-size:11px;color:var(--muted);background:#fff}
     .th.add{display:grid;place-items:center;font-size:20px;color:var(--muted);background:#fff;border-style:dashed}
     .mini{width:32px;height:32px;border-radius:6px;background:var(--soft) center/cover no-repeat;flex:none;border:1px solid var(--line)}
+    .tabs .dot{display:none;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-left:5px;vertical-align:middle;animation:pulse 1.2s infinite}
+    .tabs .dot.on{display:inline-block}
+    .lo{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-top:8px}
+    .lo .h{display:flex;align-items:center;gap:6px}
+    .lo .no{font-weight:700;color:var(--accent);flex:none}
+    .lo .who{font-weight:650;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .lo .rp{margin-top:4px;padding:5px 8px;background:var(--soft);border-radius:8px;font-size:12px}
+    .lo .rp div{padding:1px 0}
+    .lo .rp b{color:var(--muted);font-weight:500;margin-right:6px;font-variant-numeric:tabular-nums}
     .catcard{margin-top:10px;border:1px solid var(--line);border-radius:10px;padding:9px 10px}
     .acwrap{position:relative}
     .ac{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:5;background:#fff;border:1px solid var(--line);border-radius:10px;
@@ -1429,7 +1600,7 @@
     </div>
     <div class="bar"><i id="ttf-bar"></i></div>
     <div class="bodywrap"><div class="body" id="body">
-    <div class="tabs"><button data-t="go">${L('今天上架', 'Today')}</button><button data-t="lib">${L('商品庫', 'Library')}</button></div>
+    <div class="tabs"><button data-t="go">${L('今天上架', 'Today')}</button><button data-t="lib">${L('商品庫', 'Library')}</button><button data-t="live">${L('直播檢測', 'Live')}<span class="dot" id="ttf-livedot"></span></button></div>
 
     <div class="bd" id="tab-go">
       <div id="view-setup">
@@ -1463,6 +1634,22 @@
         <div class="list tall" id="ttf-list" style="margin-top:10px"></div>
         <div class="hint">${L('點清單裡任何一行，可以從那一行開始。', 'Click any row to start from it.')}</div>
       </div>
+    </div>
+
+    <div class="bd hide" id="tab-live">
+      <div class="summary" style="align-items:center">
+        <div class="grow"><div class="sum-t" id="ttf-livestat"></div><div class="meta" id="ttf-livesub"></div></div>
+        <label class="field" style="width:86px"><span>${L('回覆時間(分)', 'Reply window (min)')}</span><input class="inp" type="text" inputmode="decimal" id="ttf-livemins"></label>
+      </div>
+      <button class="btn primary block big" id="ttf-livego"></button>
+      <div class="btnrow">
+        <button class="btn ghost" id="ttf-livecsv">${L('⬇ 匯出 CSV', '⬇ Export CSV')}</button>
+        <button class="btn ghost" id="ttf-liveclr">${L('清空記錄', 'Clear records')}</button>
+        <button class="btn ghost" id="ttf-livediag">${L('直播診斷', 'Live diagnostics')}</button>
+      </div>
+      <input class="inp search" type="text" id="ttf-liveq" placeholder="${L('搜尋編號 / 客人 / listing…', 'Search no. / customer / listing…')}" style="margin-top:10px">
+      <div class="msg" id="ttf-livemsg"></div>
+      <div id="ttf-livelist"></div>
     </div>
 
     <div class="bd hide" id="tab-lib">
@@ -1807,6 +1994,7 @@
       tabs.forEach((x) => x.classList.toggle('on', x.dataset.t === t));
       $('tab-go').classList.toggle('hide', t !== 'go');
       $('tab-lib').classList.toggle('hide', t !== 'lib');
+      $('tab-live').classList.toggle('hide', t !== 'live');
     };
     tabs.forEach((t) => (t.onclick = () => selTab(t.dataset.t)));
     selTab(curTab);
@@ -1893,6 +2081,63 @@
       try { await navigator.clipboard.writeText(txt); alertMsg(L('診斷結果已複製，直接貼給 Claude', 'Diagnostics copied — paste them to Claude')); }
       catch (e) { alertMsg(L('診斷結果在上面輸入框裡，全選複製後貼給 Claude', 'Diagnostics are in the box above — copy and paste them to Claude'), 'warn'); }
     };
+
+    // 直播檢測
+    renderLive = () => {
+      const box = $('ttf-livelist'); if (!box) return;
+      const q = norm($('ttf-liveq').value);
+      $('ttf-livego').textContent = live.on ? L('■ 停止檢測', '■ Stop detecting') : L('▶ 開始檢測', '▶ Start detecting');
+      $('ttf-livego').className = 'btn block big ' + (live.on ? 'stop' : 'primary');
+      $('ttf-livedot').classList.toggle('on', !!live.on);
+      const n = live.orders.length, paid = live.orders.filter((o) => o.paid).length, rep = live.orders.filter((o) => o.replies.length).length;
+      $('ttf-livestat').textContent = live.on ? L('檢測中…', 'Detecting…') : L('未開始', 'Stopped');
+      $('ttf-livesub').textContent = L(`${n} 單 · 已付款 ${paid} · 有回覆 ${rep}`, `${n} orders · ${paid} paid · ${rep} with replies`);
+      box.innerHTML = '';
+      const win = Math.max(0.5, +live.mins || 3) * 60000;
+      [...live.orders].reverse().forEach((o) => {
+        if (q && !norm(`#${o.no} ${o.winner} ${o.listing}`).includes(q)) return;
+        const d = document.createElement('div');
+        d.className = 'lo';
+        const left = o.at + win - Date.now();
+        d.innerHTML = `<div class="h"><span class="no">#${escapeHtml(o.no)}</span><span class="who" title="${escapeHtml(o.winner)}">${escapeHtml(o.winner)}</span>
+            ${o.price ? `<span class="tag t-muted">$${escapeHtml(o.price)}</span>` : ''}
+            ${o.paid ? `<span class="tag t-ok">${L('已付款', 'Paid')}</span>` : ''}
+            <span class="tag ${left > 0 ? 't-info' : 't-muted'}" data-left="${o.at + win}">${left > 0 ? Math.ceil(left / 1000) + 's' : L('已結束', 'Closed')}</span></div>
+          <div class="meta" title="${escapeHtml(o.listing)}">${escapeHtml(o.listing)}</div>
+          <div class="meta">${L('得標', 'Won')} ${hhmmss(o.at)}${o.fromChat ? ' · ' + L('（從聊天記錄補上）', '(from chat)') : ''}</div>
+          ${o.replies.length ? `<div class="rp">${o.replies.map((r) => `<div><b>${hhmmss(r.t)}</b>${escapeHtml(r.msg)}</div>`).join('')}</div>` : ''}`;
+        box.appendChild(d);
+      });
+      if (!box.children.length) box.innerHTML = `<div class="empty">${live.on ? L('等待得標…（畫面下方出現「won!」就會記錄）', 'Waiting for a win… (recorded when “won!” appears)') : L('按「開始檢測」後，得標和客人回覆會記錄在這裡', 'Press “Start detecting” — wins and customer replies will show here')}</div>`;
+    };
+    updLiveTimers = () => {
+      root.querySelectorAll('#ttf-livelist [data-left]').forEach((el) => {
+        const left = +el.dataset.left - Date.now();
+        el.textContent = left > 0 ? Math.ceil(left / 1000) + 's' : L('已結束', 'Closed');
+        el.className = 'tag ' + (left > 0 ? 't-info' : 't-muted');
+      });
+    };
+    $('ttf-livemins').value = live.mins;
+    $('ttf-livemins').onchange = (e) => { const v = parseFloat(e.target.value); if (v > 0) { live.mins = v; saveLive(); } else e.target.value = live.mins; renderLive(); };
+    $('ttf-livego').onclick = () => { if (live.on) stopLive(); else startLive(); };
+    $('ttf-liveq').oninput = () => renderLive();
+    $('ttf-livecsv').onclick = () => {
+      const blob = new Blob([liveCSV()], { type: 'text/csv;charset=utf-8' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `tiktok-live-orders-${stamp()}.csv`;
+      document.body.appendChild(a); a.click(); a.remove();
+    };
+    $('ttf-liveclr').onclick = (e) => {
+      const b = e.currentTarget;
+      if (!b.dataset.c) { b.dataset.c = '1'; b.textContent = L('再按一次確認清空', 'Press again to clear'); setTimeout(() => { delete b.dataset.c; b.textContent = L('清空記錄', 'Clear records'); }, 3000); return; }
+      live.orders = []; saveLive(); renderLive();
+    };
+    $('ttf-livediag').onclick = async () => {
+      const txt = liveDiagnose(); LOG(txt);
+      const el = $('ttf-livemsg');
+      try { await navigator.clipboard.writeText(txt); el.textContent = L('直播診斷已複製，直接貼給 Claude', 'Live diagnostics copied — paste them to Claude'); el.className = 'msg ok'; }
+      catch (err) { el.textContent = txt; el.className = 'msg'; }
+    };
+    renderLive();
 
     // 類目庫
     const catInfo = () => {
@@ -2003,6 +2248,8 @@
   // 位置（舊版存的是 top，換算成 bottom）
   if (state.pos && state.pos.b === undefined && state.pos.y !== undefined) state.pos = { x: state.pos.x, b: Math.max(8, window.innerHeight - state.pos.y - 500) };
   buildUI();
+  if (live.on) startLive();
+  setInterval(() => { if (live.on) updLiveTimers(); }, 1000);
   if (state.pos) requestAnimationFrame(() => { state.pos = place(state.pos.x, state.pos.b); });
   window.addEventListener('resize', () => { if (state.pos) place(state.pos.x, state.pos.b); });
 
