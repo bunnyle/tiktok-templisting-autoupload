@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok LIVE 一鍵上架 / Quick Upload (Temporary listing)
 // @namespace    lok.laliquidation
-// @version      5.1
+// @version      5.2
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -43,7 +43,7 @@
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "問": "问", "單": "单", "嗎": "吗", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帶": "带", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "會": "会", "桿": "杆", "棄": "弃", "構": "构", "標": "标", "樣": "样", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "沒": "没", "準": "准", "瀏": "浏", "為": "为", "無": "无", "爾": "尔", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紅": "红", "級": "级", "結": "结", "給": "给", "統": "统", "經": "经", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "記": "记", "設": "设", "診": "诊", "試": "试", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "貼": "贴", "資": "资", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閉": "闭", "開": "开", "間": "间", "關": "关", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "頭": "头", "題": "题", "類": "类", "顯": "显", "體": "体", "麵": "面", "點": "点"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "問": "问", "單": "单", "嗎": "吗", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帶": "带", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "會": "会", "桿": "杆", "棄": "弃", "構": "构", "標": "标", "樣": "样", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "沒": "没", "準": "准", "瀏": "浏", "為": "为", "無": "无", "爾": "尔", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "給": "给", "統": "统", "經": "经", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "記": "记", "設": "设", "診": "诊", "試": "试", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "貼": "贴", "資": "资", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閉": "闭", "開": "开", "間": "间", "關": "关", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "頭": "头", "題": "题", "類": "类", "顯": "显", "體": "体", "麵": "面", "點": "点"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   const lang = () => state.lang || 'hant';
@@ -321,6 +321,8 @@
       realClick(option.closest('li, [role="option"], [class*="option"]') || option.parentElement);
       if (!(await waitFor(isChosen, 2000))) throw E('Category 沒有選上: ' + cat, 'Category didn\'t get selected: ' + cat);
     }
+    await sleep(600);
+    if (!isChosen()) throw E('Category 選上後又被清空: ' + cat, 'Category got cleared right after selecting: ' + cat);
     return res.exact ? true : option.innerText.trim();
   }
 
@@ -331,88 +333,107 @@
     const nameInput = await waitFor(() => { const b = fieldBox(getDialog() || dlg, 'Product name'); return b && textInputs(b)[0]; }, 8000);
     if (!nameInput) throw E('找不到 Product name 輸入框', 'Can\'t find the Product name field', true);
     setVal(nameInput, row.name);
-    await sleep(300);
+    await sleep(1000); // 等 TikTok 根據名稱算完類目建議，避免選好的類目被蓋掉
 
-    // 2. 類目（選完類目 TikTok 會自動改重量/尺寸，所以放在重量前面）
-    if (row.cat) {
-      const r = await setCategory(dlg, resolveCat(row.cat));
-      row.catNote = typeof r === 'string' ? r : '';
-      row.catMissing = false;
-      await sleep(900);
-    } else {
-      row.catNote = L('這個商品沒有設定類目', 'This product has no category set');
-      row.catMissing = true;
-    }
-
-    // 數量：用商品庫和「預設數量」現在的設定（生成清單後才改的也會生效）
-    { const lq = state.lib.find((x) => x.id === row.libId) || state.lib.find((x) => row.tpl && norm(x.name) === norm(row.tpl));
-      row.qty = String((lq && lq.qty) || state.qty || row.qty || '').trim(); }
-    // 3+4. 重量和尺寸：TikTok 選完類目後會延遲寫入「建議尺寸」，
-    //       所以反覆核對，被蓋掉就重填，直到連續兩輪都正確
-    const d2 = getDialog() || dlg;
-    const hasDims = await waitFor(() => {
-      const bx = fieldBox(getDialog() || d2, 'Package dimensions');
-      return bx && textInputs(bx).length >= 3;
-    }, 3000);
-    if (!hasDims && !row.cat) {
-      // 沒有類目、尺寸欄也還沒出現：只填重量，等你手動選類目
-      const wb = fieldBox(getDialog() || d2, 'Package weight');
-      const wi = wb && textInputs(wb).pop();
-      if (wi) setVal(wi, row.weight);
-      row.catNote = L(`沒有設定類目：請手動選類目，再填尺寸 H${row.h} × W${row.w} × L${row.l}`, `No category set: pick the category manually, then enter H${row.h} × W${row.w} × L${row.l}`);
-      row.catMissing = true;
-      return getDialog() || d2;
-    }
-    await sleep(800);
-
-    const getFields = () => {
-      const dd = getDialog() || d2;
-      const wBox = fieldBox(dd, 'Package weight');
-      const dimBox = fieldBox(dd, 'Package dimensions');
-      const f = {};
-      if (wBox) f.weight = textInputs(wBox).pop();
-      const qBox = fieldBox(dd, 'Quantity');
-      if (qBox && row.qty) f.qty = textInputs(qBox)[0];
-      if (dimBox) {
-        const ins = textInputs(dimBox).slice(-3);
-        const byPh = (re) => ins.find((i) => re.test(i.placeholder || '') || re.test(i.getAttribute('aria-label') || ''));
-        f.l = byPh(/length|長|长/i) || ins[0];
-        f.w = byPh(/width|寬|宽/i) || ins[1];
-        f.h = byPh(/height|高/i) || ins[2];
+    // 填完後再確認類目還在；被清空或改掉就從類目開始重來（最多 3 輪）
+    const catBox = () => fieldBox(getDialog() || dlg, 'Category');
+    const catNow = () => { const b = catBox(); return b ? norm(cascaderView(b).innerText) : ''; };
+    const catOk = (want) => { const c = catNow(); return !!c && (c === want || (want.startsWith(c.replace(/(\.\.\.|…)$/, '')) && c.length > 10)); };
+    for (let pass = 0; pass < 3; pass++) {
+      // 2. 類目（選完類目 TikTok 會自動改重量/尺寸，所以放在重量前面）
+      if (row.cat) {
+        let r;
+        try { r = await setCategory(getDialog() || dlg, resolveCat(row.cat)); }
+        catch (e) { if (pass < 2 && /清空|cleared|沒有選上|didn't get selected/.test(e.message)) { LOG('類目重試', e.message); await sleep(800); continue; } throw e; }
+        row.catNote = typeof r === 'string' ? r : '';
+        row.catMissing = false;
+        await sleep(900);
+        row._catView = catNow();
+        if (!row._catView) { if (pass < 2) { await sleep(800); continue; } throw E('類目選了但沒有顯示（被清空）', 'Category was selected but the box is empty (cleared)'); }
+      } else {
+        row.catNote = L('這個商品沒有設定類目', 'This product has no category set');
+        row.catMissing = true;
       }
-      return f;
-    };
-    const same = (inp, v) => inp && Math.abs(parseFloat(inp.value) - parseFloat(v)) < 1e-6;
-    let okRounds = 0;
-    for (let round = 0; round < 12 && okRounds < 2; round++) {
-      const f = getFields();
-      if (!f.weight) throw E('找不到 Package weight 輸入框', 'Can\'t find the Package weight field');
-      if (row.qty && !f.qty) throw E('找不到 Quantity 欄位', 'Can\'t find the Quantity field');
-      if (!f.l || !f.w || !f.h) throw E('找不到 Package dimensions（Category 選了嗎？）', 'Can\'t find Package dimensions (is a Category selected?)');
-      let allOk = true;
-      for (const k of ['weight', 'l', 'w', 'h', ...(row.qty ? ['qty'] : [])]) {
-        if (same(f[k], row[k])) continue;
-        allOk = false;
-        if (round < 3) setVal(f[k], row[k]);
-        else typeVal(f[k], row[k]); // 備用方法：模擬鍵盤輸入
-        await sleep(150);
-      }
-      okRounds = allOk ? okRounds + 1 : 0;
-      await sleep(500);
-    }
-    if (okRounds < 2) {
-      const f = getFields();
-      throw E(`重量/尺寸填不進去（現在是 ${f.weight && f.weight.value} / ${f.h && f.h.value}×${f.w && f.w.value}×${f.l && f.l.value}）`, `Weight/dimensions won't stick (now ${f.weight && f.weight.value} / ${f.h && f.h.value}×${f.w && f.w.value}×${f.l && f.l.value})`);
-    }
 
-    // 5. Product compliance：含電池 → 選鋰電池選項；不含 → None of the above
-    { const li0 = state.lib.find((x) => x.id === row.libId); if (li0) row.battery = !!li0.battery; }
-    await setCompliance(getDialog() || d2, row.battery ? BATTERY_OPT : 'None of the above');
-    // 6. 圖片（用商品庫裡「現在」的設定，生成清單後才改的圖片也會生效）
-    const li = state.lib.find((x) => x.id === row.libId) || state.lib.find((x) => row.tpl && norm(x.name) === norm(row.tpl));
-    if (li) row.img = li.img || '';
-    await setImage(getDialog() || d2, row);
-    return getDialog() || d2;
+      // 數量：用商品庫和「預設數量」現在的設定（生成清單後才改的也會生效）
+      { const lq = state.lib.find((x) => x.id === row.libId) || state.lib.find((x) => row.tpl && norm(x.name) === norm(row.tpl));
+        row.qty = String((lq && lq.qty) || state.qty || row.qty || '').trim(); }
+      // 3+4. 重量和尺寸：TikTok 選完類目後會延遲寫入「建議尺寸」，
+      //       所以反覆核對，被蓋掉就重填，直到連續兩輪都正確
+      const d2 = getDialog() || dlg;
+      const hasDims = await waitFor(() => {
+        const bx = fieldBox(getDialog() || d2, 'Package dimensions');
+        return bx && textInputs(bx).length >= 3;
+      }, 3000);
+      if (!hasDims && !row.cat) {
+        // 沒有類目、尺寸欄也還沒出現：只填重量，等你手動選類目
+        const wb = fieldBox(getDialog() || d2, 'Package weight');
+        const wi = wb && textInputs(wb).pop();
+        if (wi) setVal(wi, row.weight);
+        row.catNote = L(`沒有設定類目：請手動選類目，再填尺寸 H${row.h} × W${row.w} × L${row.l}`, `No category set: pick the category manually, then enter H${row.h} × W${row.w} × L${row.l}`);
+        row.catMissing = true;
+        return getDialog() || d2;
+      }
+      await sleep(800);
+
+      const getFields = () => {
+        const dd = getDialog() || d2;
+        const wBox = fieldBox(dd, 'Package weight');
+        const dimBox = fieldBox(dd, 'Package dimensions');
+        const f = {};
+        if (wBox) f.weight = textInputs(wBox).pop();
+        const qBox = fieldBox(dd, 'Quantity');
+        if (qBox && row.qty) f.qty = textInputs(qBox)[0];
+        if (dimBox) {
+          const ins = textInputs(dimBox).slice(-3);
+          const byPh = (re) => ins.find((i) => re.test(i.placeholder || '') || re.test(i.getAttribute('aria-label') || ''));
+          f.l = byPh(/length|長|长/i) || ins[0];
+          f.w = byPh(/width|寬|宽/i) || ins[1];
+          f.h = byPh(/height|高/i) || ins[2];
+        }
+        return f;
+      };
+      const same = (inp, v) => inp && Math.abs(parseFloat(inp.value) - parseFloat(v)) < 1e-6;
+      let okRounds = 0;
+      for (let round = 0; round < 12 && okRounds < 2; round++) {
+        const f = getFields();
+        if (!f.weight) throw E('找不到 Package weight 輸入框', 'Can\'t find the Package weight field');
+        if (row.qty && !f.qty) throw E('找不到 Quantity 欄位', 'Can\'t find the Quantity field');
+        if (!f.l || !f.w || !f.h) throw E('找不到 Package dimensions（Category 選了嗎？）', 'Can\'t find Package dimensions (is a Category selected?)');
+        let allOk = true;
+        for (const k of ['weight', 'l', 'w', 'h', ...(row.qty ? ['qty'] : [])]) {
+          if (same(f[k], row[k])) continue;
+          allOk = false;
+          if (round < 3) setVal(f[k], row[k]);
+          else typeVal(f[k], row[k]); // 備用方法：模擬鍵盤輸入
+          await sleep(150);
+        }
+        okRounds = allOk ? okRounds + 1 : 0;
+        await sleep(500);
+      }
+      if (okRounds < 2) {
+        const f = getFields();
+        throw E(`重量/尺寸填不進去（現在是 ${f.weight && f.weight.value} / ${f.h && f.h.value}×${f.w && f.w.value}×${f.l && f.l.value}）`, `Weight/dimensions won't stick (now ${f.weight && f.weight.value} / ${f.h && f.h.value}×${f.w && f.w.value}×${f.l && f.l.value})`);
+      }
+
+      // 5. Product compliance：含電池 → 選鋰電池選項；不含 → None of the above
+      { const li0 = state.lib.find((x) => x.id === row.libId); if (li0) row.battery = !!li0.battery; }
+      await setCompliance(getDialog() || d2, row.battery ? BATTERY_OPT : 'None of the above');
+      // 6. 圖片（用商品庫裡「現在」的設定，生成清單後才改的圖片也會生效）
+      const li = state.lib.find((x) => x.id === row.libId) || state.lib.find((x) => row.tpl && norm(x.name) === norm(row.tpl));
+      if (li) row.img = li.img || '';
+      await setImage(getDialog() || d2, row);
+      if (!row.cat) return getDialog() || d2;
+      // 連續確認約 1 秒：類目沒有被清空才算成功
+      const want = row._catView;
+      let stable = true;
+      for (let k = 0; k < 4 && stable; k++) { if (!catOk(want)) stable = false; else await sleep(250); }
+      if (stable) return getDialog() || d2;
+      LOG('類目被清空或改掉了，重新選擇', { want, now: catNow(), pass });
+      setMsg(L(`類目被清空了，重新選擇（第 ${pass + 2} 次）…`, `Category was cleared — selecting again (try ${pass + 2})…`), 'warn');
+      await sleep(800);
+    }
+    throw E('類目選了但一直被 TikTok 清空（已重試 3 次）', 'The category kept getting cleared by TikTok (tried 3 times)');
   }
 
   /* ---------------- TikTok 類目庫：讀取、儲存、搜尋 ---------------- */
