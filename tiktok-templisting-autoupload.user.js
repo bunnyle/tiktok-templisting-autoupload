@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok LIVE 一鍵上架 / Quick Upload (Temporary listing)
 // @namespace    lok.laliquidation
-// @version      4.9
+// @version      5.0
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -43,7 +43,7 @@
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "問": "问", "單": "单", "嗎": "吗", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帶": "带", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "會": "会", "棄": "弃", "構": "构", "標": "标", "樣": "样", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "沒": "没", "準": "准", "瀏": "浏", "為": "为", "無": "无", "爾": "尔", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紅": "红", "級": "级", "結": "结", "給": "给", "統": "统", "經": "经", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "記": "记", "設": "设", "診": "诊", "試": "试", "認": "认", "語": "语", "誤": "误", "請": "请", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "貼": "贴", "資": "资", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閉": "闭", "開": "开", "間": "间", "關": "关", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "頭": "头", "題": "题", "類": "类", "顯": "显", "體": "体", "麵": "面", "點": "点"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "問": "问", "單": "单", "嗎": "吗", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帶": "带", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "會": "会", "桿": "杆", "棄": "弃", "構": "构", "標": "标", "樣": "样", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "沒": "没", "準": "准", "瀏": "浏", "為": "为", "無": "无", "爾": "尔", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紅": "红", "級": "级", "結": "结", "給": "给", "統": "统", "經": "经", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "記": "记", "設": "设", "診": "诊", "試": "试", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "貼": "贴", "資": "资", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閉": "闭", "開": "开", "間": "间", "關": "关", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "頭": "头", "題": "题", "類": "类", "顯": "显", "體": "体", "麵": "面", "點": "点"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   const lang = () => state.lang || 'hant';
@@ -757,10 +757,15 @@
     const blob = await new Promise((r) => c.toBlob(r, 'image/jpeg', 0.88));
     return { blob, w: c.width, h: c.height };
   }
-  async function addImages(files) {
+  async function addImages(files, crop = true) {
     const ids = [];
-    for (const f of files) {
+    for (let f of files) {
       if (!/^image\//.test(f.type)) continue;
+      if (crop) {
+        const c = await cropDialog(f);
+        if (c === null) continue; // 取消
+        if (c !== 'orig') f = new File([c], f.name, { type: 'image/jpeg' });
+      }
       const { blob, w, h } = await prepImage(f);
       const id = 'img' + uid();
       await imgPut(id, blob);
@@ -777,6 +782,76 @@
     if (state.defImg === id) delete state.defImg;
     if (imgURLs[id]) { URL.revokeObjectURL(imgURLs[id]); delete imgURLs[id]; }
     saveState();
+  }
+  // 正方形裁剪框：拖動移位、滑桿放大；回傳 Blob / 'orig'（不裁剪）/ null（取消）
+  function cropDialog(file) {
+    return new Promise(async (resolve) => {
+      const card = $('card');
+      if (!card) return resolve('orig');
+      if (card.classList.contains('min')) setMin(false);
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      await new Promise((r) => { img.onload = r; img.onerror = r; img.src = url; });
+      const W = img.naturalWidth, H = img.naturalHeight;
+      if (!W || !H) { URL.revokeObjectURL(url); return resolve('orig'); }
+      const V = 280, minS = V / Math.min(W, H);
+      let s = minS, x = (V - W * s) / 2, y = (V - H * s) / 2;
+      const ov = document.createElement('div');
+      ov.className = 'cropov';
+      ov.innerHTML = `
+        <div class="cropbox">
+          <div class="nm">${L('裁剪圖片（正方形）', 'Crop image (square)')}</div>
+          <div class="meta">${escapeHtml(file.name)} · ${W}×${H}</div>
+          <div class="vp"><img draggable="false"><div class="grid"></div></div>
+          <input type="range" class="zoom" min="1" max="4" step="0.01" value="1">
+          <div class="hint" style="margin:2px 0 8px">${L('拖動圖片調整位置，滑桿放大縮小', 'Drag to move, use the slider to zoom')}</div>
+          <div class="btnrow" style="justify-content:flex-end">
+            <button class="btn ghost" data-a="cancel">${L('取消', 'Cancel')}</button>
+            <button class="btn ghost" data-a="orig">${L('不裁剪', 'Keep original')}</button>
+            <button class="btn primary" data-a="ok">${L('確定', 'Done')}</button>
+          </div>
+        </div>`;
+      card.appendChild(ov);
+      const im = ov.querySelector('img'); im.src = url;
+      const vp = ov.querySelector('.vp');
+      const clamp = () => { x = Math.min(0, Math.max(V - W * s, x)); y = Math.min(0, Math.max(V - H * s, y)); };
+      const draw = () => { clamp(); im.style.width = W * s + 'px'; im.style.height = H * s + 'px'; im.style.transform = `translate(${x}px,${y}px)`; };
+      draw();
+      ov.querySelector('.zoom').oninput = (e) => {
+        const ns = minS * +e.target.value, cx = V / 2, cy = V / 2;
+        x = cx - (cx - x) * (ns / s); y = cy - (cy - y) * (ns / s); s = ns; draw();
+      };
+      vp.addEventListener('pointerdown', (e) => {
+        vp.setPointerCapture(e.pointerId);
+        const sx = e.clientX - x, sy = e.clientY - y;
+        const mv = (ev) => { x = ev.clientX - sx; y = ev.clientY - sy; draw(); };
+        const up = () => { vp.removeEventListener('pointermove', mv); vp.removeEventListener('pointerup', up); };
+        vp.addEventListener('pointermove', mv); vp.addEventListener('pointerup', up);
+      });
+      const finish = (v) => { ov.remove(); URL.revokeObjectURL(url); resolve(v); };
+      ov.querySelector('[data-a=cancel]').onclick = () => finish(null);
+      ov.querySelector('[data-a=orig]').onclick = () => finish('orig');
+      ov.querySelector('[data-a=ok]').onclick = () => {
+        const side = V / s, N = Math.min(1600, Math.round(side));
+        const c = document.createElement('canvas'); c.width = N; c.height = N;
+        const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, N, N);
+        g.drawImage(img, -x / s, -y / s, side, side, 0, 0, N, N);
+        c.toBlob((b) => finish(b || 'orig'), 'image/jpeg', 0.9);
+      };
+    });
+  }
+  async function recropImage(id) {
+    const b = await imgGet(id).catch(() => null);
+    if (!b) return false;
+    const m = state.imgs.find((x) => x.id === id) || {};
+    const c = await cropDialog(new File([b], m.name || 'image.jpg', { type: b.type || 'image/jpeg' }));
+    if (!c || c === 'orig') return false;
+    const { blob, w, h } = await prepImage(new File([c], m.name || 'image.jpg', { type: 'image/jpeg' }));
+    await imgPut(id, blob);
+    Object.assign(m, { w, h });
+    if (imgURLs[id]) { URL.revokeObjectURL(imgURLs[id]); delete imgURLs[id]; }
+    saveState();
+    return true;
   }
   const blobToDataURL = (b) => new Promise((r) => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(b); });
   const dataURLToBlob = async (u) => (await fetch(u)).blob();
@@ -807,7 +882,25 @@
     input.files = dt.files;
     input.dispatchEvent(new Event('input', { bubbles: true }));
     input.dispatchEvent(new Event('change', { bubbles: true }));
-    const ok = await waitFor(() => done() || /fail|error|失敗/i.test(box.innerText) && 'err', 30000, 250);
+    // TikTok 可能彈出「Edit image」裁剪框 → 自動按 Done
+    const editDone = () => {
+      const t = findByText(document.body, 'Edit image')[0];
+      if (!t) return null;
+      let m = t;
+      for (let i = 0; i < 10 && m; i++) {
+        m = m.parentElement;
+        const b = m && findByText(m, 'Done')[0];
+        if (b) return b.closest('button, [role="button"]') || b;
+      }
+      return null;
+    };
+    for (let k = 0; k < 3; k++) {
+      const r = await waitFor(() => (done() ? 'done' : editDone() ? 'edit' : /fail|error|失敗/i.test(box.innerText) ? 'err' : null), 30000, 250);
+      if (r !== 'edit') break;
+      await sleep(400);
+      const b = editDone(); if (b) realClick(b);
+      await waitFor(() => !editDone(), 4000);
+    }
     if (!done()) throw E('圖片上傳失敗（TikTok 沒有接受這張圖片）', 'Image upload failed (TikTok didn\'t accept the image)');
     await sleep(400);
   }
@@ -1223,6 +1316,18 @@
     .th .star,.th .x{position:absolute;top:2px;width:18px;height:18px;border-radius:50%;background:rgba(22,24,35,.6);color:#fff;font-size:11px;line-height:18px;text-align:center;border:0;padding:0;cursor:pointer}
     .th .star{left:2px;color:#ffd24a;opacity:.35} .th .star.on{opacity:1}
     .th .x{right:2px;opacity:0} .th:hover .x{opacity:1}
+    .th .cut{position:absolute;bottom:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(22,24,35,.6);color:#fff;font-size:10px;line-height:18px;text-align:center;border:0;padding:0;cursor:pointer;opacity:0}
+    .th:hover .cut{opacity:1}
+    .card{position:relative}
+    .cropov{position:absolute;inset:0;z-index:20;background:rgba(22,24,35,.55);display:grid;place-items:center;padding:12px}
+    .cropbox{background:#fff;border-radius:12px;padding:12px;width:308px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    .vp{position:relative;width:280px;height:280px;margin:8px 0;overflow:hidden;border-radius:8px;background:#eee;cursor:grab;touch-action:none}
+    .vp:active{cursor:grabbing}
+    .vp img{position:absolute;left:0;top:0;max-width:none;user-select:none;pointer-events:none}
+    .vp .grid{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.9);
+      background:linear-gradient(rgba(255,255,255,.35),rgba(255,255,255,.35)) 33.33% 0/1px 100% no-repeat,linear-gradient(rgba(255,255,255,.35),rgba(255,255,255,.35)) 66.66% 0/1px 100% no-repeat,
+      linear-gradient(rgba(255,255,255,.35),rgba(255,255,255,.35)) 0 33.33%/100% 1px no-repeat,linear-gradient(rgba(255,255,255,.35),rgba(255,255,255,.35)) 0 66.66%/100% 1px no-repeat}
+    .zoom{width:100%;accent-color:var(--accent)}
     .th.none{display:grid;place-items:center;font-size:11px;color:var(--muted);background:#fff}
     .th.add{display:grid;place-items:center;font-size:20px;color:var(--muted);background:#fff;border-style:dashed}
     .mini{width:32px;height:32px;border-radius:6px;background:var(--soft) center/cover no-repeat;flex:none;border:1px solid var(--line)}
@@ -1434,7 +1539,8 @@
       const t = thumb(m.id);
       t.title = m.name + (m.w ? ` (${m.w}×${m.h})` : '');
       const used = state.lib.filter((x) => x.img === m.id).length;
-      t.innerHTML = `<button class="star ${state.defImg === m.id ? 'on' : ''}" title="${L('設為預設圖片', 'Set as default image')}">★</button><button class="x" title="${L('刪除', 'Delete')}">×</button>`;
+      t.innerHTML = `<button class="star ${state.defImg === m.id ? 'on' : ''}" title="${L('設為預設圖片', 'Set as default image')}">★</button><button class="x" title="${L('刪除', 'Delete')}">×</button><button class="cut" title="${L('重新裁剪', 'Re-crop')}">✂</button>`;
+      t.querySelector('.cut').onclick = async (e) => { e.stopPropagation(); if (await recropImage(m.id)) renderLib(); };
       t.querySelector('.star').onclick = (e) => { e.stopPropagation(); state.defImg = state.defImg === m.id ? '' : m.id; saveState(); renderGallery(); };
       t.querySelector('.x').onclick = async (e) => {
         e.stopPropagation();
