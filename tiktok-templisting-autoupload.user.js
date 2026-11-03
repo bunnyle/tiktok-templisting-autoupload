@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      5.7
+// @version      5.8
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -43,7 +43,7 @@
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帶": "带", "幟": "帜", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "會": "会", "桿": "杆", "條": "条", "棄": "弃", "構": "构", "標": "标", "樣": "样", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "沒": "没", "測": "测", "準": "准", "瀏": "浏", "為": "为", "無": "无", "爾": "尔", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "給": "给", "統": "统", "經": "经", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "訊": "讯", "記": "记", "設": "设", "診": "诊", "試": "试", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閉": "闭", "開": "开", "間": "间", "關": "关", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "頭": "头", "題": "题", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "會": "会", "桿": "杆", "條": "条", "棄": "弃", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "殼": "壳", "沒": "没", "測": "测", "準": "准", "瀏": "浏", "為": "为", "無": "无", "爾": "尔", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "給": "给", "統": "统", "經": "经", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "訊": "讯", "記": "记", "設": "设", "診": "诊", "評": "评", "試": "试", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "頭": "头", "頻": "频", "題": "题", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   const lang = () => state.lang || 'hant';
@@ -1431,6 +1431,94 @@
   }
   let renderLive = () => {}; let updLiveTimers = () => {};
 
+  /* ================= 自動公告：定時在聊天區發送 ================= */
+  state.ann = state.ann || { items: [], mins: 5, jitter: true, on: false, vary: true, hist: [], order: [], lastId: '' };
+  const ann = state.ann;
+  const chatInput = () => [...document.querySelectorAll('input, textarea')].find((i) => /type something/i.test(i.placeholder || '') && !inPanel(i) && visible(i));
+  // 變體：句尾加 . / .. / ...、改空格，用來避開「重複評論」
+  function variants(t) {
+    const base = t.trim();
+    const end = (base.match(/[.!?。！？~]+$/) || [''])[0];
+    const out = [base];
+    if (end) out.push(base + end.slice(-1), base.slice(0, -end.length), base + ' .', base + end.slice(-1).repeat(2));
+    else out.push(base + '.', base + '..', base + ' .', base + '...');
+    const sp = base.indexOf(' ');
+    if (sp > 0) out.push(base.slice(0, sp) + '  ' + base.slice(sp + 1)); // 兩個空格
+    if (/\s{2,}/.test(base)) out.push(base.replace(/\s{2,}/, ' '));
+    if (/[.!?。！]$/.test(base)) out.push(base.slice(0, -1));
+    return [...new Set(out)].filter((x) => x.length <= 100);
+  }
+  // 下一條：隨機輪流，一輪內不重複，也不和上一條相同
+  function pickNext() {
+    const on = ann.items.filter((x) => x.on && x.text.trim());
+    if (!on.length) return null;
+    ann.order = (ann.order || []).filter((id) => on.some((x) => x.id === id));
+    if (!ann.order.length) {
+      const ids = on.map((x) => x.id).sort(() => Math.random() - 0.5);
+      if (ids.length > 1 && ids[0] === ann.lastId) ids.push(ids.shift());
+      ann.order = ids;
+    }
+    const id = ann.order.shift();
+    return on.find((x) => x.id === id);
+  }
+  async function sendChat(text) {
+    const input = chatInput();
+    if (!input) throw E('找不到聊天輸入框（Type something...）', 'Can\'t find the chat box (Type something...)');
+    setVal(input, text, { blur: false });
+    await sleep(250);
+    if (input.value !== text) { typeVal(input, text); input.focus(); await sleep(250); }
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
+    input.dispatchEvent(new KeyboardEvent('keypress', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
+    input.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
+    if (await waitFor(() => !chatInput() || chatInput().value === '', 1500)) return true;
+    // Enter 沒送出：點右邊的送出圖示
+    let w = input; for (let i = 0; i < 4 && w; i++) { w = w.parentElement; if (w && w.querySelector('svg')) break; }
+    const icons = w ? [...w.querySelectorAll('button, [role="button"], svg')].filter((e) => visible(e) && !e.contains(input)) : [];
+    const btn = icons.length ? (icons[icons.length - 1].closest('button, [role="button"]') || icons[icons.length - 1]) : null;
+    if (btn) { realClick(btn); if (await waitFor(() => !chatInput() || chatInput().value === '', 2000)) return true; }
+    return false;
+  }
+  let annBusy = false;
+  async function sendAnnouncement(item, manual) {
+    if (annBusy) return false;
+    const input = chatInput();
+    if (input && document.activeElement === input && input.value && !manual) return 'typing'; // 你正在打字，晚點再發
+    annBusy = true;
+    try {
+      const recent = (ann.hist || []).filter((h) => Date.now() - h.t < 30 * 60000).map((h) => h.text);
+      const vs = ann.vary ? variants(item.text) : [item.text.trim()];
+      const cands = vs.filter((v) => !recent.includes(v)).concat(vs.filter((v) => recent.includes(v)));
+      for (const v of cands.slice(0, ann.vary ? 4 : 1)) {
+        let ok = false;
+        try { ok = await sendChat(v); } catch (e) { annLog(L('出錯：', 'Error: ') + e.message, 'err'); return false; }
+        if (ok) {
+          ann.hist = [...(ann.hist || []), { t: Date.now(), text: v, id: item.id }].slice(-50);
+          ann.lastId = item.id; item.sent = (item.sent || 0) + 1; item.lastAt = Date.now();
+          saveState(); annLog(L('已發送：', 'Sent: ') + v, 'ok');
+          return true;
+        }
+        const i2 = chatInput(); if (i2) setVal(i2, '', { blur: false }); // 沒被接受：清掉，換下一個變體
+        await sleep(800);
+      }
+      annLog(L('TikTok 沒有接受這條公告（可能被判定重複或發言太頻繁）：', 'TikTok didn’t accept this announcement (duplicate or too frequent): ') + item.text, 'warn');
+      return false;
+    } finally { annBusy = false; }
+  }
+  let annNext = 0;
+  const annInterval = () => Math.max(1, +ann.mins || 5) * 60000 * (ann.jitter ? 0.85 + Math.random() * 0.3 : 1);
+  function annStart() { ann.on = true; annNext = Date.now() + 3000; saveState(); renderAnn(); }
+  function annStop() { ann.on = false; saveState(); renderAnn(); }
+  async function annTick() {
+    if (!ann.on || annBusy || Date.now() < annNext) return;
+    const it = pickNext();
+    if (!it) { annLog(L('沒有開啟的公告', 'No announcements switched on'), 'warn'); annNext = Date.now() + 30000; return; }
+    const r = await sendAnnouncement(it, false);
+    annNext = Date.now() + (r === 'typing' ? 10000 : annInterval());
+    if (r === 'typing') ann.order.unshift(it.id);
+    saveState(); renderAnn();
+  }
+  let renderAnn = () => {}, annLog = () => {}, updAnnSub = () => {};
+
   /* ---------------- 浮動面板（Shadow DOM，不受 TikTok 頁面樣式影響） ---------------- */
   const host = document.createElement('div');
   host.id = 'ttfill-panel';
@@ -1570,6 +1658,12 @@
     .mini{width:32px;height:32px;border-radius:6px;background:var(--soft) center/cover no-repeat;flex:none;border:1px solid var(--line)}
     .tabs .dot{display:none;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-left:5px;vertical-align:middle;animation:pulse 1.2s infinite}
     .tabs .dot.on{display:inline-block}
+    .tabs button{font-size:12px}
+    .an{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-top:8px}
+    .an.off{opacity:.55}
+    .an textarea{height:54px;font:13px/1.4 -apple-system,BlinkMacSystemFont,sans-serif}
+    .an .row2{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:11.5px;color:var(--muted)}
+    .an .cnt.over{color:var(--err);font-weight:700}
     .lo{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-top:8px}
     .lo .h{display:flex;align-items:center;gap:6px}
     .lo .no{font-weight:700;color:var(--accent);flex:none}
@@ -1650,7 +1744,7 @@
     </div>
     <div class="bar"><i id="ttf-bar"></i></div>
     <div class="bodywrap"><div class="body" id="body">
-    <div class="tabs"><button data-t="go">${L('今天上架', 'Today')}</button><button data-t="lib">${L('商品庫', 'Library')}</button><button data-t="live">${L('直播檢測', 'Live')}<span class="dot" id="ttf-livedot"></span></button></div>
+    <div class="tabs"><button data-t="go">${L('今天上架', 'Today')}</button><button data-t="lib">${L('商品庫', 'Library')}</button><button data-t="live">${L('直播檢測', 'Live')}<span class="dot" id="ttf-livedot"></span></button><button data-t="ann">${L('自動公告', 'Notices')}<span class="dot" id="ttf-anndot"></span></button></div>
 
     <div class="bd" id="tab-go">
       <div id="view-setup">
@@ -1700,6 +1794,20 @@
       <input class="inp search" type="text" id="ttf-liveq" placeholder="${L('搜尋編號 / 客人 / listing…', 'Search no. / customer / listing…')}" style="margin-top:10px">
       <div class="msg" id="ttf-livemsg"></div>
       <div id="ttf-livelist"></div>
+    </div>
+
+    <div class="bd hide" id="tab-ann">
+      <div class="summary" style="align-items:center">
+        <div class="grow"><div class="sum-t" id="ttf-annstat"></div><div class="meta" id="ttf-annsub"></div></div>
+        <label class="field" style="width:80px"><span>${L('間隔(分)', 'Every (min)')}</span><input class="inp" type="text" inputmode="decimal" id="ttf-annmins"></label>
+      </div>
+      <button class="btn primary block big" id="ttf-anngo"></button>
+      <label class="switch"><input type="checkbox" id="ttf-annjit">${L('間隔隨機浮動 ±15%', 'Randomize interval ±15%')}</label>
+      <label class="switch" style="margin-top:6px"><input type="checkbox" id="ttf-annvary">${L('避開重複評論（自動加「.」「..」或改空格）', 'Avoid duplicates (add “.”/“..” or tweak spaces)')}</label>
+      <div class="msg" id="ttf-annmsg"></div>
+      <div class="sec">${L('公告內容', 'Announcements')} <span class="grow"></span><button class="link" id="ttf-annadd">${L('＋ 新增', '＋ Add')}</button></div>
+      <div id="ttf-annlist"></div>
+      <div class="hint">${L('開啟的公告會隨機輪流發送，一輪內不重複。間隔最少 1 分鐘；太密集可能被 TikTok 限制發言。', 'Enabled announcements rotate randomly without repeats in a round. Minimum 1 minute; posting too often may get chat restricted.')}</div>
     </div>
 
     <div class="bd hide" id="tab-lib">
@@ -2045,6 +2153,7 @@
       $('tab-go').classList.toggle('hide', t !== 'go');
       $('tab-lib').classList.toggle('hide', t !== 'lib');
       $('tab-live').classList.toggle('hide', t !== 'live');
+      $('tab-ann').classList.toggle('hide', t !== 'ann');
     };
     tabs.forEach((t) => (t.onclick = () => selTab(t.dataset.t)));
     selTab(curTab);
@@ -2131,6 +2240,49 @@
       try { await navigator.clipboard.writeText(txt); alertMsg(L('診斷結果已複製，直接貼給 Claude', 'Diagnostics copied — paste them to Claude')); }
       catch (e) { alertMsg(L('診斷結果在上面輸入框裡，全選複製後貼給 Claude', 'Diagnostics are in the box above — copy and paste them to Claude'), 'warn'); }
     };
+
+    // 自動公告
+    annLog = (m, t) => { const el = $('ttf-annmsg'); if (!el) return; el.textContent = `${hhmmss(Date.now())}  ${m}`; el.className = 'msg ' + (t || ''); };
+    renderAnn = () => {
+      if (!$('ttf-annlist')) return;
+      $('ttf-anngo').textContent = ann.on ? L('■ 停止自動公告', '■ Stop announcements') : L('▶ 開始自動公告', '▶ Start announcements');
+      $('ttf-anngo').className = 'btn block big ' + (ann.on ? 'stop' : 'primary');
+      $('ttf-anndot').classList.toggle('on', !!ann.on);
+      const onN = ann.items.filter((x) => x.on && x.text.trim()).length;
+      $('ttf-annstat').textContent = ann.on ? L('自動公告中…', 'Announcing…') : L('未開始', 'Stopped');
+      updAnnSub();
+      $('ttf-annjit').checked = !!ann.jitter; $('ttf-annvary').checked = !!ann.vary;
+      const box = $('ttf-annlist'); box.innerHTML = '';
+      if (!ann.items.length) box.innerHTML = `<div class="empty">${L('按「＋ 新增」加入公告內容', 'Press “＋ Add” to write an announcement')}</div>`;
+      ann.items.forEach((it, k) => {
+        const d = document.createElement('div');
+        d.className = 'an' + (it.on ? '' : ' off');
+        d.innerHTML = `<textarea maxlength="100" placeholder="${L('公告內容（最多 100 字）', 'Announcement (max 100 characters)')}">${escapeHtml(it.text)}</textarea>
+          <div class="row2"><label class="switch" style="margin:0"><input type="checkbox" ${it.on ? 'checked' : ''}>${L('開啟', 'On')}</label>
+            <span class="cnt">${it.text.length}/100</span><span class="grow"></span>
+            ${it.sent ? `<span>${L('已發', 'Sent')} ${it.sent} · ${hhmmss(it.lastAt)}</span>` : ''}
+            <button class="link" data-a="now">${L('立即發送', 'Send now')}</button><button class="link" data-a="del" style="color:var(--err)">${L('刪除', 'Delete')}</button></div>`;
+        const ta = d.querySelector('textarea'), cnt = d.querySelector('.cnt');
+        ta.oninput = () => { it.text = ta.value.slice(0, 100); cnt.textContent = it.text.length + '/100'; cnt.classList.toggle('over', it.text.length >= 100); saveState(); updAnnSub(); };
+        d.querySelector('input[type=checkbox]').onchange = (e) => { it.on = e.target.checked; d.classList.toggle('off', !it.on); saveState(); updAnnSub(); };
+        d.querySelector('[data-a=now]').onclick = async () => { if (!it.text.trim()) return; await sendAnnouncement(it, true); renderAnn(); };
+        const del = d.querySelector('[data-a=del]');
+        del.onclick = () => { if (!del.dataset.c) { del.dataset.c = 1; del.textContent = L('確認刪除', 'Confirm'); setTimeout(() => { delete del.dataset.c; del.textContent = L('刪除', 'Delete'); }, 3000); return; } ann.items.splice(k, 1); saveState(); renderAnn(); };
+        box.appendChild(d);
+      });
+    };
+    updAnnSub = () => {
+      const onN = ann.items.filter((x) => x.on && x.text.trim()).length;
+      const left = ann.on ? Math.max(0, Math.ceil((annNext - Date.now()) / 1000)) : 0;
+      $('ttf-annsub').textContent = L(`${onN} 條開啟`, `${onN} on`) + (ann.on ? L(` · 下一條約 ${left} 秒後`, ` · next in ~${left}s`) : '');
+    };
+    $('ttf-annmins').value = ann.mins;
+    $('ttf-annmins').onchange = (e) => { const v = parseFloat(e.target.value); if (v >= 1) { ann.mins = v; saveState(); } else e.target.value = ann.mins; };
+    $('ttf-annjit').onchange = (e) => { ann.jitter = e.target.checked; saveState(); };
+    $('ttf-annvary').onchange = (e) => { ann.vary = e.target.checked; saveState(); };
+    $('ttf-anngo').onclick = () => { if (ann.on) annStop(); else { if (!ann.items.some((x) => x.on && x.text.trim())) { annLog(L('先新增並開啟至少一條公告', 'Add and switch on at least one announcement first'), 'warn'); return; } annStart(); } };
+    $('ttf-annadd').onclick = () => { ann.items.push({ id: uid(), text: '', on: true }); saveState(); renderAnn(); const t = root.querySelectorAll('#ttf-annlist textarea'); if (t.length) t[t.length - 1].focus(); };
+    renderAnn();
 
     // 直播檢測
     renderLive = () => {
@@ -2299,7 +2451,8 @@
   if (state.pos && state.pos.b === undefined && state.pos.y !== undefined) state.pos = { x: state.pos.x, b: Math.max(8, window.innerHeight - state.pos.y - 500) };
   buildUI();
   if (live.on) startLive();
-  setInterval(() => { if (live.on) updLiveTimers(); }, 1000);
+  setInterval(() => { if (live.on) updLiveTimers(); if (ann.on) { annTick(); try { updAnnSub(); } catch (e) { /* 面板重建中 */ } } }, 1000);
+  if (ann.on) annNext = Date.now() + 5000;
   if (state.pos) requestAnimationFrame(() => { state.pos = place(state.pos.x, state.pos.b); });
   window.addEventListener('resize', () => { if (state.pos) place(state.pos.x, state.pos.b); });
 
