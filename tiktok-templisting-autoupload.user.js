@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok LIVE 一鍵上架 / Quick Upload (Temporary listing)
 // @namespace    lok.laliquidation
-// @version      5.0
+// @version      5.1
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -344,6 +344,9 @@
       row.catMissing = true;
     }
 
+    // 數量：用商品庫和「預設數量」現在的設定（生成清單後才改的也會生效）
+    { const lq = state.lib.find((x) => x.id === row.libId) || state.lib.find((x) => row.tpl && norm(x.name) === norm(row.tpl));
+      row.qty = String((lq && lq.qty) || state.qty || row.qty || '').trim(); }
     // 3+4. 重量和尺寸：TikTok 選完類目後會延遲寫入「建議尺寸」，
     //       所以反覆核對，被蓋掉就重填，直到連續兩輪都正確
     const d2 = getDialog() || dlg;
@@ -1168,6 +1171,7 @@
   }
   if (state.batMig !== 2) { state.batMig = 2; saveState(); }
   state.pt = state.pt || 'PT1';
+  if (state.qty == null || state.qty === '') state.qty = '500'; // 預設數量真的存起來（以前只是顯示）
   const today = () => { const d = new Date(); return String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0'); };
   const ptLabel = () => { const v = String(state.pt || '').trim(); return /^\d+$/.test(v) ? 'PT' + v : v.toUpperCase(); };
   // 去掉名稱結尾的場次和日期（例如「 - PT1 - 1027」「 -  - 1022」「 - PT2」），再統一接上 {PT} 和 {DATE}
@@ -1806,10 +1810,10 @@
     $('ttf-pt').value = state.pt;
     $('ttf-pt').onchange = (e) => { state.pt = e.target.value.trim() || 'PT1'; e.target.value = ptLabel(); saveState(); };
     $('ttf-date').value = dateVal;
-    $('ttf-qty').value = state.qty == null ? '500' : state.qty;
+    $('ttf-qty').value = state.qty;
     $('ttf-qty').onchange = (e) => {
       const v = e.target.value.trim();
-      if (v && !/^\d+$/.test(v)) { e.target.value = state.qty || ''; return; }
+      if (!/^\d+$/.test(v) || +v < 1) { e.target.value = state.qty; return; }
       state.qty = v; saveState();
     };
     $('ttf-date').oninput = (e) => { dateVal = e.target.value; };
