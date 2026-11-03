@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      5.5
+// @version      5.6
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -43,7 +43,7 @@
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "單": "单", "嗎": "吗", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帶": "带", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "會": "会", "桿": "杆", "條": "条", "棄": "弃", "構": "构", "標": "标", "樣": "样", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "沒": "没", "測": "测", "準": "准", "瀏": "浏", "為": "为", "無": "无", "爾": "尔", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "給": "给", "統": "统", "經": "经", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "訊": "讯", "記": "记", "設": "设", "診": "诊", "試": "试", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閉": "闭", "開": "开", "間": "间", "關": "关", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "頭": "头", "題": "题", "類": "类", "顯": "显", "體": "体", "麵": "面", "點": "点"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帶": "带", "幟": "帜", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "會": "会", "桿": "杆", "條": "条", "棄": "弃", "構": "构", "標": "标", "樣": "样", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "沒": "没", "測": "测", "準": "准", "瀏": "浏", "為": "为", "無": "无", "爾": "尔", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "給": "给", "統": "统", "經": "经", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "訊": "讯", "記": "记", "設": "设", "診": "诊", "試": "试", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閉": "闭", "開": "开", "間": "间", "關": "关", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "頭": "头", "題": "题", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   const lang = () => state.lang || 'hant';
@@ -1236,6 +1236,8 @@
     .replace(/(\.\.\.|…)\s*$/, '')
     .replace(/[\p{Extended_Pictographic}\p{Regional_Indicator}‍️⃣]/gu, ' ')
     .replace(/[^\p{L}\p{N}_.\-' ]/gu, ' '));
+  // 嚴格比對：連表情符號一起比（只去掉「No. 1 customer」這類標籤和多餘空白）
+  const strictKey = (t) => String(t || '').replace(/No\.\s*\d+\s*customer/gi, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
   const sameName = (a, b) => {
     const x = nameKey(a), y = nameKey(b);
     if (!x || !y) return false;
@@ -1349,11 +1351,11 @@
       if (!primed) continue; // 開始之前的舊留言不算
       const pc = parseComment(c.text);
       if (!pc) continue;
-      for (const o of live.orders) {
-        if (now >= o.at && now - o.at <= win && sameName(o.winner, pc.name)) {
-          o.replies.push({ t: now, msg: pc.msg }); changed = true;
-        }
-      }
+      // 先找名字完全一樣（含表情）的單；沒有才用「忽略表情」的近似比對，並標 ≈ 提醒核對
+      const open = live.orders.filter((o) => now >= o.at && now - o.at <= win);
+      const exact = open.filter((o) => strictKey(o.winner) === strictKey(pc.name));
+      const hits = exact.length ? exact : open.filter((o) => sameName(o.winner, pc.name));
+      for (const o of hits) { o.replies.push({ t: now, msg: pc.msg, loose: !exact.length, from: pc.name }); changed = true; }
     }
     if (!primed) { primed = true; } // 第一次只把畫面上已有的訊息標記為「看過」
     if (changed) { saveLive(); renderLive(); } else updLiveTimers();
@@ -1376,7 +1378,7 @@
   function liveCSV() {
     const esc = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
     const head = ['No', 'Listing', 'Customer', 'Price', 'Won time', 'Paid', 'Replies'];
-    const rows = live.orders.map((o) => [o.no, o.listing, o.winner, o.price, new Date(o.at).toLocaleString(), o.paid ? 'Y' : '', o.replies.map((r) => `[${hhmmss(r.t)}] ${r.msg}`).join(' | ')]);
+    const rows = live.orders.map((o) => [o.no, o.listing, o.winner, o.price, new Date(o.at).toLocaleString(), o.paid ? 'Y' : '', o.replies.map((r) => `[${hhmmss(r.t)}]${r.loose ? ' (≈' + (r.from || '') + ')' : ''} ${r.msg}`).join(' | ')]);
     return '﻿' + [head, ...rows].map((r) => r.map(esc).join(',')).join('\n');
   }
   function liveDiagnose() {
@@ -2116,7 +2118,7 @@
             <span class="tag ${left > 0 ? 't-info' : 't-muted'}" data-left="${o.at + win}">${left > 0 ? Math.ceil(left / 1000) + 's' : L('已結束', 'Closed')}</span></div>
           <div class="meta" title="${escapeHtml(o.listing)}">${escapeHtml(o.listing)}</div>
           <div class="meta">${L('得標', 'Won')} ${hhmmss(o.at)}${o.fromChat ? ' · ' + L('（從聊天記錄補上）', '(from chat)') : ''}</div>
-          ${o.replies.length ? `<div class="rp">${o.replies.map((r) => `<div><b>${hhmmss(r.t)}</b>${escapeHtml(r.msg)}</div>`).join('')}</div>` : ''}`;
+          ${o.replies.length ? `<div class="rp">${o.replies.map((r) => `<div><b>${hhmmss(r.t)}</b>${r.loose ? `<span class="tag t-warn" title="${escapeHtml(L('名字近似（表情不同）：', 'Similar name (different emoji): ') + (r.from || ''))}">≈ ${escapeHtml(r.from || '')}</span> ` : ''}${escapeHtml(r.msg)}</div>`).join('')}</div>` : ''}`;
         box.appendChild(d);
       });
       if (!box.children.length) box.innerHTML = `<div class="empty">${live.on ? L('等待得標…（畫面下方出現「won!」就會記錄）', 'Waiting for a win… (recorded when “won!” appears)') : L('按「開始檢測」後，得標和客人回覆會記錄在這裡', 'Press “Start detecting” — wins and customer replies will show here')}</div>`;
