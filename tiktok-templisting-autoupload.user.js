@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      5.8
+// @version      5.9
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -1354,6 +1354,28 @@
   }
 
   let liveTimer = null, liveObs = null, primed = false;
+  // 每個 listing 開始檢測時已經到第幾號；聊天區比這更早的編號都是舊單，不補成新單
+  const listingKey = (t) => norm(String(t || '').replace(/(\.\.\.|…)\s*$/, '')).slice(0, 14);
+  function baseFor(listing) {
+    const k = listingKey(listing); let b = -1;
+    for (const [kk, n] of Object.entries(live.base || {})) if (kk && k && (kk.startsWith(k) || k.startsWith(kk))) b = Math.max(b, n);
+    return b;
+  }
+  function scanBase(system) {
+    const base = { ...(live.base || {}) };
+    const put = (listing, n) => { const k = listingKey(listing); if (k && n >= 0) base[k] = Math.max(base[k] ?? -1, n); };
+    // 左邊 listing 卡片「#147 (Shoes) …」= 下一輪的編號
+    for (const e of xp("//*[starts-with(normalize-space(text()),'#')]")) {
+      if (inPanel(e)) continue;
+      const m = (e.textContent || '').trim().match(/^#(\d+)\s+(.+)/);
+      if (m && !/winner/i.test(m[2])) put(m[2], +m[1] - 1);
+    }
+    for (const it of listItems(system)) {
+      const m = (it.innerText || '').replace(/\n/g, ' ').replace(/\s*\|\s*/g, ' ').match(/won auction item\s+(\d+)\s+(.*?)(?:\s+\$\s*[\d.,]+)?\s*$/i);
+      if (m) put(m[2], +m[1]);
+    }
+    live.base = base;
+  }
   function liveTick() {
     if (!live.on) return;
     const now = Date.now();
@@ -1366,13 +1388,14 @@
       LOG('得標', w);
     }
     const { comments, system } = chatLists();
-    if (!primed) { primedEls = new WeakSet(); primeList(comments); primeList(system); }
+    if (!primed) { primedEls = new WeakSet(); primeList(comments); primeList(system); scanBase(system); saveLive(); }
     // 付款確認：「X won auction item 47 (Shoes)… $13.00」
     for (const s of newItems(system)) {
       const m = s.text.replace(/\n/g, ' ').replace(/\s*\|\s*/g, ' ').match(/^(.*?)\s+won auction item\s+(\d+)\s+(.*?)(?:\s+\$\s*([\d.,]+))?\s*$/i);
       if (!m || !primed) continue;
       const name = cleanName(m[1]), no = m[2];
       let o = live.orders.find((x) => x.no === no && sameName(x.winner, name));
+      if (!o && +no <= baseFor(m[3])) continue; // 開始檢測之前的舊單（聊天清單重新顯示舊訊息時會出現）
       if (!o) { // 開始檢測前沒看到 won! 卡片：用聊天記錄補上
         o = { no, listing: fullListing(m[3]), winner: name, price: m[4] || '', at: now, paid: false, replies: [], fromChat: true };
         live.orders.push(o);
@@ -1389,12 +1412,16 @@
       const open = live.orders.filter((o) => now >= o.at && now - o.at <= win);
       const exact = open.filter((o) => strictKey(o.winner) === strictKey(pc.name));
       const hits = exact.length ? exact : open.filter((o) => sameName(o.winner, pc.name));
-      for (const o of hits) { o.replies.push({ t: now, msg: pc.msg, loose: !exact.length, from: pc.name }); changed = true; }
+      for (const o of hits) {
+        if (o.replies.some((r) => r.msg === pc.msg && strictKey(r.from || o.winner) === strictKey(pc.name))) continue; // 同一句不重複記
+        o.replies.push({ t: now, msg: pc.msg, loose: !exact.length, from: pc.name }); changed = true;
+      }
     }
     if (!primed) { primed = true; } // 第一次只把畫面上已有的訊息標記為「看過」
     if (changed) { saveLive(); renderLive(); } else updLiveTimers();
   }
-  function startLive() {
+  function startLive(fresh) {
+    if (fresh) live.base = {};
     live.on = true; primed = false; saveLive();
     liveTick();
     liveObs = new MutationObserver(() => { if (!liveTimer) liveTimer = setTimeout(() => { liveTimer = null; liveTick(); }, 250); });
@@ -2304,10 +2331,16 @@
         d.innerHTML = `<div class="h"><span class="no">#${escapeHtml(o.no)}</span><span class="who" title="${escapeHtml(o.winner)}">${escapeHtml(o.winner)}</span>
             ${o.price ? `<span class="tag t-muted">$${escapeHtml(o.price)}</span>` : ''}
             ${o.paid ? `<span class="tag t-ok">${L('已付款', 'Paid')}</span>` : ''}
-            <span class="tag ${left > 0 ? 't-info' : 't-muted'}" data-left="${o.at + win}">${left > 0 ? Math.ceil(left / 1000) + 's' : L('已結束', 'Closed')}</span></div>
+            <span class="tag ${left > 0 ? 't-info' : 't-muted'}" data-left="${o.at + win}">${left > 0 ? Math.ceil(left / 1000) + 's' : L('已結束', 'Closed')}</span>
+            <button class="link odel" title="${L('刪除這一單', 'Delete this order')}" style="color:var(--muted);padding:0 2px">×</button></div>
           <div class="meta" title="${escapeHtml(o.listing)}">${escapeHtml(o.listing)}</div>
           <div class="meta">${L('得標', 'Won')} ${hhmmss(o.at)}${o.fromChat ? ' · ' + L('（從聊天記錄補上）', '(from chat)') : ''}</div>
           ${o.replies.length ? `<div class="rp">${o.replies.map((r) => `<div><b>${hhmmss(r.t)}</b>${r.loose ? `<span class="tag t-warn" title="${escapeHtml(L('名字近似（表情不同）：', 'Similar name (different emoji): ') + (r.from || ''))}">≈ ${escapeHtml(r.from || '')}</span> ` : ''}${escapeHtml(r.msg)}</div>`).join('')}</div>` : ''}`;
+        const od = d.querySelector('.odel');
+        od.onclick = () => {
+          if (!od.dataset.c) { od.dataset.c = 1; od.textContent = L('確認刪除', 'Delete?'); od.style.color = 'var(--err)'; setTimeout(() => { delete od.dataset.c; od.textContent = '×'; od.style.color = 'var(--muted)'; }, 3000); return; }
+          live.orders = live.orders.filter((x) => x !== o); saveLive(); renderLive();
+        };
         box.appendChild(d);
       });
       if (!box.children.length) box.innerHTML = `<div class="empty">${live.on ? L('等待得標…（畫面下方出現「won!」就會記錄）', 'Waiting for a win… (recorded when “won!” appears)') : L('按「開始檢測」後，得標和客人回覆會記錄在這裡', 'Press “Start detecting” — wins and customer replies will show here')}</div>`;
@@ -2321,7 +2354,7 @@
     };
     $('ttf-livemins').value = live.mins;
     $('ttf-livemins').onchange = (e) => { const v = parseFloat(e.target.value); if (v > 0) { live.mins = v; saveLive(); } else e.target.value = live.mins; renderLive(); };
-    $('ttf-livego').onclick = () => { if (live.on) stopLive(); else startLive(); };
+    $('ttf-livego').onclick = () => { if (live.on) stopLive(); else startLive(true); };
     $('ttf-liveq').oninput = () => renderLive();
     $('ttf-livecsv').onclick = () => {
       const blob = new Blob([liveCSV()], { type: 'text/csv;charset=utf-8' });
