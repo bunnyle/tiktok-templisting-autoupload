@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok LIVE 一鍵上架 / Quick Upload (Temporary listing)
 // @namespace    lok.laliquidation
-// @version      4.7
+// @version      4.8
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -43,7 +43,7 @@
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "問": "问", "單": "单", "嗎": "吗", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帶": "带", "庫": "库", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "會": "会", "棄": "弃", "構": "构", "標": "标", "樣": "样", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "沒": "没", "準": "准", "瀏": "浏", "為": "为", "無": "无", "爾": "尔", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紅": "红", "級": "级", "結": "结", "給": "给", "統": "统", "經": "经", "緊": "紧", "編": "编", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "記": "记", "設": "设", "診": "诊", "試": "试", "認": "认", "語": "语", "誤": "误", "請": "请", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "貼": "贴", "資": "资", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閉": "闭", "開": "开", "間": "间", "關": "关", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "頭": "头", "題": "题", "類": "类", "顯": "显", "體": "体", "麵": "面", "點": "点"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "問": "问", "單": "单", "嗎": "吗", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帶": "带", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "會": "会", "棄": "弃", "構": "构", "標": "标", "樣": "样", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "沒": "没", "準": "准", "瀏": "浏", "為": "为", "無": "无", "爾": "尔", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紅": "红", "級": "级", "結": "结", "給": "给", "統": "统", "經": "经", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "記": "记", "設": "设", "診": "诊", "試": "试", "認": "认", "語": "语", "誤": "误", "請": "请", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "貼": "贴", "資": "资", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閉": "闭", "開": "开", "間": "间", "關": "关", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "頭": "头", "題": "题", "類": "类", "顯": "显", "體": "体", "麵": "面", "點": "点"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   const lang = () => state.lang || 'hant';
@@ -414,6 +414,8 @@
 
     // 5. Product compliance：含電池 → 選鋰電池選項；不含 → None of the above
     await setCompliance(getDialog() || d2, row.battery ? BATTERY_OPT : 'None of the above');
+    // 6. 圖片
+    await setImage(getDialog() || d2, row);
     return getDialog() || d2;
   }
 
@@ -713,6 +715,97 @@
     }
     document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     return out.join('\n');
+  }
+
+  /* ---------------- 圖片庫：圖片存在瀏覽器的 IndexedDB ---------------- */
+  state.imgs = state.imgs || []; // [{ id, name, w, h }]
+  function idb() {
+    return new Promise((res, rej) => {
+      const r = indexedDB.open('ttfill_images', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('img');
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+  }
+  async function idbDo(mode, fn) {
+    const db = await idb();
+    return new Promise((res, rej) => {
+      const t = db.transaction('img', mode);
+      const out = fn(t.objectStore('img'));
+      t.oncomplete = () => res(out && out.result);
+      t.onerror = () => rej(t.error);
+    });
+  }
+  const imgPut = (id, blob) => idbDo('readwrite', (st) => st.put(blob, id));
+  const imgGet = (id) => idbDo('readonly', (st) => st.get(id));
+  const imgDel = (id) => idbDo('readwrite', (st) => st.delete(id));
+  const imgURLs = {};
+  async function imgURL(id) {
+    if (imgURLs[id]) return imgURLs[id];
+    const b = await imgGet(id).catch(() => null);
+    return b ? (imgURLs[id] = URL.createObjectURL(b)) : '';
+  }
+  // 大圖縮到最長邊 1600px（JPEG），省空間；小圖保留原檔
+  async function prepImage(file) {
+    const bmp = await createImageBitmap(file);
+    const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+    if (k === 1 && file.size < 1.5e6 && /jpe?g|png|webp/.test(file.type)) return { blob: file, w: bmp.width, h: bmp.height };
+    const c = document.createElement('canvas');
+    c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    const blob = await new Promise((r) => c.toBlob(r, 'image/jpeg', 0.88));
+    return { blob, w: c.width, h: c.height };
+  }
+  async function addImages(files) {
+    const ids = [];
+    for (const f of files) {
+      if (!/^image\//.test(f.type)) continue;
+      const { blob, w, h } = await prepImage(f);
+      const id = 'img' + uid();
+      await imgPut(id, blob);
+      state.imgs.push({ id, name: f.name.replace(/\.[^.]+$/, '') + '.jpg', w, h });
+      ids.push(id);
+    }
+    saveState();
+    return ids;
+  }
+  async function removeImage(id) {
+    await imgDel(id).catch(() => {});
+    state.imgs = state.imgs.filter((x) => x.id !== id);
+    for (const it of state.lib) if (it.img === id) delete it.img;
+    if (state.defImg === id) delete state.defImg;
+    if (imgURLs[id]) { URL.revokeObjectURL(imgURLs[id]); delete imgURLs[id]; }
+    saveState();
+  }
+  const blobToDataURL = (b) => new Promise((r) => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(b); });
+  const dataURLToBlob = async (u) => (await fetch(u)).blob();
+
+  // 上架時：類目要求圖片（或商品有指定圖片）就自動上傳
+  async function setImage(dlg, row) {
+    const box = fieldBox(dlg, 'Images');
+    if (!box) return; // 這個表單沒有圖片欄
+    const done = () => !!box.querySelector('img[src]') || /\(\s*1\s*\/\s*1\s*\)/.test(box.innerText);
+    if (done()) return;
+    const required = !!box.querySelector('[class*="symbol"], [class*="required"], [class*="asterisk"]') ||
+      /^\s*\*/.test(box.textContent || '') || /at least 1 product image/i.test(box.innerText);
+    const id = row.img && state.imgs.some((x) => x.id === row.img) ? row.img : (required ? state.defImg : null);
+    if (!id) {
+      if (required) throw E('這個類目需要上傳圖片，但商品沒有指定圖片，也沒有設定預設圖片', 'This category needs an image, but the product has no image and no default image is set');
+      return;
+    }
+    const blob = await imgGet(id).catch(() => null);
+    if (!blob) throw E('圖片庫裡找不到這張圖片', 'Image not found in the image library');
+    const input = box.querySelector('input[type="file"]') || dlg.querySelector('input[type="file"][accept*="image"]') || dlg.querySelector('input[type="file"]');
+    if (!input) throw E('找不到 TikTok 的圖片上傳欄', 'Can\'t find TikTok\'s image upload field');
+    const meta = state.imgs.find((x) => x.id === id) || {};
+    const dt = new DataTransfer();
+    dt.items.add(new File([blob], meta.name || 'image.jpg', { type: blob.type || 'image/jpeg' }));
+    input.files = dt.files;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    const ok = await waitFor(() => done() || /fail|error|失敗/i.test(box.innerText) && 'err', 30000, 250);
+    if (!done()) throw E('圖片上傳失敗（TikTok 沒有接受這張圖片）', 'Image upload failed (TikTok didn\'t accept the image)');
+    await sleep(400);
   }
 
   const BATTERY_OPT = 'Rechargeable (lithium ion) batteries installed in or packed with equipment';
@@ -1088,6 +1181,16 @@
     .dims{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
     .err{color:var(--err);font-size:12px;margin-left:6px}
     .fields.f3{grid-template-columns:1fr 1fr 1fr}
+    .gallery{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .gallery:empty{display:none}
+    .th{position:relative;width:58px;height:58px;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:var(--soft) center/cover no-repeat;cursor:pointer;flex:none}
+    .th.sel{outline:2px solid var(--accent);outline-offset:1px}
+    .th .star,.th .x{position:absolute;top:2px;width:18px;height:18px;border-radius:50%;background:rgba(22,24,35,.6);color:#fff;font-size:11px;line-height:18px;text-align:center;border:0;padding:0;cursor:pointer}
+    .th .star{left:2px;color:#ffd24a;opacity:.35} .th .star.on{opacity:1}
+    .th .x{right:2px;opacity:0} .th:hover .x{opacity:1}
+    .th.none{display:grid;place-items:center;font-size:11px;color:var(--muted);background:#fff}
+    .th.add{display:grid;place-items:center;font-size:20px;color:var(--muted);background:#fff;border-style:dashed}
+    .mini{width:32px;height:32px;border-radius:6px;background:var(--soft) center/cover no-repeat;flex:none;border:1px solid var(--line)}
     .catcard{margin-top:10px;border:1px solid var(--line);border-radius:10px;padding:9px 10px}
     .acwrap{position:relative}
     .ac{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:5;background:#fff;border:1px solid var(--line);border-radius:10px;
@@ -1212,6 +1315,14 @@
         </div>
         <div class="msg" id="ttf-catmsg"></div>
       </div>
+      <div class="catcard">
+        <div class="top"><div class="grow"><div class="nm">${L('圖片庫', 'Image library')}</div>
+          <div class="meta">${L('類目要求圖片、商品又沒指定圖片時，會用 ★ 預設圖片。', 'When a category requires an image and the product has none, the ★ default image is used.')}</div></div></div>
+        <div class="gallery" id="ttf-gal"></div>
+        <div class="btnrow"><button class="btn dark" id="ttf-imgadd">${L('＋ 上傳圖片', '＋ Upload images')}</button></div>
+        <input type="file" id="ttf-imgfile" accept="image/*" multiple style="display:none">
+        <div class="msg" id="ttf-imgmsg"></div>
+      </div>
       <details class="tools">
         <summary>${L('匯入 · 備份 · 工具', 'Import · Backup · Tools')}</summary>
         <div class="in">
@@ -1273,6 +1384,61 @@
     if (cur && !$('card').classList.contains('min')) cur.scrollIntoView({ block: 'nearest' });
   }
 
+  // 縮圖：先放占位，再非同步填圖
+  function thumb(id, cls) {
+    const el = document.createElement('div');
+    el.className = cls || 'th';
+    imgURL(id).then((u) => { if (u) el.style.backgroundImage = `url("${u}")`; });
+    return el;
+  }
+  function renderGallery() {
+    const g = $('ttf-gal');
+    if (!g) return;
+    g.innerHTML = '';
+    for (const m of state.imgs) {
+      const t = thumb(m.id);
+      t.title = m.name + (m.w ? ` (${m.w}×${m.h})` : '');
+      const used = state.lib.filter((x) => x.img === m.id).length;
+      t.innerHTML = `<button class="star ${state.defImg === m.id ? 'on' : ''}" title="${L('設為預設圖片', 'Set as default image')}">★</button><button class="x" title="${L('刪除', 'Delete')}">×</button>`;
+      t.querySelector('.star').onclick = (e) => { e.stopPropagation(); state.defImg = state.defImg === m.id ? '' : m.id; saveState(); renderGallery(); };
+      t.querySelector('.x').onclick = async (e) => {
+        e.stopPropagation();
+        const btn = e.currentTarget;
+        if (!btn.dataset.c) { btn.dataset.c = '1'; btn.style.opacity = 1; btn.style.background = 'var(--err)'; btn.title = L(`再按一次刪除${used ? `（${used} 個商品在用）` : ''}`, `Press again to delete${used ? ` (used by ${used})` : ''}`); setTimeout(() => { delete btn.dataset.c; btn.style.cssText = ''; }, 3000); return; }
+        await removeImage(m.id); renderLib();
+      };
+      g.appendChild(t);
+    }
+  }
+  function renderFormPicker(d) {
+    const fp = d.querySelector('.fpick');
+    if (!fp) return;
+    const draw = () => {
+      fp.innerHTML = '';
+      const none = document.createElement('div');
+      none.className = 'th none' + (fp.dataset.img ? '' : ' sel');
+      none.textContent = L('不用', 'None');
+      none.onclick = () => { fp.dataset.img = ''; draw(); };
+      fp.appendChild(none);
+      for (const m of state.imgs) {
+        const t = thumb(m.id, 'th' + (fp.dataset.img === m.id ? ' sel' : ''));
+        t.title = m.name;
+        t.onclick = () => { fp.dataset.img = m.id; draw(); };
+        fp.appendChild(t);
+      }
+      const add = document.createElement('label');
+      add.className = 'th add'; add.title = L('上傳新圖片', 'Upload a new image');
+      add.innerHTML = '＋<input type="file" accept="image/*" style="display:none">';
+      add.querySelector('input').onchange = async (e) => {
+        const ids = await addImages([...e.target.files]);
+        if (ids[0]) fp.dataset.img = ids[0];
+        renderGallery(); draw();
+      };
+      fp.appendChild(add);
+    };
+    draw();
+  }
+
   function renderPick() {
     const box = $('ttf-pick');
     if (!box) return;
@@ -1282,7 +1448,7 @@
       if (q && !norm(it.name + ' ' + it.cat).includes(q)) return;
       const lab = document.createElement('label');
       lab.className = 'row';
-      lab.innerHTML = `<input class="chk" type="checkbox" ${it.sel ? 'checked' : ''}><div class="txt"><div class="nm" title="${escapeHtml(baseName(it.name))}">${escapeHtml(baseName(it.name))}</div><div class="meta">${it.cat ? escapeHtml(lastSeg(it.cat)) + ' · ' : ''}${escapeHtml(it.weight)} lb${it.qty ? ' · ×' + escapeHtml(it.qty) : ''}</div></div>${it.battery ? '<span class="tag t-info">🔋</span>' : ''}${it.cat ? '' : `<span class="tag t-warn">${L('沒類目', 'No cat.')}</span>`}`;
+      lab.innerHTML = `<input class="chk" type="checkbox" ${it.sel ? 'checked' : ''}><div class="txt"><div class="nm" title="${escapeHtml(baseName(it.name))}">${escapeHtml(baseName(it.name))}</div><div class="meta">${it.cat ? escapeHtml(lastSeg(it.cat)) + ' · ' : ''}${escapeHtml(it.weight)} lb${it.qty ? ' · ×' + escapeHtml(it.qty) : ''}</div></div>${it.img ? '<span class="tag t-muted">🖼</span>' : ''}${it.battery ? '<span class="tag t-info">🔋</span>' : ''}${it.cat ? '' : `<span class="tag t-warn">${L('沒類目', 'No cat.')}</span>`}`;
       lab.querySelector('input').onchange = (e) => { it.sel = e.target.checked; saveState(); updSel(); };
       box.appendChild(lab);
     });
@@ -1300,6 +1466,7 @@
         <label>${L('類目', 'Category')}</label><div class="acwrap"><input class="inp" type="text" data-f="cat" autocomplete="off" value="${escapeHtml(it.cat || '')}" placeholder="${cats.paths.length ? L('輸入關鍵字，從清單選', 'Type a keyword, pick from the list') : L('完整路徑最準（可先讀取類目庫）', 'Full path is best (read the category list first)')}"><div class="ac"></div></div>
         <label>${L('數量', 'Quantity')}</label><input class="inp" type="text" inputmode="numeric" data-f="qty" value="${escapeHtml(it.qty || '')}" placeholder="${L('留空＝用「今天上架」的預設數量', 'Blank = use the default qty on “Today”')}">
         <label>${L('重量 lb', 'Weight lb')}</label><input class="inp" type="text" data-f="weight" value="${escapeHtml(it.weight || '')}" placeholder="1.5">
+        <label>${L('圖片', 'Image')}</label><div><div class="gallery fpick" data-img="${escapeHtml(it.img || '')}"></div></div>
         <label>${L('電池', 'Battery')}</label><label class="switch" style="margin:0;color:var(--ink)"><input type="checkbox" data-b="battery" ${it.battery ? 'checked' : ''}>${L('含鋰電池（裝在產品內）', 'Contains lithium-ion battery (installed)')}</label>
         <label>H · W · L</label><div class="dims"><input class="inp" type="text" data-f="h" placeholder="H" value="${escapeHtml(it.h || '')}"><input class="inp" type="text" data-f="w" placeholder="W" value="${escapeHtml(it.w || '')}"><input class="inp" type="text" data-f="l" placeholder="L" value="${escapeHtml(it.l || '')}"></div>
       </div>
@@ -1350,6 +1517,7 @@
     const v = {};
     d.querySelectorAll('input[data-f]').forEach((i) => (v[i.dataset.f] = i.value.trim()));
     const b = d.querySelector('input[data-b=battery]'); v.battery = !!(b && b.checked);
+    const fp = d.querySelector('.fpick'); v.img = fp ? fp.dataset.img || '' : '';
     if (!v.name) return L('請填名稱', 'Please enter a name');
     for (const k of ['weight', 'h', 'w', 'l']) if (!(parseFloat(v[k]) > 0)) return L('重量和長寬高要填正數', 'Weight and dimensions must be positive numbers');
     if (v.qty && !/^\d+$/.test(v.qty)) return L('數量要填整數，或留空', 'Quantity must be a whole number, or blank');
@@ -1360,6 +1528,7 @@
 
   function renderLib() {
     renderPick();
+    renderGallery();
     const box = $('ttf-lib');
     if (!box) return;
     box.innerHTML = '';
@@ -1367,7 +1536,7 @@
       const d = document.createElement('div');
       d.className = 'item edit';
       d.innerHTML = `<div class="nm" style="margin-bottom:4px">${L('新增商品', 'New product')}</div>` + formHtml({});
-      attachCatAC(d);
+      attachCatAC(d); renderFormPicker(d);
       d.querySelector('[data-a=save]').onclick = () => {
         const v = readForm(d);
         if (typeof v === 'string') { d.querySelector('.err').textContent = v; return; }
@@ -1390,7 +1559,7 @@
       if (editing === it.id) {
         d.classList.add('edit');
         d.innerHTML = formHtml(it);
-        attachCatAC(d);
+        attachCatAC(d); renderFormPicker(d);
         d.querySelector('[data-a=save]').onclick = () => {
           const v = readForm(d);
           if (typeof v === 'string') { d.querySelector('.err').textContent = v; return; }
@@ -1402,6 +1571,7 @@
       } else {
         d.innerHTML = `
           <div class="top">
+            ${it.img && state.imgs.some((x) => x.id === it.img) ? '<span class="mini" data-thumb="' + it.img + '"></span>' : ''}
             <div class="txt grow"><div class="nm" title="${escapeHtml(baseName(it.name))}">${escapeHtml(baseName(it.name))}</div></div>
             <div class="acts">
               <button data-a="up" title="${L('上移', 'Move up')}">↑</button><button data-a="down" title="${L('下移', 'Move down')}">↓</button>
@@ -1410,6 +1580,8 @@
           </div>
           <div class="meta" title="${escapeHtml(it.cat || '')}">${it.cat ? escapeHtml(it.cat) + (cats.paths.length && !catSet.has(norm(resolveCat(it.cat))) ? ` <span class="tag t-warn">${L('不在類目庫', 'Not in list')}</span>` : '') : `<span class="tag t-warn">${L('沒有類目', 'No category')}</span>`}</div>
           <div class="meta">${escapeHtml(it.weight)} lb · H${escapeHtml(it.h)} × W${escapeHtml(it.w)} × L${escapeHtml(it.l)}${it.qty ? ' · ' + L('數量', 'Qty') + ' ' + escapeHtml(it.qty) : ''}${it.battery ? ` · <span class="tag t-info">🔋 ${L('含電池', 'Battery')}</span>` : ''}</div>`;
+        const mt = d.querySelector('[data-thumb]');
+        if (mt) imgURL(mt.dataset.thumb).then((u) => { if (u) mt.style.backgroundImage = `url("${u}")`; });
         d.querySelector('[data-a=edit]').onclick = () => { editing = it.id; renderLib(); };
         const del = d.querySelector('[data-a=del]');
         del.onclick = () => {
@@ -1513,7 +1685,7 @@
       state.runPt = ptLabel(); state.runDate = $('ttf-date').value.trim() || today();
       showSetup = false;
       const dq = String(state.qty || '').trim();
-      state.rows = sel.map((x) => ({ name: applyTpl(x.name), cat: x.cat, weight: x.weight, h: x.h, w: x.w, l: x.l, battery: !!x.battery, qty: x.qty || dq, status: '待填' }));
+      state.rows = sel.map((x) => ({ name: applyTpl(x.name), cat: x.cat, weight: x.weight, h: x.h, w: x.w, l: x.l, battery: !!x.battery, qty: x.qty || dq, img: x.img || '', status: '待填' }));
       state.idx = 0; saveState(); render();
       setMsg(L(`已生成 ${sel.length} 個，按「全部自動上架」開始`, `${sel.length} items ready — press “Auto-upload all” to start`));
     };
@@ -1600,9 +1772,11 @@
       catMsg(L(`已下載 ${cats.paths.length} 個類目。在別的電腦按「匯入類目庫」選這個檔案。`, `Downloaded ${cats.paths.length} categories. On another computer, press “Import categories” and pick this file.`), 'ok');
     };
     $('ttf-catimp').onclick = () => { if (!busy) pickFile('cats'); };
-    $('ttf-fullexp').onclick = () => {
-      downloadJSON({ type: 'ttfill-backup', version: 1, lib: state.lib, cats, settings: { pt: state.pt, qty: state.qty, lang: state.lang, auto: state.auto } }, `tiktok-upload-backup-${stamp()}.json`);
-      alertMsg(L(`已下載完整備份：${state.lib.length} 個商品、${cats.paths.length} 個類目`, `Full backup downloaded: ${state.lib.length} products, ${cats.paths.length} categories`));
+    $('ttf-fullexp').onclick = async () => {
+      const images = [];
+      for (const m of state.imgs) { const b = await imgGet(m.id).catch(() => null); if (b) images.push({ ...m, data: await blobToDataURL(b) }); }
+      downloadJSON({ type: 'ttfill-backup', version: 2, lib: state.lib, cats, images, settings: { pt: state.pt, qty: state.qty, lang: state.lang, auto: state.auto, defImg: state.defImg } }, `tiktok-upload-backup-${stamp()}.json`);
+      alertMsg(L(`已下載完整備份：${state.lib.length} 個商品、${cats.paths.length} 個類目、${images.length} 張圖片`, `Full backup downloaded: ${state.lib.length} products, ${cats.paths.length} categories, ${images.length} images`));
     };
     $('ttf-fullimp').onclick = () => { if (!busy) pickFile('full'); };
     $('ttf-file').onchange = async (e) => {
@@ -1618,14 +1792,32 @@
         catMsg(L(`匯入完成：新增 ${n} 個類目，已有的跳過，共 ${cats.paths.length} 個`, `Imported: ${n} new categories (existing ones skipped), ${cats.paths.length} total`), 'ok');
       } else {
         if (!lib && !c) { alertMsg(L('這個檔案裡沒有可匯入的資料', 'Nothing to import in this file'), 'err'); return; }
+        let ni = 0;
+        for (const m of data.images || []) {
+          if (!m || !m.id || !m.data || state.imgs.some((x) => x.id === m.id)) continue;
+          await imgPut(m.id, await dataURLToBlob(m.data));
+          state.imgs.push({ id: m.id, name: m.name, w: m.w, h: m.h }); ni++;
+        }
         const r = mergeLib(lib);
         const n = c ? mergeCats(c) : 0;
-        if (data.settings) { for (const k of ['pt', 'qty', 'lang', 'auto']) if (data.settings[k] !== undefined) state[k] = data.settings[k]; saveState(); }
+        if (data.settings) { for (const k of ['pt', 'qty', 'lang', 'auto', 'defImg']) if (data.settings[k] !== undefined && (k !== 'defImg' || !state.defImg)) state[k] = data.settings[k]; saveState(); }
         curTab = 'lib'; buildUI();
-        alertMsg(L(`匯入完成：商品新增 ${r.added} 個、更新 ${r.updated} 個；類目新增 ${Math.max(n, 0)} 個`, `Imported: ${r.added} products added, ${r.updated} updated; ${Math.max(n, 0)} categories added`));
+        alertMsg(L(`匯入完成：商品新增 ${r.added} 個、更新 ${r.updated} 個；類目新增 ${Math.max(n, 0)} 個；圖片新增 ${ni} 張`, `Imported: ${r.added} products added, ${r.updated} updated; ${Math.max(n, 0)} categories, ${ni} images added`));
         return;
       }
       catInfo(); renderLib();
+    };
+
+    $('ttf-imgadd').onclick = () => { $('ttf-imgfile').value = ''; $('ttf-imgfile').click(); };
+    $('ttf-imgfile').onchange = async (e) => {
+      const el = $('ttf-imgmsg');
+      try {
+        const ids = await addImages([...e.target.files]);
+        if (ids.length && !state.defImg) { state.defImg = ids[0]; saveState(); }
+        el.textContent = L(`已加入 ${ids.length} 張圖片。點 ★ 設定預設圖片；在商品「編輯」裡可以指定每個商品用哪一張。`, `Added ${ids.length} image(s). Tap ★ to set the default; choose a product’s image in its “Edit” form.`);
+        el.className = 'msg ok';
+      } catch (err) { LOG(err); el.textContent = L('圖片加入失敗：', 'Couldn’t add the image: ') + err.message; el.className = 'msg err'; }
+      renderLib();
     };
 
     $('ttf-catup').onclick = () => runCrawl(false);
