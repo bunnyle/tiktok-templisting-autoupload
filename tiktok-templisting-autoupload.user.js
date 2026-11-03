@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      5.6
+// @version      5.7
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -1226,10 +1226,18 @@
     return { orders: [], on: false, mins: 3 };
   }
   const live = loadLive();
+  for (const o of live.orders) { // 修正舊版記錄裡的「Bids: $2.00 名字」
+    if (/bids?\s*:/i.test(o.winner)) o.winner = String(o.winner).replace(/^[\s\S]*bids?\s*:\s*[$\s\u00a0]*[\d.,]+/i, '').replace(/\s+/g, ' ').trim();
+  }
   const saveLive = () => { try { localStorage.setItem(LIVE_KEY, JSON.stringify(live)); } catch (e) { LOG('live save fail', e); } };
   const xp = (expr, ctx) => { const r = document.evaluate(expr, ctx || document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null); const a = []; for (let i = 0; i < r.snapshotLength; i++) a.push(r.snapshotItem(i)); return a; };
   const inPanel = (e) => !!(e && e.closest && e.closest('#ttfill-panel'));
   const cleanName = (t) => String(t || '').replace(/\s+/g, ' ').trim();
+  // 去掉卡片上混進名字的「Bids: $2.00」「1 bid」「won!」
+  const winnerOnly = (t) => cleanName(String(t || '')
+    .replace(/^[\s\S]*bids?\s*:\s*[$\s\u00a0]*[\d.,]+/i, '')
+    .replace(/^\s*\d+\s+bids?\b/i, '')
+    .replace(/\s*(won!|is winning!)\s*$/i, ''));
   // 比對名字時去掉裝飾：表情、旗幟、✨♥💜、「No. 1 customer」這類標籤
   const nameKey = (t) => norm(String(t || '')
     .replace(/No\.\s*\d+\s*customer/gi, ' ').replace(/\b(top fan|moderator|host)\b/gi, ' ')
@@ -1269,9 +1277,9 @@
       const m = t.match(/#(\d+)\s+([^\n]+)/);
       if (!m) continue;
       const line = t.split('\n').map((x) => x.trim()).find((x) => /won!\s*$/i.test(x)) || '';
-      let winner = line.replace(/won!\s*$/i, '').replace(/^.*?bids?:\s*\$?[\d.,]+\s*/i, '').trim();
+      let winner = winnerOnly(line);
       if (!winner) { // 名字和 won! 分在不同元素
-        const p = w.parentElement; winner = cleanName((p ? p.innerText : '').replace(/won!\s*$/i, ''));
+        const p = w.parentElement; winner = winnerOnly(p ? p.innerText : '');
       }
       const price = (t.match(/bids?:\s*\$?\s*([\d.,]+)/i) || [])[1] || '';
       if (!winner || /no bids|is winning/i.test(winner)) continue;
@@ -1285,12 +1293,17 @@
     const input = [...document.querySelectorAll('input, textarea')].find((i) => /type something/i.test(i.placeholder || '') && !inPanel(i));
     if (!input) return {};
     let panel = input;
-    for (let i = 0; i < 10 && panel; i++) { panel = panel.parentElement; if (panel && /all comments/i.test(panel.innerText || '')) break; }
+    for (let i = 0; i < 14 && panel; i++) { panel = panel.parentElement; if (panel && /all comments/i.test(panel.innerText || '') && /won auction item/i.test(panel.innerText || '')) break; }
+    if (!panel) { panel = input; for (let i = 0; i < 10 && panel; i++) { panel = panel.parentElement; if (panel && /all comments/i.test(panel.innerText || '')) break; } }
     if (!panel) return {};
     const ir = input.getBoundingClientRect();
     const filt = xp(".//*[normalize-space(text())='All comments']", panel)[0];
     const fr = filt ? filt.getBoundingClientRect() : null;
-    const scrolls = [...panel.querySelectorAll('*')].filter((e) => { const s = getComputedStyle(e); return /(auto|scroll)/.test(s.overflowY) && e.clientHeight > 40 && visible(e); });
+    const scrolls = [...panel.querySelectorAll('*')].filter((e) => {
+      if (!visible(e)) return false;
+      if (/\barco-list\b|\bcore-list\b|virtual-list/.test(e.className || '')) return true;
+      const s = getComputedStyle(e); return /(auto|scroll)/.test(s.overflowY) && e.clientHeight > 40;
+    });
     const outer = (arr) => arr.filter((e) => !arr.some((o) => o !== e && o.contains(e)));
     const comments = outer(scrolls.filter((e) => { const r = e.getBoundingClientRect(); return r.bottom <= ir.top + 8 && (!fr || r.top >= fr.bottom - 8); }))[0];
     const system = fr ? outer(scrolls.filter((e) => e.getBoundingClientRect().bottom <= fr.top + 8))[0] : null;
@@ -1300,13 +1313,18 @@
   function listItems(box) {
     if (!box) return [];
     let el = box;
-    for (let i = 0; i < 6 && el && el.children.length === 1; i++) el = el.children[0];
+    // 只穿過「清單外殼」那幾層（list / content / wrapper…），到訊息那一層就停，清單只有一條訊息時也不會拆錯
+    const isShell = (c) => /list|content|wrapper|virtual|scroll|holder|inner|body/i.test(c.className || '') || c.children.length >= 3 || c.getBoundingClientRect().height > 150;
+    for (let i = 0; i < 6 && el && el.children.length === 1 && isShell(el.children[0]); i++) el = el.children[0];
     return [...(el ? el.children : [])].filter((c) => visible(c) && (c.innerText || '').trim());
   }
   const seen = new WeakMap();
+  let primedEls = new WeakSet(); // 按「開始」時畫面上已有的元素：永遠不算新訊息
+  function primeList(box) { if (box) for (const e of box.querySelectorAll('*')) primedEls.add(e); }
   function newItems(box) {
     const out = [];
     for (const it of listItems(box)) {
+      if (primedEls.has(it)) continue;
       const t = (it.innerText || '').trim();
       if (seen.get(it) === t) continue;
       seen.set(it, t);
@@ -1314,10 +1332,25 @@
     }
     return out;
   }
-  function parseComment(t) {
+  // 一條留言：第一行是「頭像 + 名字 + 徽章（No. 3 customer、等級數字）」，下面才是留言
+  function parseComment(t, el) {
+    if (el) {
+      const header = [...el.children].find((c) => c.querySelector && (c.querySelector('[class*="avatar"], img'))) || el.firstElementChild;
+      if (header) {
+        const rest = [...el.children].filter((c) => c !== header && !c.contains(header));
+        let msg = rest.map((c) => (c.innerText || '').trim()).filter(Boolean).join(' ');
+        // 名字 = 標題列裡第一段文字（徽章在後面）
+        const name = ((header.innerText || '').split('\n').map((x) => x.trim()).filter(Boolean)[0]) || '';
+        if (!msg) { // 留言也在同一層：去掉標題列的文字
+          const full = (el.innerText || '').trim(), head = (header.innerText || '').trim();
+          if (full.startsWith(head)) msg = full.slice(head.length).trim();
+        }
+        if (name && msg) return { name: cleanName(name), msg: msg.replace(/\s*\n\s*/g, ' ') };
+      }
+    }
     const lines = t.split('\n').map((x) => x.trim()).filter(Boolean);
     if (lines.length < 2) return null;
-    return { name: cleanName(lines[0]), msg: lines.slice(1).join(' ') };
+    return { name: cleanName(lines[0]), msg: lines[lines.length - 1] };
   }
 
   let liveTimer = null, liveObs = null, primed = false;
@@ -1333,6 +1366,7 @@
       LOG('得標', w);
     }
     const { comments, system } = chatLists();
+    if (!primed) { primedEls = new WeakSet(); primeList(comments); primeList(system); }
     // 付款確認：「X won auction item 47 (Shoes)… $13.00」
     for (const s of newItems(system)) {
       const m = s.text.replace(/\n/g, ' ').replace(/\s*\|\s*/g, ' ').match(/^(.*?)\s+won auction item\s+(\d+)\s+(.*?)(?:\s+\$\s*([\d.,]+))?\s*$/i);
@@ -1349,7 +1383,7 @@
     const win = Math.max(0.5, +live.mins || 3) * 60000;
     for (const c of newItems(comments)) {
       if (!primed) continue; // 開始之前的舊留言不算
-      const pc = parseComment(c.text);
+      const pc = parseComment(c.text, c.el);
       if (!pc) continue;
       // 先找名字完全一樣（含表情）的單；沒有才用「忽略表情」的近似比對，並標 ≈ 提醒核對
       const open = live.orders.filter((o) => now >= o.at && now - o.at <= win);
@@ -1390,6 +1424,9 @@
     const { comments, system } = chatLists();
     const d = (n, b) => { out.push(n + ': ' + (b ? b.tagName + '.' + String(b.className).slice(0, 60) : 'null')); listItems(b).slice(-3).forEach((it) => out.push('    item <' + it.tagName + '.' + String(it.className).slice(0, 40) + '> ' + JSON.stringify((it.innerText || '').slice(0, 120)) + ' html=' + it.innerHTML.replace(/\s+/g, ' ').slice(0, 200))); };
     d('comments list', comments); d('system list', system);
+    listItems(comments).slice(-3).forEach((it) => out.push('  parsed: ' + JSON.stringify(parseComment((it.innerText || '').trim(), it))));
+    const sysTxt = xp("//*[contains(normalize-space(.),'won auction item') and not(.//*[contains(normalize-space(.),'won auction item')])]").filter((e) => !inPanel(e) && e.tagName !== 'SCRIPT').slice(-2);
+    sysTxt.forEach((e) => { let c = e; const chain = []; for (let i = 0; i < 7 && c; i++, c = c.parentElement) chain.push(c.tagName + '.' + String(c.className).slice(0, 40)); out.push('  sys line: ' + JSON.stringify((e.innerText || '').slice(0, 100)) + ' chain: ' + chain.join(' < ')); });
     return out.join('\n');
   }
   let renderLive = () => {}; let updLiveTimers = () => {};
