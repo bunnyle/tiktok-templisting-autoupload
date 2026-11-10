@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      6.4
+// @version      6.5
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -43,7 +43,7 @@
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "訂": "订", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   const lang = () => state.lang || 'hant';
@@ -1309,25 +1309,76 @@
   }
 
   // 2) 聊天區
+  // 聊天區有兩種版面：
+  //  舊版：上面系統訊息（won auction item）、「All comments」下面是留言
+  //  Quick LIVE：中間「Chat」（All / Product related / All viewers）是留言，右邊「Activity」是訂單動態
+  const scrollBoxes = (root) => [...root.querySelectorAll('*')].filter((e) => {
+    if (!visible(e) || inPanel(e)) return false;
+    if (/\barco-list\b|\bcore-list\b|virtual-list/.test(e.className || '')) return true;
+    const s = getComputedStyle(e); return /(auto|scroll)/.test(s.overflowY) && e.clientHeight > 40;
+  });
+  const outerOnly = (arr) => arr.filter((e) => !arr.some((o) => o !== e && o.contains(e)));
+  const biggest = (arr) => arr.sort((x, y) => y.getBoundingClientRect().height - x.getBoundingClientRect().height)[0] || null;
+  const leafText = (root, re) => xp('.//*[normalize-space(text())]', root).filter((e) => !inPanel(e) && visible(e) && re.test((e.textContent || '').trim()));
   function chatLists() {
     const input = [...document.querySelectorAll('input, textarea')].find((i) => /type something/i.test(i.placeholder || '') && !inPanel(i));
     if (!input) return {};
+    const ir = input.getBoundingClientRect();
     let panel = input;
     for (let i = 0; i < 14 && panel; i++) { panel = panel.parentElement; if (panel && /all comments/i.test(panel.innerText || '') && /won auction item/i.test(panel.innerText || '')) break; }
     if (!panel) { panel = input; for (let i = 0; i < 10 && panel; i++) { panel = panel.parentElement; if (panel && /all comments/i.test(panel.innerText || '')) break; } }
-    if (!panel) return {};
-    const ir = input.getBoundingClientRect();
-    const filt = xp(".//*[normalize-space(text())='All comments']", panel)[0];
-    const fr = filt ? filt.getBoundingClientRect() : null;
-    const scrolls = [...panel.querySelectorAll('*')].filter((e) => {
-      if (!visible(e)) return false;
-      if (/\barco-list\b|\bcore-list\b|virtual-list/.test(e.className || '')) return true;
-      const s = getComputedStyle(e); return /(auto|scroll)/.test(s.overflowY) && e.clientHeight > 40;
-    });
-    const outer = (arr) => arr.filter((e) => !arr.some((o) => o !== e && o.contains(e)));
-    const comments = outer(scrolls.filter((e) => { const r = e.getBoundingClientRect(); return r.bottom <= ir.top + 8 && (!fr || r.top >= fr.bottom - 8); }))[0];
-    const system = fr ? outer(scrolls.filter((e) => e.getBoundingClientRect().bottom <= fr.top + 8))[0] : null;
-    return { comments, system };
+    if (panel) { // 舊版
+      const filt = xp(".//*[normalize-space(text())='All comments']", panel)[0];
+      const fr = filt ? filt.getBoundingClientRect() : null;
+      const scrolls = scrollBoxes(panel);
+      const comments = outerOnly(scrolls.filter((e) => { const r = e.getBoundingClientRect(); return r.bottom <= ir.top + 8 && (!fr || r.top >= fr.bottom - 8); }))[0];
+      const system = fr ? outerOnly(scrolls.filter((e) => e.getBoundingClientRect().bottom <= fr.top + 8))[0] : null;
+      return { comments, system, mode: 'classic' };
+    }
+    // Quick LIVE
+    panel = input;
+    for (let i = 0; i < 12 && panel; i++) {
+      panel = panel.parentElement;
+      const t = panel && panel.innerText || '';
+      if (panel && /\bchat\b/i.test(t) && /all viewers|product related|viewer comments/i.test(t)) break;
+    }
+    let comments = null;
+    if (panel) {
+      const tops = leafText(panel, /^(all viewers|product related|all|chat)$/i).map((e) => e.getBoundingClientRect().bottom).filter((y) => y < ir.top);
+      const fb = tops.length ? Math.max(...tops) : -1e9;
+      comments = biggest(outerOnly(scrollBoxes(panel).filter((e) => { const r = e.getBoundingClientRect(); return r.bottom <= ir.top + 8 && r.top >= fb - 8 && !e.contains(input); })));
+    }
+    let system = null;
+    const tab = leafText(document.body, /^activity$/i)[0];
+    if (tab) {
+      let box = tab;
+      for (let i = 0; i < 10 && box; i++) { box = box.parentElement; if (box && /top customers/i.test(box.innerText || '') && box.getBoundingClientRect().height > 200) break; }
+      if (box) {
+        const tb = tab.getBoundingClientRect().bottom;
+        const drag = leafText(box, /^(drag to resize|ask to show)$/i).map((e) => e.getBoundingClientRect().top).filter((y) => y > tb);
+        const lim = drag.length ? Math.min(...drag) : 1e9;
+        system = biggest(outerOnly(scrollBoxes(box).filter((e) => { const r = e.getBoundingClientRect(); return r.top >= tb - 8 && r.bottom <= lim + 8 && (!comments || !comments.contains(e)) && !e.contains(input); })));
+      }
+    }
+    if (!system) system = biggest(outerOnly(scrollBoxes(document.body).filter((e) => /won auction item/i.test(e.innerText || '') && (!comments || (!comments.contains(e) && !e.contains(comments))))));
+    return { comments, system, mode: 'quick' };
+  }
+  // 系統行：「X won auction item 47 (Shoes)… $13.00」
+  const SYS_RE = /^(.*?)\s+won auction item\s+(\d+)\s+(.*?)(?:\s+\$\s*([\d.,]+))?\s*$/i;
+  const sysMatch = (t) => String(t || '').replace(/\n/g, ' ').replace(/\s*\|\s*/g, ' ').trim().match(SYS_RE);
+  // 左邊 listing 卡片上的「#3 winner 名字」（Quick LIVE 版面沒有下方 won! 卡片時用）
+  function cardWinners() {
+    const out = [];
+    for (const e of xp("//*[starts-with(normalize-space(text()),'#') and contains(normalize-space(.),'winner')]")) {
+      if (inPanel(e) || !visible(e)) continue;
+      let row = e; for (let i = 0; i < 3 && row && !/#\d+\s+winner\s+\S/i.test((row.innerText || '').replace(/\n/g, ' ')); i++) row = row.parentElement;
+      const m = (row && row.innerText || '').replace(/\n/g, ' ').match(/#(\d+)\s+winner\s+(.+?)(?:\s+items sold.*)?$/i);
+      if (!m || /^[-–—\s]*$/.test(m[2])) continue;
+      let card = row; let title = '';
+      for (let i = 0; i < 8 && card; i++) { card = card.parentElement; const tt = (card && card.innerText || '').split('\n').map((x) => x.trim()).find((x) => /^#\d+\s+/.test(x) && !/winner/i.test(x)); if (tt) { title = tt.replace(/^#\d+\s+/, ''); break; } }
+      if (title) out.push({ no: m[1], winner: winnerOnly(m[2]), listing: fullListing(title) });
+    }
+    return out;
   }
   // 把一個清單拆成一條條訊息（往下找到真正有多個子元素的那層）
   function listItems(box) {
@@ -1374,6 +1425,7 @@
   }
 
   let liveTimer = null, liveObs = null, primed = false, wonSeen = null;
+  const cwSeen = new Map();
   // 每個 listing 開始檢測時已經到第幾號；聊天區比這更早的編號都是舊單，不補成新單
   // listing 比對用完整名稱（被截斷的用「開頭相同」比對），不同場次的同類 listing 不會混在一起
   const listingKey = (t) => norm(String(t || '').replace(/(\.\.\.|…)\s*$/, ''));
@@ -1382,7 +1434,7 @@
     for (const [kk, n] of Object.entries(live.base || {})) if (kk && k && (kk.startsWith(k) || k.startsWith(kk))) b = Math.max(b, n);
     return b;
   }
-  function scanBase(system) {
+  function scanBase(system, comments) {
     const base = { ...(live.base || {}) };
     const put = (listing, n) => { const k = listingKey(listing); if (k && n >= 0) base[k] = Math.max(base[k] ?? -1, n); };
     // 左邊 listing 卡片「#147 (Shoes) …」= 下一輪的編號
@@ -1391,9 +1443,9 @@
       const m = (e.textContent || '').trim().match(/^#(\d+)\s+(.+)/);
       if (m && !/winner/i.test(m[2])) put(m[2], +m[1] - 1);
     }
-    for (const it of listItems(system)) {
-      const m = (it.innerText || '').replace(/\n/g, ' ').replace(/\s*\|\s*/g, ' ').match(/won auction item\s+(\d+)\s+(.*?)(?:\s+\$\s*[\d.,]+)?\s*$/i);
-      if (m) put(m[2], +m[1]);
+    for (const it of [...listItems(system), ...listItems(comments)]) {
+      const m = sysMatch(it.innerText);
+      if (m) put(m[3], +m[2]);
     }
     live.base = base;
   }
@@ -1415,11 +1467,24 @@
         LOG('得標', w);
       } else if (!sameName(dup.winner, w.winner)) LOG('忽略：同一編號已有得標者', w, dup.winner);
     }
+    // Quick LIVE 版面：左邊 listing 卡片的「#3 winner 名字」（開始時已經有的不算）
+    const cws = cardWinners(), cwNow = new Set();
+    for (const c of cws) {
+      const k = [c.no, strictKey(c.winner), listingKey(c.listing)].join('|'); cwNow.add(k);
+      if (!primed) { cwSeen.set(k, -1); continue; }
+      if (!cwSeen.has(k)) { cwSeen.set(k, now); continue; }
+      const t0 = cwSeen.get(k); if (t0 < 0 || now - t0 < 1200) continue;
+      cwSeen.set(k, -1);
+      const dup = live.orders.find((o) => o.no === c.no && listingKey(o.listing) && (listingKey(o.listing).startsWith(listingKey(c.listing)) || listingKey(c.listing).startsWith(listingKey(o.listing))));
+      if (!dup && +c.no > baseFor(c.listing)) { live.orders.push({ no: c.no, listing: c.listing, winner: c.winner, price: '', at: t0, paid: false, replies: [] }); changed = true; LOG('得標（listing 卡片）', c); }
+    }
+    for (const [k, v] of cwSeen) if (v >= 0 && !cwNow.has(k)) cwSeen.delete(k);
     const { comments, system } = chatLists();
-    if (!primed) { primedEls = new WeakSet(); primeList(comments); primeList(system); scanBase(system); saveLive(); }
-    // 付款確認：「X won auction item 47 (Shoes)… $13.00」
-    for (const s of newItems(system)) {
-      const m = s.text.replace(/\n/g, ' ').replace(/\s*\|\s*/g, ' ').match(/^(.*?)\s+won auction item\s+(\d+)\s+(.*?)(?:\s+\$\s*([\d.,]+))?\s*$/i);
+    if (!primed) { primedEls = new WeakSet(); primeList(comments); primeList(system); scanBase(system, comments); saveLive(); }
+    const cNew = newItems(comments);
+    // 付款確認：「X won auction item 47 (Shoes)… $13.00」（Quick LIVE 可能混在留言裡）
+    for (const s of [...newItems(system), ...cNew.filter((c) => sysMatch(c.text))]) {
+      const m = sysMatch(s.text);
       if (!m || !primed) continue;
       const name = cleanName(m[1]), no = m[2];
       let o = live.orders.find((x) => x.no === no && sameName(x.winner, name));
@@ -1433,12 +1498,13 @@
         o = { no, listing: fullListing(m[3]), winner: name, price: m[4] || '', at: now, paid: false, replies: [], fromChat: true };
         live.orders.push(o);
       }
+      if (!o.price && m[4]) o.price = m[4];
       if (!o.paid) { o.paid = true; o.paidAt = now; changed = true; }
     }
     // 留言 → 放進該客人得標後 N 分鐘內的每一單
     const win = Math.max(0.5, +live.mins || 3) * 60000;
-    for (const c of newItems(comments)) {
-      if (!primed) continue; // 開始之前的舊留言不算
+    for (const c of cNew) {
+      if (!primed || sysMatch(c.text)) continue; // 開始之前的舊留言不算
       const pc = parseComment(c.text, c.el);
       if (!pc) continue;
       // 先找名字完全一樣（含表情）的單；沒有才用「忽略表情」的近似比對，並標 ≈ 提醒核對
@@ -1481,7 +1547,12 @@
     out.push('won! nodes: ' + wons.length);
     wons.slice(0, 2).forEach((w) => { let c = w; for (let i = 0; i < 5 && c.parentElement; i++) c = c.parentElement; out.push('  card: ' + c.tagName + '.' + String(c.className).slice(0, 60) + ' text=' + JSON.stringify((c.innerText || '').slice(0, 200))); });
     out.push('parsed card: ' + JSON.stringify(readWonCard()));
-    const { comments, system } = chatLists();
+    const cl = chatLists(); const { comments, system } = cl;
+    out.push('layout: ' + (cl.mode || 'no chat input') + ' · Quick LIVE text: ' + /quick live/i.test(document.body.innerText || ''));
+    out.push('card winners: ' + JSON.stringify(cardWinners().slice(0, 4)));
+    xp("//*[starts-with(normalize-space(text()),'#') and contains(normalize-space(.),'winner')]").filter((e) => !inPanel(e)).slice(0, 3).forEach((e) => { let c = e; const ch = []; for (let i = 0; i < 4 && c; i++, c = c.parentElement) ch.push(c.tagName + '.' + String(c.className).slice(0, 30)); out.push('  winner node: ' + JSON.stringify((e.parentElement && e.parentElement.innerText || '').slice(0, 80)) + ' chain: ' + ch.join(' < ')); });
+    const act = leafText(document.body, /^activity$/i)[0];
+    if (act) { let c = act; for (let i = 0; i < 6 && c.parentElement; i++) c = c.parentElement; out.push('activity box text: ' + JSON.stringify((c.innerText || '').slice(0, 400))); }
     const d = (n, b) => { out.push(n + ': ' + (b ? b.tagName + '.' + String(b.className).slice(0, 60) : 'null')); listItems(b).slice(-3).forEach((it) => out.push('    item <' + it.tagName + '.' + String(it.className).slice(0, 40) + '> ' + JSON.stringify((it.innerText || '').slice(0, 120)) + ' html=' + it.innerHTML.replace(/\s+/g, ' ').slice(0, 200))); };
     d('comments list', comments); d('system list', system);
     listItems(comments).slice(-3).forEach((it) => out.push('  parsed: ' + JSON.stringify(parseComment((it.innerText || '').trim(), it))));
@@ -1886,7 +1957,7 @@
       </div>
       <button class="btn primary block big" id="ttf-livego"></button>
       <div class="btnrow">
-        <button class="btn ghost" id="ttf-livecsv">${L('⬇ 匯出 CSV', '⬇ Export CSV')}</button>
+        <button class="btn ghost" id="ttf-livecsv">${L('⬇ 匯出並清空', '⬇ Export & clear')}</button>
         <button class="btn ghost" id="ttf-liveclr">${L('清空記錄', 'Clear records')}</button>
         <button class="btn ghost" id="ttf-livediag">${L('直播診斷', 'Live diagnostics')}</button>
       </div>
@@ -2295,6 +2366,7 @@
     const now = Date.now();
     const card = readAuctionCard();
     if (card && card.status === 'won' && card.who && !feedWins.some((o) => o.no === card.no && strictKey(o.winner) === strictKey(card.who))) feedWins.push({ no: card.no, winner: card.who, at: now });
+    for (const c of cardWinners()) if (!feedWins.some((o) => o.no === c.no && strictKey(o.winner) === strictKey(c.winner))) feedWins.push({ no: c.no, winner: c.winner, at: now });
     const { comments, system } = chatLists();
     let added = 0;
     const annTexts = (ann.hist || []).filter((h) => now - h.t < 10 * 60000).map((h) => h.text.trim());
@@ -2302,6 +2374,7 @@
       const t = (it.innerText || '').trim();
       if (feed.seen.get(it) === t) continue;
       feed.seen.set(it, t);
+      if (sysMatch(t)) { const m = sysMatch(t); if (fset.sys && feedPush({ kind: 's', name: cleanName(m[1]), msg: '#' + m[2] + (m[4] ? '  $' + m[4] : ''), no: m[2], t: now, old: feed.first })) added++; continue; }
       const pc = parseComment(t, it); if (!pc) continue;
       const head = (it.firstElementChild && it.firstElementChild.innerText) || '';
       let host = isHostName(pc.name) || /\b(host|creator)\b/i.test(head.replace(pc.name, ''));
@@ -2312,7 +2385,7 @@
       const t = (it.innerText || '').trim();
       if (feed.seen.get(it) === t) continue;
       feed.seen.set(it, t);
-      const m = t.replace(/\n/g, ' ').replace(/\s*\|\s*/g, ' ').match(/^(.*?)\s+won auction item\s+(\d+)\s+(.*?)(?:\s+\$\s*([\d.,]+))?\s*$/i);
+      const m = sysMatch(t);
       if (m && feedPush({ kind: 's', name: cleanName(m[1]), msg: '#' + m[2] + (m[4] ? '  $' + m[4] : ''), no: m[2], t: now, old: feed.first })) added++;
     }
     feed.first = false;
@@ -2337,13 +2410,16 @@
     .auc.won .st{color:#22c55e}
     .no{display:inline-block;font-weight:800;color:#fff;background:#e5132f;border-radius:.3em;padding:.08em .35em;line-height:1.25;margin-right:.3em;font-size:.85em;vertical-align:.06em}
     #list{flex:1;overflow-y:auto;padding:6px 0 10px;font-size:var(--fs);line-height:1.3}
-    .c{padding:.22em 14px;border-left:4px solid transparent;word-wrap:break-word}
-    .c .n{font-weight:800;margin-right:.45em}
-    .c .m{font-weight:600}
-    .c .tm{font-size:.5em;color:var(--mute);margin-left:.5em;font-weight:400;vertical-align:.15em}
+    .c{padding:.3em 14px .35em;border-left:4px solid transparent;word-wrap:break-word;overflow-wrap:anywhere;border-bottom:1px solid var(--line)}
+    .c .hd{display:flex;align-items:center;flex-wrap:wrap;gap:4px;font-size:max(13px,calc(var(--fs) * .55));line-height:1.35}
+    .c .hd .no{font-size:1em;margin-right:0}
+    .c .n{font-weight:800}
+    .c .m{display:block;font-weight:600;margin-top:.05em}
+    .c .tm{font-size:max(11px,calc(var(--fs) * .4));color:var(--mute);margin-left:auto;font-weight:400}
+    .c.sys .tm{margin-left:.5em}
     .c.win{background:rgba(229,19,47,.12);border-left-color:#e5132f}
     .c.host{background:var(--host);border-left-color:#4f8cff}
-    .c.host .n::after{content:" ${L('主播', 'Host')}";font-size:.55em;font-weight:700;color:#fff;background:#4f8cff;border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:.2em}
+    .c.host .n::after{content:" ${L('主播', 'Host')}";font-size:.8em;font-weight:700;color:#fff;background:#4f8cff;border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:.2em}
     .c.sys{font-size:.62em;color:var(--mute)} .c.sys .ok{color:#22c55e;font-weight:800}
     .empty{color:var(--mute);text-align:center;padding:40px 10px;font-size:16px}
     #more{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#e5132f;color:#fff;border:0;border-radius:20px;padding:8px 16px;font-size:15px;font-weight:700;cursor:pointer;display:none;box-shadow:0 4px 14px rgba(0,0,0,.35)}
@@ -2385,13 +2461,17 @@
     $$('more').onclick = () => { feed.stick = true; scrollEnd(); $$('more').style.display = 'none'; };
     w.addEventListener('pagehide', () => setTimeout(() => { if (feed.win && feed.win.closed) feedStop(); }, 300));
   }
-  let lastAucSig = '';
+  let lastAucSig = null;
   function feedRender(card, added, full) {
     const w = feed.win; if (!w || w.closed) return;
     const d = w.document, list = d.getElementById('list'), auc = d.getElementById('auc');
     if (!list) return;
     if (card !== null) {
-      const c = card || readAuctionCard();
+      let c = card || readAuctionCard();
+      if (!c) { // Quick LIVE 版面沒有下方拍賣卡片：顯示最近一個得標
+        const lw = [...live.orders, ...feedWins].sort((x, y) => x.at - y.at).pop();
+        if (lw) c = { no: lw.no, listing: lw.listing || '', price: lw.price || '', who: lw.winner, status: 'won' };
+      }
       const sig = c ? [c.no, c.price, c.who, c.status, c.listing].join('|') : '';
       if (sig !== lastAucSig) {
         lastAucSig = sig;
@@ -2410,7 +2490,7 @@
       if (fset.onlyWin && x.kind === 'c' && !x.host && !nos.length) return '';
       const tm = x.old ? '' : `<span class="tm">${hhmmss(x.t)}</span>`;
       if (x.kind === 's') return `<div class="c sys"><span class="ok">✓ ${L('已付款', 'Paid')}</span> <span class="no">${escapeHtml(x.msg.split(' ')[0])}</span><b style="color:${nameColor(x.name)}">${escapeHtml(x.name)}</b> ${escapeHtml(x.msg.split(' ').slice(1).join(' '))}${tm}</div>`;
-      return `<div class="c${x.host ? ' host' : ''}${nos.length ? ' win' : ''}">${nos.map((n) => `<span class="no">#${escapeHtml(n)}</span>`).join('')}<span class="n" style="color:${nameColor(x.name)}">${escapeHtml(x.name)}</span><span class="m">${escapeHtml(x.msg)}</span>${tm}</div>`;
+      return `<div class="c${x.host ? ' host' : ''}${nos.length ? ' win' : ''}"><div class="hd">${nos.map((n) => `<span class="no">#${escapeHtml(n)}</span>`).join('')}<span class="n" style="color:${nameColor(x.name)}">${escapeHtml(x.name)}</span>${tm}</div><span class="m">${escapeHtml(x.msg)}</span></div>`;
     };
     if (full) list.innerHTML = rows.map(html).join('') || `<div class="empty">${L('等待新留言…', 'Waiting for comments…')}</div>`;
     else {
@@ -2430,7 +2510,7 @@
       w = window.open('', 'ttlive_comments', 'popup=yes,width=560,height=860');
       if (!w) return 'blocked';
     }
-    feed.win = w; feed.kind = kind; feed.stick = true; feed.first = true; feed.seen = new WeakMap(); lastAucSig = '';
+    feed.win = w; feed.kind = kind; feed.stick = true; feed.first = true; feed.seen = new WeakMap(); lastAucSig = null;
     try { feedSetup(w); } catch (e) { LOG('feed setup fail', e); feed.win = null; try { w.close(); } catch (er) { /* 空 */ } return 'blocked'; }
     feedTick();
     feedRender(null, 0, true);
@@ -2661,9 +2741,23 @@
     $('ttf-livego').onclick = () => { if (live.on) stopLive(); else startLive(true); };
     $('ttf-liveq').oninput = () => renderLive();
     $('ttf-livecsv').onclick = () => {
+      const el = $('ttf-livemsg');
+      if (!live.orders.length) { el.textContent = L('沒有記錄可以匯出', 'No records to export'); el.className = 'msg warn'; return; }
+      // 文件名 = 場次 + 日期（從 listing 名稱結尾「- PT1 - 1110」讀，讀不到就用今天的設定）
+      const ses = [];
+      for (const o of live.orders) {
+        const m = String(o.listing || '').match(/-\s*(PT\s*\d+)\s*-\s*(\d{3,4})\s*$/i);
+        const k = m ? m[1].replace(/\s+/g, '').toUpperCase() + '_' + m[2] : '';
+        if (k && !ses.includes(k)) ses.push(k);
+      }
+      const name = `TikTokLive_${(ses.length ? ses : [ptLabel() + '_' + today()]).join('+')}_${new Date().getFullYear()}.csv`;
       const blob = new Blob([liveCSV()], { type: 'text/csv;charset=utf-8' });
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `tiktok-live-orders-${stamp()}.csv`;
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
       document.body.appendChild(a); a.click(); a.remove();
+      try { localStorage.setItem('ttfill_live_last', JSON.stringify({ at: Date.now(), name, orders: live.orders })); } catch (e) { /* 空 */ } // 留一份備份
+      const n = live.orders.length;
+      live.orders = []; saveLive(); renderLive();
+      el.textContent = L(`已匯出 ${n} 單到「${name}」，記錄已清空`, `Exported ${n} orders to “${name}” and cleared the records`); el.className = 'msg ok';
     };
     $('ttf-liveclr').onclick = (e) => {
       const b = e.currentTarget;
