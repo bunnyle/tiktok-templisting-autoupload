@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      6.2
+// @version      6.3
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -200,6 +200,28 @@
     return b && textInputs(b)[0] ? d : null;
   };
 
+  // 點了「Temporary listing / product」之後：舊版直接打開彈窗；新版會彈出子選單「Create new / Choose from LIVE history」
+  async function clickTempItem(item) {
+    const before = new Set(findByText(document.body, 'Create new'));
+    const inMenu = (e) => !!e.closest('[role="menu"], [role="menuitem"], [class*="dropdown"], [class*="Dropdown"], [class*="menu"], [class*="popover"], [class*="popup"], [class*="trigger"]');
+    const createNew = () => {
+      const all = findByText(document.body, 'Create new');
+      return all.find((e) => !before.has(e)) || all.find(inMenu) || null;
+    };
+    const state = () => (formReady() ? 'dlg' : createNew() ? 'sub' : null);
+    realClick(clickable(item));
+    let r = await waitFor(state, 4000);
+    if (!r) { // 子選單可能要滑鼠移上去才出現
+      for (const t of ['pointerover', 'mouseover', 'mouseenter', 'mousemove']) item.dispatchEvent(new MouseEvent(t, { bubbles: true }));
+      r = await waitFor(state, 3000);
+    }
+    if (r === 'sub') {
+      const c = createNew();
+      realClick(clickable(c));
+    }
+    return await waitFor(formReady, 12000);
+  }
+
   async function openDialog() {
     if (getDialog()) {
       const r = await waitFor(formReady, 10000);
@@ -210,8 +232,7 @@
     // A) 列表是空的時候，頁面中間有「Temporary auction」卡片
     const card = findByText(document.body, 'Temporary auction')[0] || findByText(document.body, 'Temporary listing')[0];
     if (card) {
-      realClick(clickable(card));
-      d = await waitFor(formReady, 12000);
+      d = await clickTempItem(card);
       if (d) return d;
     }
     // B) 點右上角「+ Add」→ 下拉菜單「Temporary product / Temporary auction」
@@ -227,9 +248,8 @@
       add.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
       item = await waitFor(findItem, 2500);
     }
-    if (!item) throw E('點了 + Add 但沒看到 Temporary product，請手動打開彈窗', 'Clicked + Add but “Temporary product” didn\'t appear — please open the window manually', true);
-    realClick(clickable(item));
-    d = await waitFor(formReady, 12000);
+    if (!item) throw E('點了 + Add 但沒看到 Temporary listing，請手動打開彈窗', 'Clicked + Add but “Temporary listing” didn\'t appear — please open the window manually', true);
+    d = await clickTempItem(item);
     if (!d) throw E('彈窗沒有打開，請手動打開後再按 ⌥F', 'The listing window didn\'t open — open it manually, then press ⌥F', true);
     return d;
   }
