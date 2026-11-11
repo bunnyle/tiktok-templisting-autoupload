@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.2
+// @version      7.3
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -1281,7 +1281,8 @@
     .replace(/[\p{Extended_Pictographic}\p{Regional_Indicator}‍️⃣]/gu, ' ')
     .replace(/[^\p{L}\p{N}_.\-' ]/gu, ' '));
   // 嚴格比對：連表情符號一起比（只去掉「No. 1 customer」這類標籤和多餘空白）
-  const strictKey = (t) => String(t || '').replace(/No\.\s*\d+\s*customer/gi, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+  const strictKey = (t) => String(t || '').replace(/No\.\s*\d+\s*customer/gi, ' ').replace(/\b(top fan|moderator|host)\b/gi, ' ')
+    .replace(/[^\p{L}\p{N}\p{M}\p{Extended_Pictographic}\p{Regional_Indicator}\u200d_.\-' ]/gu, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
   const sameName = (a, b) => {
     const x = nameKey(a), y = nameKey(b);
     if (!x || !y) return false;
@@ -1451,7 +1452,8 @@
       const tag = n.tagName;
       if (tag === 'IMG') {
         const alt = n.getAttribute('alt') || '', r = n.getBoundingClientRect();
-        if (alt && r.width <= 36 && !n.closest('[class*="avatar"]')) out += alt;
+        // 只要表情的 alt；徽章圖示的 alt（例如 "icon"）不算進名字或留言
+        if (alt && r.width <= 36 && !n.closest('[class*="avatar"]') && /^[\p{Extended_Pictographic}\p{Regional_Indicator}\u200d\ufe0f\u20e3\s\p{Emoji_Component}]+$/u.test(alt)) out += alt;
         return;
       }
       if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'svg' || tag === 'SVG') return;
