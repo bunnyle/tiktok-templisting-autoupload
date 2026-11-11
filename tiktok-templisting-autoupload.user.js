@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.5
+// @version      7.6
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -24,15 +24,16 @@
   const tickErr = {};
   function bgInterval(fn, ms, name) {
     const run = () => { try { fn(); tickErr[name] = null; } catch (e) { tickErr[name] = (e && e.message) || String(e); console.warn('[TTFill]', name, e); } };
+    let beat = 0, w = null, url = null;
     try {
-      const url = URL.createObjectURL(new Blob([`setInterval(()=>postMessage(0),${ms})`], { type: 'text/javascript' }));
-      const w = new Worker(url);
-      w.onmessage = run;
-      return () => { w.terminate(); URL.revokeObjectURL(url); };
-    } catch (e) {
-      const iv = setInterval(run, ms);
-      return () => clearInterval(iv);
-    }
+      url = URL.createObjectURL(new Blob([`setInterval(()=>postMessage(0),${ms})`], { type: 'text/javascript' }));
+      w = new Worker(url);
+      w.onmessage = () => { beat = Date.now(); run(); };
+      w.onerror = () => { w = null; }; // 網站不允許 Worker：只用普通計時器
+    } catch (e) { w = null; }
+    // 普通計時器做後備：Worker 沒在跑（被網站擋掉）時由它來跑
+    const iv = setInterval(() => { if (Date.now() - beat > ms * 2.5) run(); }, ms);
+    return () => { clearInterval(iv); try { if (w) w.terminate(); if (url) URL.revokeObjectURL(url); } catch (e) { /* 空 */ } };
   }
   const visible = (el) => {
     if (!el || !el.getClientRects().length) return false;
