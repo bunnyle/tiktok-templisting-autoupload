@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      6.6
+// @version      6.7
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -44,9 +44,10 @@
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
   const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "訂": "订", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点"};
-  const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击']];
+  const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
-  const lang = () => state.lang || 'hant';
+  let langOverride = null; // 評論窗可以用自己的語言
+  const lang = () => langOverride || state.lang || 'hant';
   const L = (hant, en) => (lang() === 'en' ? en : lang() === 'hans' ? toHans(hant) : hant);
   const E = (hant, en, retry) => Object.assign(new Error(L(hant, en)), { retry: !!retry });
 
@@ -2395,7 +2396,7 @@
   function feedHTML() {
     return `<!doctype html><html><head><meta charset="utf-8"><title>TikTok Live ${L('評論', 'Comments')}</title></head><body></body></html>`;
   }
-  const FEED_CSS = `
+  const feedCSS = () => `
     *{box-sizing:border-box} html,body{margin:0;height:100%}
     body{--bg:#0e0f13;--fg:#f3f4f6;--mute:#9aa0aa;--line:#262a33;--card:#171a21;--host:#1d2a44;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Microsoft JhengHei","Segoe UI",sans-serif;background:var(--bg);color:var(--fg);display:flex;flex-direction:column;overflow:hidden}
     body.light{--bg:#ffffff;--fg:#111317;--mute:#636a75;--line:#e4e6ea;--card:#f5f6f8;--host:#e6efff}
@@ -2404,6 +2405,7 @@
     .bar input[type=range]{width:120px}
     .bar button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;padding:3px 9px;cursor:pointer}
     .bar .grow{flex:1}
+    .bar select{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;padding:3px 6px;cursor:pointer}
     .auc{padding:10px 14px;border-bottom:1px solid var(--line);background:var(--card);display:flex;align-items:center;gap:12px;font-size:calc(var(--fs) * .8)}
     .auc .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--mute)}
     .auc .w{font-weight:800;white-space:nowrap}
@@ -2438,17 +2440,20 @@
     .hist #hb{overflow-y:auto;padding:4px 0 10px}
     .hist .older{display:block;margin:6px auto;font-size:14px}
     .off{position:fixed;inset:0;background:rgba(0,0,0,.75);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;text-align:center;padding:20px}`;
-  function feedSetup(w) {
+  const inFeedLang = (fn) => function (...a) { const o = langOverride; langOverride = fset.lang || null; try { return fn.apply(this, a); } finally { langOverride = o; } };
+  const feedSetup = inFeedLang(function (w) {
     const d = w.document;
     if (!d.body) { d.open(); d.write(feedHTML()); d.close(); }
     d.title = 'TikTok Live ' + L('評論', 'Comments');
-    const st = d.createElement('style'); st.textContent = FEED_CSS; d.head.appendChild(st);
+    d.head.querySelectorAll('style[data-tt]').forEach((x) => x.remove());
+    const st = d.createElement('style'); st.dataset.tt = '1'; st.textContent = feedCSS(); d.head.appendChild(st);
     d.body.innerHTML = `
       <div class="bar">
         <label>A<input type="range" id="fs" min="14" max="64" step="1"><b id="fsv"></b></label>
         <label><input type="checkbox" id="ow">${L('只看得標客人', 'Winners only')}</label>
         <label><input type="checkbox" id="sy">${L('付款通知', 'Payments')}</label>
         <input type="search" id="q" placeholder="${L('🔍 搜尋客人 / 留言 / #編號', '🔍 Search customer / comment / #no.')}">
+        <select id="lg" title="Language"><option value="hant">繁體</option><option value="hans">简体</option><option value="en">English</option></select>
         <button id="th">${L('深色 / 淺色', 'Dark / Light')}</button>
         <button id="fsc">${L('全螢幕', 'Full screen')}</button>
       </div>
@@ -2485,10 +2490,13 @@
     $$('hx').onclick = () => histClose();
     $$('hq').onclick = () => { $$('q').value = feed.hist || ''; feed.q = feed.hist || ''; histClose(); feed.stick = true; feedRender(null, 0, true); };
     d.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (feed.hist != null) histClose(); else if ($$('q').value) { $$('q').value = ''; feed.q = ''; feedRender(null, 0, true); } } });
-    w.addEventListener('pagehide', () => setTimeout(() => { if (feed.win && feed.win.closed) feedStop(); }, 300));
-  }
+    if (!feed.hideBound) { feed.hideBound = true; w.addEventListener('pagehide', () => setTimeout(() => { if (feed.win && feed.win.closed) feedStop(); }, 300)); }
+    // 評論窗語言（和面板分開設定）
+    $$('lg').value = fset.lang || lang();
+    $$('lg').onchange = (e) => { fset.lang = e.target.value; saveState(); lastAucSig = null; feedSetup(w); feedRender(undefined, 0, true); if (feed.hist != null) histRender(true); };
+  });
   let lastAucSig = null;
-  function feedRender(card, added, full) {
+  const feedRender = inFeedLang(function (card, added, full) {
     const w = feed.win; if (!w || w.closed) return;
     const d = w.document, list = d.getElementById('list'), auc = d.getElementById('auc');
     if (!list) return;
@@ -2526,7 +2534,7 @@
     if (qi) { qi.style.display = q ? 'block' : 'none'; qi.textContent = q ? L(`搜尋「${feed.q}」：${rows.length} 條（按 Esc 清除）`, `Search “${feed.q}”: ${rows.length} (Esc to clear)`) : ''; }
     if (feed.stick) feed.scrollEnd(); else if (added) d.getElementById('more').style.display = 'block';
     if (added && feed.hist != null && feed.items.slice(-added).some((x) => strictKey(x.name) === strictKey(feed.hist))) histRender();
-  }
+  });
   // 搜尋：名字、留言、#編號
   function feedMatch(x, q) {
     if ((x.name + ' ' + x.msg).toLowerCase().includes(q)) return true;
@@ -2550,7 +2558,7 @@
   // 客人歷史發言：先看最近 5 條，按「更早的」看全部
   function histOpen(name) { feed.hist = name; feed.histAll = false; histRender(true); }
   function histClose() { feed.hist = null; const d = feed.win && !feed.win.closed && feed.win.document; if (d) d.getElementById('hist').classList.add('hide'); }
-  function histRender(scroll) {
+  const histRender = inFeedLang(function (scroll) {
     const w = feed.win; if (!w || w.closed || feed.hist == null) return;
     const d = w.document, name = feed.hist, k = strictKey(name);
     const mine = feed.items.filter((x) => strictKey(x.name) === k);
@@ -2566,7 +2574,7 @@
     d.getElementById('hist').classList.remove('hide');
     if (feed.stick) feed.scrollEnd();
     if (scroll || !feed.histAll) hb.scrollTop = hb.scrollHeight;
-  }
+  });
   async function feedOpen(kind) {
     if (feed.win && !feed.win.closed) { try { feed.win.focus(); } catch (e) { /* 空 */ } return true; }
     let w = null;
@@ -2577,7 +2585,7 @@
       w = window.open('', 'ttlive_comments', 'popup=yes,width=560,height=860');
       if (!w) return 'blocked';
     }
-    feed.win = w; feed.kind = kind; feed.stick = true; feed.first = true; feed.seen = new WeakMap(); lastAucSig = null;
+    feed.win = w; feed.kind = kind; feed.stick = true; feed.first = true; feed.hideBound = false; feed.seen = new WeakMap(); lastAucSig = null;
     try { feedSetup(w); } catch (e) { LOG('feed setup fail', e); feed.win = null; try { w.close(); } catch (er) { /* 空 */ } return 'blocked'; }
     feedTick();
     feedRender(null, 0, true);
@@ -2597,7 +2605,8 @@
   // TikTok 頁面重新整理 / 關掉時，提示評論窗已經斷開
   window.addEventListener('pagehide', () => {
     const w = feed.win; if (!w || w.closed || feed.kind === 'pip') return;
-    try { const o = w.document.createElement('div'); o.className = 'off'; o.textContent = L('TikTok 頁面已重新整理或關閉 — 請回到面板再按一次「彈出評論窗」', 'The TikTok page reloaded or closed — press “Pop out comments” in the panel again'); w.document.body.appendChild(o); } catch (e) { /* 空 */ }
+    try { const o = w.document.createElement('div'); o.className = 'off'; langOverride = fset.lang || null; o.textContent = L('TikTok 頁面已重新整理或關閉 — 請回到面板再按一次「彈出評論窗」', 'The TikTok page reloaded or closed — press “Pop out comments” in the panel again'); w.document.body.appendChild(o); } catch (e) { /* 空 */ }
+    langOverride = null;
   });
   let updFeedBtns = () => {};
 
