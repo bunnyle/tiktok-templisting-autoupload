@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.6
+// @version      7.7
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -59,7 +59,7 @@
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   let langOverride = null; // 評論窗可以用自己的語言
@@ -2380,7 +2380,7 @@
   }
 
   /* ================= 評論大窗：把聊天區搬到另一個窗口（大字、分顏色） ================= */
-  state.feed = Object.assign({ fs: 26, onlyWin: false, sys: true, host: '', theme: 'dark', mute: '' }, state.feed || {});
+  state.feed = Object.assign({ fs: 26, onlyWin: false, sys: true, host: '', theme: 'dark', mute: '', newTop: true }, state.feed || {});
   const fset = state.feed;
   const feed = { win: null, items: [], seen: new WeakMap(), iv: null, obs: null, timer: null, kind: '', stick: true };
   // 過濾留言：每行一句，留言包含這句就不顯示（不分大小寫、忽略標點和空格）
@@ -2512,6 +2512,12 @@
     .c.host .n::after{content:" ${L('主播', 'Host')}";font-size:.8em;font-weight:700;color:#fff;background:#4f8cff;border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:.2em}
     .c.sys{font-size:.62em;color:var(--mute)} .c.sys .ok{color:#22c55e;font-weight:800}
     .empty{color:var(--mute);text-align:center;padding:40px 10px;font-size:16px}
+    @keyframes ttin{from{opacity:0;transform:translateY(-12px);background:rgba(250,204,21,.25)}to{opacity:1;transform:none}}
+    .c.new{animation:ttin .45s ease-out}
+    body.newtop .c.new{animation-name:ttin}
+    body:not(.newtop) .c.new{animation-name:ttup}
+    @keyframes ttup{from{opacity:0;transform:translateY(12px);background:rgba(250,204,21,.25)}to{opacity:1;transform:none}}
+    body.newtop #more{top:auto;bottom:16px}
     #more{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#e5132f;color:#fff;border:0;border-radius:20px;padding:8px 16px;font-size:15px;font-weight:700;cursor:pointer;display:none;box-shadow:0 4px 14px rgba(0,0,0,.35)}
     .bar input[type=search]{font:inherit;font-size:14px;flex:1 1 160px;min-width:120px;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;padding:4px 9px}
     mark{background:#facc15;color:#111;border-radius:3px;padding:0 1px}
@@ -2546,6 +2552,7 @@
         <label>A<input type="range" id="fs" min="14" max="64" step="1"><b id="fsv"></b></label>
         <label><input type="checkbox" id="ow">${L('只看得標客人', 'Winners only')}</label>
         <label><input type="checkbox" id="sy">${L('付款通知', 'Payments')}</label>
+        <label><input type="checkbox" id="nt">${L('最新在上面', 'Newest on top')}</label>
         <input type="search" id="q" placeholder="${L('🔍 搜尋客人 / 留言 / #編號', '🔍 Search customer / comment / #no.')}">
         <select id="lg" title="Language"><option value="hant">繁體</option><option value="hans">简体</option><option value="en">English</option></select>
         <button id="mb">⚙ ${L('過濾 / 設定', 'Filter / settings')} <span id="mc"></span></button>
@@ -2559,22 +2566,26 @@
       <div class="qinfo" id="qinfo"></div>
       <div id="list"></div>
       <div class="hist hide" id="hist"><div class="hh"><span class="hn" id="hn"></span><span id="hw"></span><span class="cnt" id="hc"></span><button id="hq">${L('🔍 搜尋這位', '🔍 Filter')}</button><button class="x" id="hx">×</button></div><div id="hb"></div></div>
-      <button id="more">↓ ${L('新留言', 'New comments')}</button>`;
+      <button id="more"></button>`;
     const $$ = (id) => d.getElementById(id);
     const applyFs = () => { d.body.style.setProperty('--fs', fset.fs + 'px'); $$('fsv').textContent = fset.fs; };
     const applyTheme = () => d.body.classList.toggle('light', fset.theme === 'light');
     $$('fs').value = fset.fs; applyFs(); applyTheme();
     $$('fs').oninput = (e) => { fset.fs = +e.target.value; applyFs(); saveState(); if (feed.stick) scrollEnd(); };
+    const moreTxt = () => { d.getElementById('more').textContent = (fset.newTop ? '↑ ' : '↓ ') + L('新留言', 'New comments'); };
+    moreTxt();
+    d.body.classList.toggle('newtop', !!fset.newTop);
+    $$('nt').checked = !!fset.newTop; $$('nt').onchange = (e) => { fset.newTop = e.target.checked; saveState(); d.body.classList.toggle('newtop', fset.newTop); moreTxt(); feed.stick = true; d.getElementById('more').style.display = 'none'; feedRender(null, 0, true); };
     $$('ow').checked = !!fset.onlyWin; $$('ow').onchange = (e) => { fset.onlyWin = e.target.checked; saveState(); feedRender(null, 0, true); };
     $$('sy').checked = !!fset.sys; $$('sy').onchange = (e) => { fset.sys = e.target.checked; saveState(); feedRender(null, 0, true); };
     $$('th').onclick = () => { fset.theme = fset.theme === 'light' ? 'dark' : 'light'; saveState(); applyTheme(); feedRender(null, 0, true); };
     $$('fsc').onclick = () => { try { if (d.fullscreenElement) d.exitFullscreen(); else d.documentElement.requestFullscreen(); } catch (e) { /* 小窗不支援全螢幕 */ } };
     if (feed.kind === 'pip') $$('fsc').style.display = 'none';
     const list = $$('list');
-    const scrollEnd = () => { list.scrollTop = list.scrollHeight; };
+    const scrollEnd = () => { list.scrollTop = fset.newTop ? 0 : list.scrollHeight; };
     feed.scrollEnd = scrollEnd;
     list.addEventListener('scroll', () => {
-      feed.stick = list.scrollHeight - list.scrollTop - list.clientHeight < 40;
+      feed.stick = fset.newTop ? list.scrollTop < 40 : list.scrollHeight - list.scrollTop - list.clientHeight < 40;
       if (feed.stick) $$('more').style.display = 'none';
     });
     $$('more').onclick = () => { feed.stick = true; scrollEnd(); $$('more').style.display = 'none'; };
@@ -2635,13 +2646,22 @@
     if (mc && (full || added)) { const n = feed.items.filter((x) => x.kind === 'c' && !x.host && isMuted(x.msg)).length; mc.textContent = n ? `(${n})` : ''; }
     const rows = feed.items.filter(show);
     const html = (x) => feedRow(x, q, fset.onlyWin);
+    const top = !!fset.newTop; // 最新在上面
     if (full) {
       const out = []; for (let i = rows.length - 1; i >= 0 && out.length < FEED_MAX; i--) { const h = html(rows[i]); if (h) out.push(h); }
-      list.innerHTML = out.reverse().join('') || `<div class="empty">${q ? L('沒有符合的留言', 'No matching comments') : L('等待新留言…', 'Waiting for comments…')}</div>`;
+      if (!top) out.reverse();
+      list.innerHTML = out.join('') || `<div class="empty">${q ? L('沒有符合的留言', 'No matching comments') : L('等待新留言…', 'Waiting for comments…')}</div>`;
     } else {
-      const add = feed.items.slice(-added).filter(show).map(html).join('');
-      if (add) { const em = list.querySelector('.empty'); if (em) em.remove(); list.insertAdjacentHTML('beforeend', add); }
-      while (list.children.length > FEED_MAX) list.firstElementChild.remove();
+      const parts = feed.items.slice(-added).filter(show).map(html).filter(Boolean).map((h) => h.replace('<div class="c', '<div class="new c'));
+      if (parts.length) {
+        const em = list.querySelector('.empty'); if (em) em.remove();
+        if (top) {
+          const h0 = list.scrollHeight;
+          list.insertAdjacentHTML('afterbegin', parts.reverse().join(''));
+          if (!feed.stick) list.scrollTop += list.scrollHeight - h0; // 正在看下面的舊留言：畫面不跳
+        } else list.insertAdjacentHTML('beforeend', parts.join(''));
+      }
+      while (list.children.length > FEED_MAX) (top ? list.lastElementChild : list.firstElementChild).remove();
     }
     const qi = d.getElementById('qinfo');
     if (qi) { qi.style.display = q ? 'block' : 'none'; qi.textContent = q ? L(`搜尋「${feed.q}」：${rows.length} 條（按 Esc 清除）`, `Search “${feed.q}”: ${rows.length} (Esc to clear)`) : ''; }
