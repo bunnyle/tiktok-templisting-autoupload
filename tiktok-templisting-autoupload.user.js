@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      6.8
+// @version      6.9
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -1384,20 +1384,37 @@
     return out;
   }
   // 把一個清單拆成一條條訊息（往下找到真正有多個子元素的那層）
-  function listItems(box) {
+  function listItems(box, byAvatar) {
     if (!box) return [];
     let el = box;
     // 只穿過「清單外殼」那幾層（list / content / wrapper…），到訊息那一層就停，清單只有一條訊息時也不會拆錯
     const isShell = (c) => /list|content|wrapper|virtual|scroll|holder|inner|body/i.test(c.className || '') || c.children.length >= 3 || c.getBoundingClientRect().height > 150;
     for (let i = 0; i < 6 && el && el.children.length === 1 && isShell(el.children[0]); i++) el = el.children[0];
-    return [...(el ? el.children : [])].filter((c) => visible(c) && (c.innerText || '').trim());
+    const base = [...(el ? el.children : [])].filter((c) => visible(c) && (c.innerText || '').trim());
+    // 用頭像切開每一條留言：不論 TikTok 把幾條留言包在同一層，每個頭像 = 一條
+    const avs = byAvatar ? avatarsIn(box) : [];
+    if (!avs.length) return base;
+    const rows = avs.map((a) => { let r = a; while (r.parentElement && r.parentElement !== box && avatarsIn(r.parentElement).length === 1) r = r.parentElement; return r; })
+      .filter((r, i, arr) => arr.indexOf(r) === i && visible(r) && (r.innerText || '').trim());
+    const extra = base.filter((b) => !avatarsIn(b).length && !rows.some((r) => r.contains(b) || b.contains(r)));
+    return [...rows, ...extra].sort((x, y) => (x.compareDocumentPosition(y) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+  }
+  function avatarsIn(root) {
+    if (!root || !root.querySelectorAll) return [];
+    let av = [...root.querySelectorAll('[class*="avatar"]')];
+    if (!av.length) { // 沒有 avatar class：用左邊對齊、方形的小圖
+      const imgs = [...root.querySelectorAll('img')].filter((i) => { const r = i.getBoundingClientRect(); return r.width >= 16 && r.width <= 64 && Math.abs(r.width - r.height) < 6; });
+      const minL = Math.min(...imgs.map((i) => i.getBoundingClientRect().left));
+      av = imgs.filter((i) => i.getBoundingClientRect().left - minL < 30);
+    }
+    return av.filter((a) => !av.some((o) => o !== a && o.contains(a)));
   }
   const seen = new WeakMap();
   let primedEls = new WeakSet(); // 按「開始」時畫面上已有的元素：永遠不算新訊息
   function primeList(box) { if (box) for (const e of box.querySelectorAll('*')) primedEls.add(e); }
-  function newItems(box) {
+  function newItems(box, byAvatar) {
     const out = [];
-    for (const it of listItems(box)) {
+    for (const it of listItems(box, byAvatar)) {
       if (primedEls.has(it)) continue;
       const t = (it.innerText || '').trim();
       if (seen.get(it) === t) continue;
@@ -1422,9 +1439,11 @@
         if (name && msg) return { name: cleanName(name), msg: msg.replace(/\s*\n\s*/g, ' ') };
       }
     }
+    const BADGE = /^(\d{1,3}|no\.?\s*\d+\s*customer|top\s*\d+|host|moderator|mod|creator|new|lv\.?\s*\d+|fan club.*)$/i;
     const lines = t.split('\n').map((x) => x.trim()).filter(Boolean);
     if (lines.length < 2) return null;
-    return { name: cleanName(lines[0]), msg: lines[lines.length - 1] };
+    const msg = lines.slice(1).filter((x) => !BADGE.test(x)).join(' ');
+    return msg ? { name: cleanName(lines[0]), msg } : null;
   }
 
   let liveTimer = null, liveObs = null, primed = false, wonSeen = null;
@@ -1446,7 +1465,7 @@
       const m = (e.textContent || '').trim().match(/^#(\d+)\s+(.+)/);
       if (m && !/winner/i.test(m[2])) put(m[2], +m[1] - 1);
     }
-    for (const it of [...listItems(system), ...listItems(comments)]) {
+    for (const it of [...listItems(system), ...listItems(comments, true)]) {
       const m = sysMatch(it.innerText);
       if (m) put(m[3], +m[2]);
     }
@@ -1484,7 +1503,7 @@
     for (const [k, v] of cwSeen) if (v >= 0 && !cwNow.has(k)) cwSeen.delete(k);
     const { comments, system } = chatLists();
     if (!primed) { primedEls = new WeakSet(); primeList(comments); primeList(system); scanBase(system, comments); saveLive(); }
-    const cNew = newItems(comments);
+    const cNew = newItems(comments, true);
     // 付款確認：「X won auction item 47 (Shoes)… $13.00」（Quick LIVE 可能混在留言裡）
     for (const s of [...newItems(system), ...cNew.filter((c) => sysMatch(c.text))]) {
       const m = sysMatch(s.text);
@@ -1558,7 +1577,7 @@
     if (act) { let c = act; for (let i = 0; i < 6 && c.parentElement; i++) c = c.parentElement; out.push('activity box text: ' + JSON.stringify((c.innerText || '').slice(0, 400))); }
     const d = (n, b) => { out.push(n + ': ' + (b ? b.tagName + '.' + String(b.className).slice(0, 60) : 'null')); listItems(b).slice(-3).forEach((it) => out.push('    item <' + it.tagName + '.' + String(it.className).slice(0, 40) + '> ' + JSON.stringify((it.innerText || '').slice(0, 120)) + ' html=' + it.innerHTML.replace(/\s+/g, ' ').slice(0, 200))); };
     d('comments list', comments); d('system list', system);
-    listItems(comments).slice(-3).forEach((it) => out.push('  parsed: ' + JSON.stringify(parseComment((it.innerText || '').trim(), it))));
+    listItems(comments, true).slice(-3).forEach((it) => out.push('  parsed: ' + JSON.stringify(parseComment((it.innerText || '').trim(), it))));
     const sysTxt = xp("//*[contains(normalize-space(.),'won auction item') and not(.//*[contains(normalize-space(.),'won auction item')])]").filter((e) => !inPanel(e) && e.tagName !== 'SCRIPT').slice(-2);
     sysTxt.forEach((e) => { let c = e; const chain = []; for (let i = 0; i < 7 && c; i++, c = c.parentElement) chain.push(c.tagName + '.' + String(c.className).slice(0, 40)); out.push('  sys line: ' + JSON.stringify((e.innerText || '').slice(0, 100)) + ' chain: ' + chain.join(' < ')); });
     return out.join('\n');
@@ -2374,7 +2393,7 @@
     const { comments, system } = chatLists();
     let added = 0;
     const annTexts = (ann.hist || []).filter((h) => now - h.t < 10 * 60000).map((h) => h.text.trim());
-    for (const it of listItems(comments)) {
+    for (const it of listItems(comments, true)) {
       const t = (it.innerText || '').trim();
       if (feed.seen.get(it) === t) continue;
       feed.seen.set(it, t);
