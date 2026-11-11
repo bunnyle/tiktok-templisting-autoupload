@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.4
+// @version      7.5
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -1263,6 +1263,8 @@
   }
   const live = loadLive();
   for (const o of live.orders) { // 修正舊版記錄裡的「Bids: $2.00 名字」
+    const pm = String(o.winner || '').match(/^(.*?)\s*:\s*\$\s*[\d.,]+\s*$/); // 舊版：「名字 : $9.00」（其實是出價領先者）
+    if (pm) { o.winner = pm[1].trim(); delete o.src; }
     if (/bids?\s*:/i.test(o.winner)) o.winner = String(o.winner).replace(/^[\s\S]*bids?\s*:\s*[$\s\u00a0]*[\d.,]+/i, '').replace(/\s+/g, ' ').trim();
   }
   const saveLive = () => { try { localStorage.setItem(LIVE_KEY, JSON.stringify(live)); } catch (e) { LOG('live save fail', e); } };
@@ -1492,7 +1494,6 @@
   }
 
   let liveTimer = null, liveObs = null, primed = false, wonSeen = null;
-  const cwSeen = new Map();
   // 每個 listing 開始檢測時已經到第幾號；聊天區比這更早的編號都是舊單，不補成新單
   // listing 比對用完整名稱（被截斷的用「開頭相同」比對），不同場次的同類 listing 不會混在一起
   const listingKey = (t) => norm(String(t || '').replace(/(\.\.\.|…)\s*$/, ''));
@@ -1529,23 +1530,16 @@
       // 同一個 listing 的同一個編號只能有一個得標者
       const dup = live.orders.find((o) => o.no === w.no && listingKey(o.listing) && (listingKey(o.listing).startsWith(listingKey(w.listing)) || listingKey(w.listing).startsWith(listingKey(o.listing))));
       if (!dup) {
-        live.orders.push({ no: w.no, listing: w.listing, winner: w.winner, price: w.price, at: wonSeen.t, paid: false, replies: [] });
+        live.orders.push({ no: w.no, listing: w.listing, winner: w.winner, price: w.price, at: wonSeen.t, paid: false, replies: [], src: 'card' });
         changed = true;
         LOG('得標', w);
-      } else if (!sameName(dup.winner, w.winner)) LOG('忽略：同一編號已有得標者', w, dup.winner);
+      } else if (!sameName(dup.winner, w.winner)) {
+        if (dup.src !== 'card' && !dup.paid) { // 舊版從 listing 卡片讀到的是「出價領先」不是得標：用 won! 卡片改正
+          LOG('改正得標者', dup.winner, '→', w.winner);
+          Object.assign(dup, { winner: w.winner, price: w.price || dup.price, at: wonSeen.t, replies: [], src: 'card' }); changed = true;
+        } else LOG('忽略：同一編號已有得標者', w, dup.winner);
+      } else if (!dup.src) { dup.src = 'card'; }
     }
-    // Quick LIVE 版面：左邊 listing 卡片的「#3 winner 名字」（開始時已經有的不算）
-    const cws = cardWinners(), cwNow = new Set();
-    for (const c of cws) {
-      const k = [c.no, strictKey(c.winner), listingKey(c.listing)].join('|'); cwNow.add(k);
-      if (!primed) { cwSeen.set(k, -1); continue; }
-      if (!cwSeen.has(k)) { cwSeen.set(k, now); continue; }
-      const t0 = cwSeen.get(k); if (t0 < 0 || now - t0 < 1200) continue;
-      cwSeen.set(k, -1);
-      const dup = live.orders.find((o) => o.no === c.no && listingKey(o.listing) && (listingKey(o.listing).startsWith(listingKey(c.listing)) || listingKey(c.listing).startsWith(listingKey(o.listing))));
-      if (!dup && +c.no > baseFor(c.listing)) { live.orders.push({ no: c.no, listing: c.listing, winner: c.winner, price: c.price || '', at: t0, paid: false, replies: [] }); changed = true; LOG('得標（listing 卡片）', c); }
-    }
-    for (const [k, v] of cwSeen) if (v >= 0 && !cwNow.has(k)) cwSeen.delete(k);
     const { comments, system } = chatLists();
     if (!primed) { primedEls = new WeakSet(); primeList(comments); primeList(system); scanBase(system, comments); saveLive(); }
     const cNew = newItems(comments, true);
@@ -1558,7 +1552,7 @@
       if (!o && live.orders.some((x) => x.no === no && (listingKey(x.listing).startsWith(listingKey(m[3])) || listingKey(m[3]).startsWith(listingKey(x.listing))))) {
         // 付款訊息的得標者和記錄不同：以付款訊息為準，修正那一單
         const wrong = live.orders.find((x) => x.no === no && !x.paid && (listingKey(x.listing).startsWith(listingKey(m[3])) || listingKey(m[3]).startsWith(listingKey(x.listing))));
-        if (wrong) { LOG('以付款訊息修正得標者', wrong.winner, '→', name); wrong.winner = name; wrong.replies = []; o = wrong; }
+        if (wrong) { LOG('以付款訊息修正得標者', wrong.winner, '→', name); wrong.winner = name; wrong.replies = []; if (m[4]) wrong.price = m[4]; wrong.src = 'card'; o = wrong; }
       }
       if (!o && +no <= baseFor(m[3])) continue; // 開始檢測之前的舊單（聊天清單重新顯示舊訊息時會出現）
       if (!o) { // 開始檢測前沒看到 won! 卡片：用聊天記錄補上
@@ -2455,7 +2449,6 @@
     const now = Date.now();
     const card = readAuctionCard();
     if (card && card.status === 'won' && card.who && !feedWins.some((o) => o.no === card.no && strictKey(o.winner) === strictKey(card.who))) feedWins.push({ no: card.no, winner: card.who, price: card.price, listing: card.listing, at: now, src: 'card' });
-    for (const c of cardWinners()) if (!feedWins.some((o) => o.no === c.no && strictKey(o.winner) === strictKey(c.winner))) feedWins.push({ no: c.no, winner: c.winner, price: c.price, listing: c.listing, at: feed.first ? now - 1 : now, src: 'list' });
     const { comments, system } = chatLists();
     let added = 0;
     const annTexts = (ann.hist || []).filter((h) => now - h.t < 10 * 60000).map((h) => h.text.trim());
@@ -2622,7 +2615,7 @@
       // 頂部只顯示「最近一單 won!」，下面高亮這位客人得標後的回覆（直到下一單得標）
       const pool = [...live.orders, ...feedWins.filter((o) => o.src === 'card')];
       const pick = (arr) => arr.slice().sort((x, y) => x.at - y.at).pop();
-      const c = pick(pool) || pick(feedWins.filter((o) => o.src === 'list'));
+      const c = pick(pool);
       const reps = c ? feed.items.filter((x) => x.kind === 'c' && !x.host && x.t >= c.at && !isMuted(x.msg) && (strictKey(x.name) === strictKey(c.winner) || sameName(x.name, c.winner))).slice(-4) : [];
       const sig = c ? [c.no, c.price, c.winner, c.listing, c.at, reps.map((r) => r.t + r.msg).join('|'), fset.lang].join('|') : '';
       if (sig !== lastAucSig) {
