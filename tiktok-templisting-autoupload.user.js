@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      6.7
+// @version      6.8
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -1325,13 +1325,15 @@
     const input = [...document.querySelectorAll('input, textarea')].find((i) => /type something/i.test(i.placeholder || '') && !inPanel(i));
     if (!input) return {};
     const ir = input.getBoundingClientRect();
-    let panel = input;
-    for (let i = 0; i < 14 && panel; i++) { panel = panel.parentElement; if (panel && /all comments/i.test(panel.innerText || '') && /won auction item/i.test(panel.innerText || '')) break; }
-    if (!panel) { panel = input; for (let i = 0; i < 10 && panel; i++) { panel = panel.parentElement; if (panel && /all comments/i.test(panel.innerText || '')) break; } }
+    // 只看和輸入框同一欄的東西（不然會抓到左邊的 listing 清單）
+    const sameCol = (e) => { const r = e.getBoundingClientRect(); return r.left < ir.right - 20 && r.right > ir.left + 20; };
+    const filt0 = xp("//*[normalize-space(text())='All comments']").find((e) => !inPanel(e) && visible(e) && sameCol(e) && e.getBoundingClientRect().bottom <= ir.top);
+    let panel = null;
+    if (filt0) { panel = input; for (let i = 0; i < 12 && panel && !panel.contains(filt0); i++) panel = panel.parentElement; }
     if (panel) { // 舊版
-      const filt = xp(".//*[normalize-space(text())='All comments']", panel)[0];
+      const filt = filt0;
       const fr = filt ? filt.getBoundingClientRect() : null;
-      const scrolls = scrollBoxes(panel);
+      const scrolls = scrollBoxes(panel).filter(sameCol);
       const comments = outerOnly(scrolls.filter((e) => { const r = e.getBoundingClientRect(); return r.bottom <= ir.top + 8 && (!fr || r.top >= fr.bottom - 8); }))[0];
       const system = fr ? outerOnly(scrolls.filter((e) => e.getBoundingClientRect().bottom <= fr.top + 8))[0] : null;
       return { comments, system, mode: 'classic' };
@@ -1345,9 +1347,9 @@
     }
     let comments = null;
     if (panel) {
-      const tops = leafText(panel, /^(all viewers|product related|all|chat)$/i).map((e) => e.getBoundingClientRect().bottom).filter((y) => y < ir.top);
+      const tops = leafText(panel, /^(all viewers|product related|all|chat)$/i).filter(sameCol).map((e) => e.getBoundingClientRect().bottom).filter((y) => y < ir.top);
       const fb = tops.length ? Math.max(...tops) : -1e9;
-      comments = biggest(outerOnly(scrollBoxes(panel).filter((e) => { const r = e.getBoundingClientRect(); return r.bottom <= ir.top + 8 && r.top >= fb - 8 && !e.contains(input); })));
+      comments = biggest(outerOnly(scrollBoxes(panel).filter((e) => { const r = e.getBoundingClientRect(); return sameCol(e) && r.bottom <= ir.top + 8 && r.top >= fb - 8 && !e.contains(input); })));
     }
     let system = null;
     const tab = leafText(document.body, /^activity$/i)[0];
