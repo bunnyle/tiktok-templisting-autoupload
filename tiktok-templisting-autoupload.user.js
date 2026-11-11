@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.1
+// @version      7.2
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -1395,7 +1395,9 @@
       if (!m || /^[-–—\s]*$/.test(m[2])) continue;
       let card = row; let title = '';
       for (let i = 0; i < 8 && card; i++) { card = card.parentElement; const tt = (card && card.innerText || '').split('\n').map((x) => x.trim()).find((x) => /^#\d+\s+/.test(x) && !/winner/i.test(x)); if (tt) { title = tt.replace(/^#\d+\s+/, ''); break; } }
-      if (title) out.push({ no: m[1], winner: winnerOnly(m[2]), listing: fullListing(title) });
+      const pm = m[2].match(/^(.*?)\s*:\s*\$\s*([\d.,]+)\s*$/); // 「名字 : $12.00」
+      const who = winnerOnly(pm ? pm[1] : m[2]).replace(/\s*:\s*$/, '');
+      if (title && who) out.push({ no: m[1], winner: who, price: pm ? pm[2] : '', listing: fullListing(title) });
     }
     return out;
   }
@@ -1539,7 +1541,7 @@
       const t0 = cwSeen.get(k); if (t0 < 0 || now - t0 < 1200) continue;
       cwSeen.set(k, -1);
       const dup = live.orders.find((o) => o.no === c.no && listingKey(o.listing) && (listingKey(o.listing).startsWith(listingKey(c.listing)) || listingKey(c.listing).startsWith(listingKey(o.listing))));
-      if (!dup && +c.no > baseFor(c.listing)) { live.orders.push({ no: c.no, listing: c.listing, winner: c.winner, price: '', at: t0, paid: false, replies: [] }); changed = true; LOG('得標（listing 卡片）', c); }
+      if (!dup && +c.no > baseFor(c.listing)) { live.orders.push({ no: c.no, listing: c.listing, winner: c.winner, price: c.price || '', at: t0, paid: false, replies: [] }); changed = true; LOG('得標（listing 卡片）', c); }
     }
     for (const [k, v] of cwSeen) if (v >= 0 && !cwNow.has(k)) cwSeen.delete(k);
     const { comments, system } = chatLists();
