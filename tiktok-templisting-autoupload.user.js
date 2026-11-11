@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.0
+// @version      7.1
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -19,6 +19,21 @@
   const LOG = (...a) => console.log('[TT填表]', ...a);
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const norm = (s) => (s || '').replace(/[*＊]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+  // 背景計時器：TikTok 視窗被遮住或切到別的分頁時，Chrome 會把普通計時器放慢到一分鐘一次；
+  // 用 Worker 計時不會被這樣放慢。Worker 開不了（網站不允許）就退回普通計時器。
+  const tickErr = {};
+  function bgInterval(fn, ms, name) {
+    const run = () => { try { fn(); tickErr[name] = null; } catch (e) { tickErr[name] = (e && e.message) || String(e); console.warn('[TTFill]', name, e); } };
+    try {
+      const url = URL.createObjectURL(new Blob([`setInterval(()=>postMessage(0),${ms})`], { type: 'text/javascript' }));
+      const w = new Worker(url);
+      w.onmessage = run;
+      return () => { w.terminate(); URL.revokeObjectURL(url); };
+    } catch (e) {
+      const iv = setInterval(run, ms);
+      return () => clearInterval(iv);
+    }
+  }
   const visible = (el) => {
     if (!el || !el.getClientRects().length) return false;
     const cs = getComputedStyle(el);
@@ -43,7 +58,7 @@
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "訂": "订", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   let langOverride = null; // 評論窗可以用自己的語言
@@ -1573,13 +1588,14 @@
     liveTick();
     liveObs = new MutationObserver(() => { if (!liveTimer) liveTimer = setTimeout(() => { liveTimer = null; liveTick(); }, 250); });
     liveObs.observe(document.body, { childList: true, subtree: true, characterData: true });
-    live._iv = setInterval(liveTick, 1000);
+    if (live._stop) live._stop();
+    live._stop = bgInterval(liveTick, 1000, 'live');
     renderLive();
   }
   function stopLive() {
     live.on = false; saveLive();
     if (liveObs) liveObs.disconnect(); liveObs = null;
-    clearInterval(live._iv);
+    if (live._stop) live._stop(); live._stop = null;
     renderLive();
   }
   const hhmmss = (t) => new Date(t).toLocaleTimeString([], { hour12: false });
@@ -1593,6 +1609,7 @@
     const out = [];
     const wons = xp("//*[contains(normalize-space(text()),'won!')]").filter((e) => !inPanel(e));
     out.push('version: ' + ((typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.version) || '?'));
+    out.push('hidden: ' + document.hidden + ' · tick errors: ' + JSON.stringify(tickErr));
     out.push('won! nodes: ' + wons.length);
     wons.slice(0, 2).forEach((w) => { let c = w; for (let i = 0; i < 5 && c.parentElement; i++) c = c.parentElement; out.push('  card: ' + c.tagName + '.' + String(c.className).slice(0, 60) + ' text=' + JSON.stringify((c.innerText || '').slice(0, 200))); });
     out.push('parsed card: ' + JSON.stringify(readWonCard()));
@@ -2417,6 +2434,23 @@
   }
   function feedTick() {
     if (!feed.win || feed.win.closed) { feedStop(); return; }
+    try { feedTick2(); } catch (e) { tickErr.feed = (e && e.message) || String(e); console.warn('[TTFill] feed', e); }
+    feedStatus();
+  }
+  // 窗口頂部的狀態：最後更新時間，TikTok 頁面被遮住時提醒
+  function feedStatus() { return inFeedLang(feedStatus0)(); }
+  function feedStatus0() {
+    const w = feed.win; if (!w || w.closed) return;
+    const el = w.document.getElementById('stat'); if (!el) return;
+    const comments = (chatLists() || {}).comments;
+    let msg = '', cls = 'stat';
+    if (document.hidden) { cls += ' warn'; msg = L('⚠ TikTok 分頁被遮住、最小化或切到別的分頁 — Chrome 會暫停 TikTok 更新留言。請讓 TikTok 視窗露出一部分。', '⚠ The TikTok tab is covered, minimised or in the background — Chrome pauses TikTok’s comment updates. Keep part of the TikTok window visible.'); }
+    else if (!comments) { cls += ' warn'; msg = L('⚠ 找不到評論區（TikTok 頁面是否在直播控制台？）', '⚠ Comment area not found (is the TikTok page on the LIVE console?)'); }
+    else if (tickErr.feed) { cls += ' warn'; msg = '⚠ ' + tickErr.feed; }
+    else msg = L('● 更新中 ', '● Live ') + hhmmss(Date.now());
+    el.className = cls; el.textContent = msg;
+  }
+  function feedTick2() {
     const now = Date.now();
     const card = readAuctionCard();
     if (card && card.status === 'won' && card.who && !feedWins.some((o) => o.no === card.no && strictKey(o.winner) === strictKey(card.who))) feedWins.push({ no: card.no, winner: card.who, at: now });
@@ -2481,6 +2515,8 @@
     .bar input[type=search]{font:inherit;font-size:14px;flex:1 1 160px;min-width:120px;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;padding:4px 9px}
     mark{background:#facc15;color:#111;border-radius:3px;padding:0 1px}
     .c .n{cursor:pointer} .c .n:hover{text-decoration:underline}
+    .stat{padding:3px 14px;font-size:12px;color:#22c55e;border-bottom:1px solid var(--line)}
+    .stat.warn{color:#fff;background:#b45309;font-size:14px;padding:6px 14px}
     .qinfo{padding:4px 14px;font-size:13px;color:var(--mute);border-bottom:1px solid var(--line);display:none}
     .hist{flex:none;max-height:55%;display:flex;flex-direction:column;background:var(--card);border-top:3px solid #4f8cff;box-shadow:0 -8px 24px rgba(0,0,0,.4);font-size:var(--fs);z-index:5}
     .hist.hide{display:none}
@@ -2517,6 +2553,7 @@
       </div>
       <div class="mutep" id="mp">${L('包含以下句子的留言不顯示（每行一句，例如 giveaway 指定要留的話）。也可以把滑鼠移到留言上按「🚫」加入。', 'Comments containing any of these lines are hidden (one per line, e.g. the giveaway entry phrase). You can also hover a comment and press “🚫”.')}<textarea id="mt" placeholder="Final Sale! Bid responsible! Bundle Ship"></textarea></div>
       <div class="auc" id="auc"></div>
+      <div class="stat" id="stat"></div>
       <div class="qinfo" id="qinfo"></div>
       <div id="list"></div>
       <div class="hist hide" id="hist"><div class="hh"><span class="hn" id="hn"></span><span id="hw"></span><span class="cnt" id="hc"></span><button id="hq">${L('🔍 搜尋這位', '🔍 Filter')}</button><button class="x" id="hx">×</button></div><div id="hb"></div></div>
@@ -2665,13 +2702,14 @@
     feedRender(null, 0, true);
     feed.obs = new MutationObserver(() => { if (!feed.timer) feed.timer = setTimeout(() => { feed.timer = null; feedTick(); }, 200); });
     feed.obs.observe(document.body, { childList: true, subtree: true, characterData: true });
-    feed.iv = setInterval(feedTick, 1000);
+    if (feed.stopIv) feed.stopIv();
+    feed.stopIv = bgInterval(feedTick, 1000, 'feed');
     updFeedBtns();
     return true;
   }
   function feedStop() {
     if (feed.obs) feed.obs.disconnect(); feed.obs = null;
-    clearInterval(feed.iv); feed.iv = null;
+    if (feed.stopIv) feed.stopIv(); feed.stopIv = null;
     feed.win = null;
     updFeedBtns();
   }
@@ -2682,6 +2720,7 @@
     try { const o = w.document.createElement('div'); o.className = 'off'; langOverride = fset.lang || null; o.textContent = L('TikTok 頁面已重新整理或關閉 — 請回到面板再按一次「彈出評論窗」', 'The TikTok page reloaded or closed — press “Pop out comments” in the panel again'); w.document.body.appendChild(o); } catch (e) { /* 空 */ }
     langOverride = null;
   });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { if (feed.win) feedTick(); if (live.on) try { liveTick(); } catch (e) { /* 空 */ } } else if (feed.win) feedStatus(); });
   let updFeedBtns = () => {};
 
   /* ---- 建立整個面板（切換語言時重建） ---- */
@@ -3053,7 +3092,7 @@
   if (state.pos && state.pos.b === undefined && state.pos.y !== undefined) state.pos = { x: state.pos.x, b: Math.max(8, window.innerHeight - state.pos.y - 500) };
   buildUI();
   if (live.on) startLive();
-  setInterval(() => { if (live.on) updLiveTimers(); if (ann.on) { annTick(); try { updAnnSub(); } catch (e) { /* 面板重建中 */ } } }, 1000);
+  bgInterval(() => { if (live.on) updLiveTimers(); if (ann.on) { annTick(); try { updAnnSub(); } catch (e) { /* 面板重建中 */ } } }, 1000, 'ann');
   if (ann.on) annNext = Date.now() + 5000;
   if (state.pos) requestAnimationFrame(() => { state.pos = place(state.pos.x, state.pos.b); });
   window.addEventListener('resize', () => { if (state.pos) place(state.pos.x, state.pos.b); });
