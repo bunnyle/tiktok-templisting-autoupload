@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      6.5
+// @version      6.6
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -43,7 +43,7 @@
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "訂": "订", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "覽": "览", "訂": "订", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   const lang = () => state.lang || 'hant';
@@ -2321,7 +2321,8 @@
   state.feed = Object.assign({ fs: 26, onlyWin: false, sys: true, host: '', theme: 'dark' }, state.feed || {});
   const fset = state.feed;
   const feed = { win: null, items: [], seen: new WeakMap(), iv: null, obs: null, timer: null, kind: '', stick: true };
-  const FEED_MAX = 400;
+  const FEED_MAX = 400; // 畫面上最多幾條
+  const FEED_KEEP = 3000; // 記住幾條（給點名字看歷史）
   // 同一個客人永遠同一個顏色
   function nameHue(n) { const s = strictKey(n); let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0) % 360; }
   const nameColor = (n) => (fset.theme === 'light' ? `hsl(${nameHue(n)},75%,36%)` : `hsl(${nameHue(n)},85%,68%)`);
@@ -2358,7 +2359,7 @@
     const tail = feed.items.slice(-150);
     if (tail.some((x) => x.sig === sig && it.t - x.t < 10 * 60000)) return false; // 清單重新顯示舊留言：不重複
     it.sig = sig; feed.items.push(it);
-    if (feed.items.length > FEED_MAX) feed.items.splice(0, feed.items.length - FEED_MAX);
+    if (feed.items.length > FEED_KEEP) feed.items.splice(0, feed.items.length - FEED_KEEP);
     return true;
   }
   function feedTick() {
@@ -2423,6 +2424,19 @@
     .c.sys{font-size:.62em;color:var(--mute)} .c.sys .ok{color:#22c55e;font-weight:800}
     .empty{color:var(--mute);text-align:center;padding:40px 10px;font-size:16px}
     #more{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#e5132f;color:#fff;border:0;border-radius:20px;padding:8px 16px;font-size:15px;font-weight:700;cursor:pointer;display:none;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+    .bar input[type=search]{font:inherit;font-size:14px;flex:1 1 160px;min-width:120px;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;padding:4px 9px}
+    mark{background:#facc15;color:#111;border-radius:3px;padding:0 1px}
+    .c .n{cursor:pointer} .c .n:hover{text-decoration:underline}
+    .qinfo{padding:4px 14px;font-size:13px;color:var(--mute);border-bottom:1px solid var(--line);display:none}
+    .hist{flex:none;max-height:55%;display:flex;flex-direction:column;background:var(--card);border-top:3px solid #4f8cff;box-shadow:0 -8px 24px rgba(0,0,0,.4);font-size:var(--fs);z-index:5}
+    .hist.hide{display:none}
+    .hist .hh{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--line);font-size:max(14px,calc(var(--fs) * .6))}
+    .hist .hh .hn{font-weight:800}
+    .hist .hh .cnt{color:var(--mute);font-size:.8em}
+    .hist .hh button,.hist .older{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;padding:3px 9px;cursor:pointer}
+    .hist .hh .x{margin-left:auto;font-size:18px;line-height:1;padding:2px 9px}
+    .hist #hb{overflow-y:auto;padding:4px 0 10px}
+    .hist .older{display:block;margin:6px auto;font-size:14px}
     .off{position:fixed;inset:0;background:rgba(0,0,0,.75);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;text-align:center;padding:20px}`;
   function feedSetup(w) {
     const d = w.document;
@@ -2434,12 +2448,14 @@
         <label>A<input type="range" id="fs" min="14" max="64" step="1"><b id="fsv"></b></label>
         <label><input type="checkbox" id="ow">${L('只看得標客人', 'Winners only')}</label>
         <label><input type="checkbox" id="sy">${L('付款通知', 'Payments')}</label>
-        <span class="grow"></span>
+        <input type="search" id="q" placeholder="${L('🔍 搜尋客人 / 留言 / #編號', '🔍 Search customer / comment / #no.')}">
         <button id="th">${L('深色 / 淺色', 'Dark / Light')}</button>
         <button id="fsc">${L('全螢幕', 'Full screen')}</button>
       </div>
       <div class="auc" id="auc"></div>
+      <div class="qinfo" id="qinfo"></div>
       <div id="list"></div>
+      <div class="hist hide" id="hist"><div class="hh"><span class="hn" id="hn"></span><span id="hw"></span><span class="cnt" id="hc"></span><button id="hq">${L('🔍 搜尋這位', '🔍 Filter')}</button><button class="x" id="hx">×</button></div><div id="hb"></div></div>
       <button id="more">↓ ${L('新留言', 'New comments')}</button>`;
     const $$ = (id) => d.getElementById(id);
     const applyFs = () => { d.body.style.setProperty('--fs', fset.fs + 'px'); $$('fsv').textContent = fset.fs; };
@@ -2459,6 +2475,16 @@
       if (feed.stick) $$('more').style.display = 'none';
     });
     $$('more').onclick = () => { feed.stick = true; scrollEnd(); $$('more').style.display = 'none'; };
+    // 搜尋
+    let qt = null;
+    $$('q').value = feed.q || '';
+    $$('q').oninput = (e) => { clearTimeout(qt); qt = setTimeout(() => { feed.q = e.target.value.trim(); feed.stick = true; feedRender(null, 0, true); }, 150); };
+    // 點客人名字 → 看這位客人之前所有發言
+    list.addEventListener('click', (e) => { const n = e.target.closest && e.target.closest('.n'); if (n && n.dataset.n != null) histOpen(n.dataset.n); });
+    $$('hb').addEventListener('click', (e) => { if (!e.target.closest) return; if (e.target.closest('.older')) { feed.histAll = true; histRender(); } });
+    $$('hx').onclick = () => histClose();
+    $$('hq').onclick = () => { $$('q').value = feed.hist || ''; feed.q = feed.hist || ''; histClose(); feed.stick = true; feedRender(null, 0, true); };
+    d.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (feed.hist != null) histClose(); else if ($$('q').value) { $$('q').value = ''; feed.q = ''; feedRender(null, 0, true); } } });
     w.addEventListener('pagehide', () => setTimeout(() => { if (feed.win && feed.win.closed) feedStop(); }, 300));
   }
   let lastAucSig = null;
@@ -2484,21 +2510,62 @@
       }
     }
     if (!added && !full) return;
-    const rows = feed.items.filter((x) => (x.kind === 's' ? fset.sys : true));
-    const html = (x) => {
-      const nos = x.kind === 'c' && !x.host ? winsOf(x.name) : [];
-      if (fset.onlyWin && x.kind === 'c' && !x.host && !nos.length) return '';
-      const tm = x.old ? '' : `<span class="tm">${hhmmss(x.t)}</span>`;
-      if (x.kind === 's') return `<div class="c sys"><span class="ok">✓ ${L('已付款', 'Paid')}</span> <span class="no">${escapeHtml(x.msg.split(' ')[0])}</span><b style="color:${nameColor(x.name)}">${escapeHtml(x.name)}</b> ${escapeHtml(x.msg.split(' ').slice(1).join(' '))}${tm}</div>`;
-      return `<div class="c${x.host ? ' host' : ''}${nos.length ? ' win' : ''}"><div class="hd">${nos.map((n) => `<span class="no">#${escapeHtml(n)}</span>`).join('')}<span class="n" style="color:${nameColor(x.name)}">${escapeHtml(x.name)}</span>${tm}</div><span class="m">${escapeHtml(x.msg)}</span></div>`;
-    };
-    if (full) list.innerHTML = rows.map(html).join('') || `<div class="empty">${L('等待新留言…', 'Waiting for comments…')}</div>`;
-    else {
-      const em = list.querySelector('.empty'); if (em) em.remove();
-      list.insertAdjacentHTML('beforeend', feed.items.slice(-added).filter((x) => (x.kind === 's' ? fset.sys : true)).map(html).join(''));
+    const q = (feed.q || '').toLowerCase();
+    const show = (x) => (x.kind === 's' ? fset.sys : true) && (!q || feedMatch(x, q));
+    const rows = feed.items.filter(show);
+    const html = (x) => feedRow(x, q, fset.onlyWin);
+    if (full) {
+      const out = []; for (let i = rows.length - 1; i >= 0 && out.length < FEED_MAX; i--) { const h = html(rows[i]); if (h) out.push(h); }
+      list.innerHTML = out.reverse().join('') || `<div class="empty">${q ? L('沒有符合的留言', 'No matching comments') : L('等待新留言…', 'Waiting for comments…')}</div>`;
+    } else {
+      const add = feed.items.slice(-added).filter(show).map(html).join('');
+      if (add) { const em = list.querySelector('.empty'); if (em) em.remove(); list.insertAdjacentHTML('beforeend', add); }
       while (list.children.length > FEED_MAX) list.firstElementChild.remove();
     }
+    const qi = d.getElementById('qinfo');
+    if (qi) { qi.style.display = q ? 'block' : 'none'; qi.textContent = q ? L(`搜尋「${feed.q}」：${rows.length} 條（按 Esc 清除）`, `Search “${feed.q}”: ${rows.length} (Esc to clear)`) : ''; }
     if (feed.stick) feed.scrollEnd(); else if (added) d.getElementById('more').style.display = 'block';
+    if (added && feed.hist != null && feed.items.slice(-added).some((x) => strictKey(x.name) === strictKey(feed.hist))) histRender();
+  }
+  // 搜尋：名字、留言、#編號
+  function feedMatch(x, q) {
+    if ((x.name + ' ' + x.msg).toLowerCase().includes(q)) return true;
+    const m = q.match(/^#?(\d+)$/); if (!m) return false;
+    return x.no === m[1] || (x.kind === 'c' && winsOf(x.name).includes(m[1]));
+  }
+  function hl(text, q) {
+    const t = String(text || ''); if (!q) return escapeHtml(t);
+    const low = t.toLowerCase(); let out = '', i = 0, j;
+    while ((j = low.indexOf(q, i)) >= 0 && q) { out += escapeHtml(t.slice(i, j)) + '<mark>' + escapeHtml(t.slice(j, j + q.length)) + '</mark>'; i = j + q.length; }
+    return out + escapeHtml(t.slice(i));
+  }
+  function feedRow(x, q, onlyWin) {
+    const nos = x.kind === 'c' && !x.host ? winsOf(x.name) : [];
+    if (onlyWin && x.kind === 'c' && !x.host && !nos.length) return '';
+    const tm = x.old ? '' : `<span class="tm">${hhmmss(x.t)}</span>`;
+    const nm = `<span class="n" data-n="${escapeHtml(x.name)}" style="color:${nameColor(x.name)}">${hl(x.name, q)}</span>`;
+    if (x.kind === 's') return `<div class="c sys"><span class="ok">✓ ${L('已付款', 'Paid')}</span> <span class="no">${escapeHtml(x.msg.split(' ')[0])}</span>${nm} ${escapeHtml(x.msg.split(' ').slice(1).join(' '))}${tm}</div>`;
+    return `<div class="c${x.host ? ' host' : ''}${nos.length ? ' win' : ''}"><div class="hd">${nos.map((n) => `<span class="no">#${escapeHtml(n)}</span>`).join('')}${nm}${tm}</div><span class="m">${hl(x.msg, q)}</span></div>`;
+  }
+  // 客人歷史發言：先看最近 5 條，按「更早的」看全部
+  function histOpen(name) { feed.hist = name; feed.histAll = false; histRender(true); }
+  function histClose() { feed.hist = null; const d = feed.win && !feed.win.closed && feed.win.document; if (d) d.getElementById('hist').classList.add('hide'); }
+  function histRender(scroll) {
+    const w = feed.win; if (!w || w.closed || feed.hist == null) return;
+    const d = w.document, name = feed.hist, k = strictKey(name);
+    const mine = feed.items.filter((x) => strictKey(x.name) === k);
+    const nos = winsOf(name);
+    d.getElementById('hn').textContent = name; d.getElementById('hn').style.color = nameColor(name);
+    d.getElementById('hw').innerHTML = nos.map((n) => `<span class="no">#${escapeHtml(n)}</span>`).join('');
+    d.getElementById('hc').textContent = L(`共 ${mine.filter((x) => x.kind === 'c').length} 條發言`, `${mine.filter((x) => x.kind === 'c').length} comments`);
+    const shown = feed.histAll ? mine : mine.slice(-5);
+    const more = mine.length - shown.length;
+    const hb = d.getElementById('hb');
+    hb.innerHTML = (more > 0 ? `<button class="older">${L(`▲ 顯示更早的 ${more} 條`, `▲ Show ${more} earlier`)}</button>` : '') +
+      (shown.map((x) => feedRow(x, '', false)).join('') || `<div class="empty">${L('還沒有發言', 'No comments yet')}</div>`);
+    d.getElementById('hist').classList.remove('hide');
+    if (feed.stick) feed.scrollEnd();
+    if (scroll || !feed.histAll) hb.scrollTop = hb.scrollHeight;
   }
   async function feedOpen(kind) {
     if (feed.win && !feed.win.closed) { try { feed.win.focus(); } catch (e) { /* 空 */ } return true; }
