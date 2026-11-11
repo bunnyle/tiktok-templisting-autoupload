@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.3
+// @version      7.4
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -58,7 +58,7 @@
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   let langOverride = null; // 評論窗可以用自己的語言
@@ -2031,13 +2031,10 @@
         <button class="btn ghost" id="ttf-liveclr">${L('清空記錄', 'Clear records')}</button>
         <button class="btn ghost" id="ttf-livediag">${L('直播診斷', 'Live diagnostics')}</button>
       </div>
-      <div class="sec">${L('評論大窗（給主播看）', 'Big comment window (for the host)')}</div>
-      <div class="btnrow">
+      <div class="btnrow" title="${L('評論大窗（給主播看）：可拖到第二個螢幕或全螢幕，設定都在窗口上方', 'Big comment window for the host — drag to a second screen; settings are at the top of the window')}">
         <button class="btn dark" id="ttf-feedwin">${L('⧉ 彈出評論窗', '⧉ Pop out comments')}</button>
         <button class="btn ghost" id="ttf-feedpip">${L('📌 置頂小窗', '📌 Always-on-top')}</button>
       </div>
-      <label class="field" style="margin-top:6px"><span>${L('主播帳號名稱（發公告時自動辨認，也可自己填）', 'Host account name (auto-detected from notices, or type it)')}</span><input class="inp" type="text" id="ttf-feedhost"></label>
-      <div class="hint">${L('評論窗可以拖到第二個螢幕或按「全螢幕」；字體大小、只看得標客人都在窗口上方調整。每個客人固定一個顏色，得標的客人前面有紅色 #編號。', 'Drag the window to a second screen or press “Full screen”; font size and “Winners only” are at the top of the window. Each customer keeps one colour, and winners get a red #number.')}</div>
       <input class="inp search" type="text" id="ttf-liveq" placeholder="${L('搜尋編號 / 客人 / listing…', 'Search no. / customer / listing…')}" style="margin-top:10px">
       <div class="msg" id="ttf-livemsg"></div>
       <div id="ttf-livelist"></div>
@@ -2457,8 +2454,8 @@
   function feedTick2() {
     const now = Date.now();
     const card = readAuctionCard();
-    if (card && card.status === 'won' && card.who && !feedWins.some((o) => o.no === card.no && strictKey(o.winner) === strictKey(card.who))) feedWins.push({ no: card.no, winner: card.who, at: now });
-    for (const c of cardWinners()) if (!feedWins.some((o) => o.no === c.no && strictKey(o.winner) === strictKey(c.winner))) feedWins.push({ no: c.no, winner: c.winner, at: now });
+    if (card && card.status === 'won' && card.who && !feedWins.some((o) => o.no === card.no && strictKey(o.winner) === strictKey(card.who))) feedWins.push({ no: card.no, winner: card.who, price: card.price, listing: card.listing, at: now, src: 'card' });
+    for (const c of cardWinners()) if (!feedWins.some((o) => o.no === c.no && strictKey(o.winner) === strictKey(c.winner))) feedWins.push({ no: c.no, winner: c.winner, price: c.price, listing: c.listing, at: feed.first ? now - 1 : now, src: 'list' });
     const { comments, system } = chatLists();
     let added = 0;
     const annTexts = (ann.hist || []).filter((h) => now - h.t < 10 * 60000).map((h) => h.text.trim());
@@ -2496,11 +2493,17 @@
     .bar button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;padding:3px 9px;cursor:pointer}
     .bar .grow{flex:1}
     .bar select{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;padding:3px 6px;cursor:pointer}
-    .auc{padding:10px 14px;border-bottom:1px solid var(--line);background:var(--card);display:flex;align-items:center;gap:12px;font-size:calc(var(--fs) * .8)}
-    .auc .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--mute)}
-    .auc .w{font-weight:800;white-space:nowrap}
-    .auc .st{font-weight:800;color:#ff4d6a}
-    .auc.won .st{color:#22c55e}
+    .auc{padding:12px 14px;border-bottom:3px solid #e5132f;background:var(--card);font-size:calc(var(--fs) * 1.15)}
+    .auc .r1{display:flex;align-items:center;flex-wrap:wrap;gap:6px 14px;line-height:1.2}
+    .auc .r1 .no{font-size:1em;margin:0}
+    .auc .w{font-weight:800;overflow-wrap:anywhere}
+    .auc .pr{font-weight:800;white-space:nowrap}
+    .auc .st{font-weight:800;color:#22c55e;white-space:nowrap}
+    .auc .t{margin-top:4px;font-size:max(12px,calc(var(--fs) * .45));color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .auc .reps{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+    .auc .rp{background:#facc15;color:#111;font-weight:800;border-radius:8px;padding:.15em .45em;overflow-wrap:anywhere}
+    .auc .rp .tm{font-size:max(11px,calc(var(--fs) * .35));font-weight:500;color:#5b4a00;margin-left:.5em}
+    .auc .wait{color:var(--mute);font-size:max(13px,calc(var(--fs) * .5))}
     .no{display:inline-block;font-weight:800;color:#fff;background:#e5132f;border-radius:.3em;padding:.08em .35em;line-height:1.25;margin-right:.3em;font-size:.85em;vertical-align:.06em}
     #list{flex:1;overflow-y:auto;padding:6px 0 10px;font-size:var(--fs);line-height:1.3}
     .c{padding:.3em 14px .35em;border-left:4px solid transparent;word-wrap:break-word;overflow-wrap:anywhere;border-bottom:1px solid var(--line)}
@@ -2551,11 +2554,12 @@
         <label><input type="checkbox" id="sy">${L('付款通知', 'Payments')}</label>
         <input type="search" id="q" placeholder="${L('🔍 搜尋客人 / 留言 / #編號', '🔍 Search customer / comment / #no.')}">
         <select id="lg" title="Language"><option value="hant">繁體</option><option value="hans">简体</option><option value="en">English</option></select>
-        <button id="mb">🚫 ${L('過濾', 'Filter')} <span id="mc"></span></button>
+        <button id="mb">⚙ ${L('過濾 / 設定', 'Filter / settings')} <span id="mc"></span></button>
         <button id="th">${L('深色 / 淺色', 'Dark / Light')}</button>
         <button id="fsc">${L('全螢幕', 'Full screen')}</button>
       </div>
-      <div class="mutep" id="mp">${L('包含以下句子的留言不顯示（每行一句，例如 giveaway 指定要留的話）。也可以把滑鼠移到留言上按「🚫」加入。', 'Comments containing any of these lines are hidden (one per line, e.g. the giveaway entry phrase). You can also hover a comment and press “🚫”.')}<textarea id="mt" placeholder="Final Sale! Bid responsible! Bundle Ship"></textarea></div>
+      <div class="mutep" id="mp">${L('包含以下句子的留言不顯示（每行一句，例如 giveaway 指定要留的話）。也可以把滑鼠移到留言上按「🚫」加入。', 'Comments containing any of these lines are hidden (one per line, e.g. the giveaway entry phrase). You can also hover a comment and press “🚫”.')}<textarea id="mt" placeholder="Final Sale! Bid responsible! Bundle Ship"></textarea>
+        <div style="margin-top:6px">${L('主播帳號名稱（發公告時會自動認出，也可以自己填）', 'Host account name (auto-detected from notices, or type it)')}<input type="text" id="hostn" style="width:100%;font:inherit;font-size:14px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 8px;margin-top:4px"></div></div>
       <div class="auc" id="auc"></div>
       <div class="stat" id="stat"></div>
       <div class="qinfo" id="qinfo"></div>
@@ -2583,6 +2587,8 @@
     // 過濾
     $$('mb').onclick = () => $$('mp').classList.toggle('on');
     $$('mt').value = fset.mute || '';
+    $$('hostn').value = fset.host || '';
+    $$('hostn').onchange = (e) => { fset.host = e.target.value.trim(); saveState(); feedRender(null, 0, true); };
     let mtT = null;
     $$('mt').oninput = (e) => { clearTimeout(mtT); mtT = setTimeout(() => { fset.mute = e.target.value; saveState(); feedRender(null, 0, true); if (feed.hist != null) histRender(); }, 300); };
     list.addEventListener('click', (e) => {
@@ -2613,20 +2619,19 @@
     const d = w.document, list = d.getElementById('list'), auc = d.getElementById('auc');
     if (!list) return;
     if (card !== null) {
-      let c = card || readAuctionCard();
-      if (!c) { // Quick LIVE 版面沒有下方拍賣卡片：顯示最近一個得標
-        const lw = [...live.orders, ...feedWins].sort((x, y) => x.at - y.at).pop();
-        if (lw) c = { no: lw.no, listing: lw.listing || '', price: lw.price || '', who: lw.winner, status: 'won' };
-      }
-      const sig = c ? [c.no, c.price, c.who, c.status, c.listing].join('|') : '';
+      // 頂部只顯示「最近一單 won!」，下面高亮這位客人得標後的回覆（直到下一單得標）
+      const pool = [...live.orders, ...feedWins.filter((o) => o.src === 'card')];
+      const pick = (arr) => arr.slice().sort((x, y) => x.at - y.at).pop();
+      const c = pick(pool) || pick(feedWins.filter((o) => o.src === 'list'));
+      const reps = c ? feed.items.filter((x) => x.kind === 'c' && !x.host && x.t >= c.at && !isMuted(x.msg) && (strictKey(x.name) === strictKey(c.winner) || sameName(x.name, c.winner))).slice(-4) : [];
+      const sig = c ? [c.no, c.price, c.winner, c.listing, c.at, reps.map((r) => r.t + r.msg).join('|'), fset.lang].join('|') : '';
       if (sig !== lastAucSig) {
         lastAucSig = sig;
-        auc.className = 'auc' + (c && c.status === 'won' ? ' won' : '');
-        auc.innerHTML = c ? `<span class="no">#${escapeHtml(c.no)}</span><span class="t" title="${escapeHtml(c.listing)}">${escapeHtml(c.listing)}</span>
-            ${c.price ? `<span class="w">$${escapeHtml(c.price)}</span>` : ''}
-            ${c.who ? `<span class="w" style="color:${nameColor(c.who)}">${escapeHtml(c.who)}</span>` : ''}
-            <span class="st">${c.status === 'won' ? L('得標 won!', 'won!') : c.status === 'winning' ? L('領先中', 'winning') : L('未有出價', 'No bids')}</span>`
-          : `<span class="t">${L('（下方拍賣卡片還沒出現）', '(No auction card on screen yet)')}</span>`;
+        auc.className = 'auc';
+        auc.innerHTML = c ? `<div class="r1"><span class="no">#${escapeHtml(c.no)}</span><span class="w" style="color:${nameColor(c.winner)}">${escapeHtml(c.winner)}</span><span class="st">won!</span>${c.price ? `<span class="pr">$${escapeHtml(c.price)}</span>` : ''}</div>
+            ${c.listing ? `<div class="t" title="${escapeHtml(c.listing)}">${escapeHtml(c.listing)}</div>` : ''}
+            <div class="reps">${reps.map((r) => `<div class="rp">${escapeHtml(r.msg)}<span class="tm">${hhmmss(r.t)}</span></div>`).join('') || `<div class="wait">${L('等待客人回覆…', 'Waiting for the winner’s reply…')}</div>`}</div>`
+          : `<div class="wait">${L('（還沒有得標）', '(No winner yet)')}</div>`;
       }
     }
     if (!added && !full) return;
@@ -2982,8 +2987,6 @@
     $('ttf-feedwin').onclick = () => feedBtn('win');
     $('ttf-feedpip').onclick = () => feedBtn('pip');
     if (!window.documentPictureInPicture) $('ttf-feedpip').title = L('需要 Chrome 116 或以上', 'Needs Chrome 116+');
-    $('ttf-feedhost').value = fset.host || '';
-    $('ttf-feedhost').onchange = (e) => { fset.host = e.target.value.trim(); saveState(); if (feed.win) feedRender(null, 0, true); };
     updFeedBtns();
 
     // 類目庫
