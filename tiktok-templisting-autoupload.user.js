@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.9
+// @version      7.10
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -2854,7 +2854,7 @@ function ttfillMain() {
   /* ================= 直接讀 TikTok 收到的留言資料（不靠畫面） =================
      留言從 webcast 的 WebSocket 進來（protobuf：PushFrame → Response → WebcastChatMessage）。
      這條連線有資料時，評論窗和訂單回覆都用它；沒有資料時（連線斷了 / 格式改了）自動退回看畫面。 */
-  const wire = { all: [], seq: 0, ids: new Set(), lastFrame: 0, frames: 0, bad: 0, methods: {}, samples: {}, chain: Promise.resolve() };
+  const wire = { all: [], seq: 0, ids: new Set(), lastFrame: 0, frames: 0, bad: 0, methods: {}, kinds: {}, samples: {}, chain: Promise.resolve() };
   const WIRE_KEEP = 3000;
   function pbFields(u8) { // 最簡 protobuf 讀法：回傳 [{f, w, v|b}]；讀不通就回 null
     const out = []; let i = 0; const n = u8.length;
@@ -2908,7 +2908,13 @@ function ttfillMain() {
       wire.methods[name] = (wire.methods[name] || 0) + 1;
       if (data && data.b) {
         // 留樣本給「網路診斷」：每種訊息最近 2 條（留言以外的，用來找拍賣 / 得標訊息的格式）
-        if (name !== 'WebcastChatMessage') { const arr = wire.samples[name] || (wire.samples[name] = []); arr.push({ t: recvT, b: data.b.slice(0, 6000), full: data.b.length }); if (arr.length > 2) arr.shift(); }
+        if (name !== 'WebcastChatMessage') {
+          // 電商訊息按「事件種類」分開留樣本（auction.start / auction.new_bid / 得標 / 付款…各留 3 條）
+          let key = name;
+          if (/oec/i.test(name)) { try { const df = pbFields(data.b); const ev = pbGet(df, 4), ty = pbGet(df, 2); const evf = ev && ev.b ? pbFields(ev.b) : null; const en = pbGet(evf, 3); key = name + (en && en.b ? ' ' + pbStr(en.b) : '') + (ty && ty.v != null ? ' type=' + ty.v : ''); } catch (e) { /* 空 */ } }
+          wire.kinds[key] = (wire.kinds[key] || 0) + 1;
+          const arr = wire.samples[key] || (wire.samples[key] = []); arr.push({ t: recvT, b: data.b.slice(0, 6000), full: data.b.length }); if (arr.length > 3) arr.shift();
+        }
         if (name === 'WebcastChatMessage') { try { wireChat(data.b, recvT); } catch (e) { wire.bad++; } }
       }
     }
@@ -2966,6 +2972,7 @@ function ttfillMain() {
     out.push(`recording for ${Math.round((Date.now() - NET.t0) / 1000)}s · buffered ${NET.buf.length} msgs / ${Math.round(NET.bytes / 1024)} KB`);
     out.push(`wire: frames=${wire.frames} bad=${wire.bad} chat=${wire.all.length} alive=${wireAlive()} lastFrame=${wire.lastFrame ? hhmmss(wire.lastFrame) : '-'}`);
     out.push('wire methods: ' + JSON.stringify(wire.methods));
+    out.push('wire kinds: ' + JSON.stringify(wire.kinds));
     out.push('wire last chats: ' + JSON.stringify(wire.all.slice(-6).map((c) => [hhmmss(c.t), c.name, c.msg])));
     out.push('', '== WebSockets ==');
     if (!NET.socks.length) out.push('(none seen on the page — the connection may live in a worker)');
