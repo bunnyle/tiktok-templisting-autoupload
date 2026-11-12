@@ -1,18 +1,97 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.7
+// @version      7.8
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
 // @downloadURL  https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
 // @homepageURL  https://github.com/bunnyle/tiktok-templisting-autoupload
 // @grant        none
-// @run-at       document-idle
+// @run-at       document-start
 // ==/UserScript==
 
+/* ---------- 網路記錄（越早裝越好）：記下 TikTok 收到的資料，給「網路診斷」用 ----------
+   只留在這一頁的記憶體裡，不會傳到任何地方；按「網路診斷」才會存成檔案。 */
 (function () {
   'use strict';
+  if (window.__ttNet) return;
+  const NET = window.__ttNet = { buf: [], bytes: 0, socks: [], http: {}, t0: Date.now(), on: true };
+  const MAX_BYTES = 12 * 1024 * 1024, MAX_ONE = 300 * 1024;
+  const cleanUrl = (u) => { try { const x = new URL(String(u), location.href); return x.origin + x.pathname + (x.search ? '?' + [...x.searchParams.keys()].join('&') : ''); } catch (e) { return String(u).split('?')[0]; } };
+  const push = (e) => {
+    NET.buf.push(e); NET.bytes += e.len || 0;
+    while (NET.bytes > MAX_BYTES && NET.buf.length > 20) { const o = NET.buf.shift(); NET.bytes -= o.len || 0; }
+  };
+  const record = (src, url, data) => {
+    try {
+      if (!NET.on) return;
+      const e = { src, url, t: Date.now() };
+      if (typeof data === 'string') { e.kind = 'text'; e.text = data.length > MAX_ONE ? data.slice(0, MAX_ONE) : data; e.len = e.text.length; e.full = data.length; }
+      else if (data instanceof ArrayBuffer) { e.kind = 'bin'; e.full = data.byteLength; e.bytes = new Uint8Array(data.slice(0, MAX_ONE)); e.len = e.bytes.length; }
+      else if (data && data.buffer instanceof ArrayBuffer) { e.kind = 'bin'; e.full = data.byteLength; e.bytes = new Uint8Array(data.buffer.slice(data.byteOffset, data.byteOffset + Math.min(data.byteLength, MAX_ONE))); e.len = e.bytes.length; }
+      else if (typeof Blob !== 'undefined' && data instanceof Blob) { e.kind = 'bin'; e.full = data.size; e.len = Math.min(data.size, MAX_ONE); data.slice(0, MAX_ONE).arrayBuffer().then((b) => { e.bytes = new Uint8Array(b); }).catch(() => {}); }
+      else return;
+      push(e);
+    } catch (er) { /* 記錄失敗不影響頁面 */ }
+  };
+  NET.record = record;
+  // WebSocket：新開的連線 + 已經開了的連線（它一發送心跳就會被認出來）
+  try {
+    const WS = window.WebSocket, seen = new WeakSet();
+    const attach = (ws, how) => {
+      if (!ws || seen.has(ws)) return; seen.add(ws);
+      const info = { url: cleanUrl(ws.url), how, n: 0, bytes: 0, bin: 0, t: Date.now() };
+      NET.socks.push(info);
+      ws.addEventListener('message', (ev) => {
+        const d = ev.data; info.n++;
+        const len = typeof d === 'string' ? d.length : (d && (d.byteLength || d.size)) || 0;
+        info.bytes += len; if (typeof d !== 'string') info.bin++;
+        record('ws', info.url, d);
+      });
+    };
+    if (WS && WS.prototype) {
+      const send = WS.prototype.send;
+      WS.prototype.send = function (...a) { try { attach(this, 'send'); } catch (e) { /* 空 */ } return send.apply(this, a); };
+      const Wrapped = function (...a) { const ws = new WS(...a); try { attach(ws, 'new'); } catch (e) { /* 空 */ } return ws; };
+      Wrapped.prototype = WS.prototype;
+      for (const k of ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED']) Wrapped[k] = WS[k];
+      try { Object.defineProperty(Wrapped, 'name', { value: 'WebSocket' }); } catch (e) { /* 空 */ }
+      window.WebSocket = Wrapped;
+    }
+  } catch (e) { /* 空 */ }
+  // fetch / XHR：只記可能和直播留言有關的網址
+  const WANT = /webcast|\/im\/|chat|comment|message|room|auction|live|frontier|push/i;
+  const SKIP = /\.(js|css|png|jpe?g|gif|webp|svg|woff2?|ttf|mp4|m3u8|ts|flv)(\?|$)|\/log|monitor|slardar|mcs\.|tea\.|\/collect|stat|report/i;
+  const wantUrl = (u) => WANT.test(u) && !SKIP.test(u);
+  const tally = (u) => { const k = cleanUrl(u); NET.http[k] = (NET.http[k] || 0) + 1; return k; };
+  try {
+    const f = window.fetch;
+    if (f) window.fetch = function (...a) {
+      const p = f.apply(this, a);
+      try {
+        const u = String((a[0] && a[0].url) || a[0] || '');
+        if (wantUrl(u)) p.then((res) => { try { const k = tally(u); const ct = res.headers.get('content-type') || ''; const c = res.clone(); (/json|text/i.test(ct) ? c.text() : c.arrayBuffer()).then((d) => record('fetch', k, d)).catch(() => {}); } catch (e) { /* 空 */ } }).catch(() => {});
+      } catch (e) { /* 空 */ }
+      return p;
+    };
+  } catch (e) { /* 空 */ }
+  try {
+    const XO = XMLHttpRequest.prototype.open, XS = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.open = function (m, u, ...r) { try { this.__ttUrl = String(u || ''); } catch (e) { /* 空 */ } return XO.call(this, m, u, ...r); };
+    XMLHttpRequest.prototype.send = function (...a) {
+      try {
+        const u = this.__ttUrl || '';
+        if (wantUrl(u)) this.addEventListener('load', () => { try { const k = tally(u); const rt = this.responseType; if (rt === '' || rt === 'text') record('xhr', k, this.responseText); else if (rt === 'arraybuffer') record('xhr', k, this.response); else if (rt === 'json') record('xhr', k, JSON.stringify(this.response)); else if (rt === 'blob') record('xhr', k, this.response); } catch (e) { /* 空 */ } });
+      } catch (e) { /* 空 */ }
+      return XS.apply(this, a);
+    };
+  } catch (e) { /* 空 */ }
+})();
+
+function ttfillMain() {
+  'use strict';
+  if (window.__ttfillLoaded) return; window.__ttfillLoaded = true;
 
   /* ---------------- 基本工具 ---------------- */
   const KEY = 'ttfill_queue_v1';
@@ -59,7 +138,7 @@
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "約": "约", "紅": "红", "級": "级", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   let langOverride = null; // 評論窗可以用自己的語言
@@ -2025,6 +2104,7 @@
         <button class="btn ghost" id="ttf-livecsv">${L('⬇ 匯出並清空', '⬇ Export & clear')}</button>
         <button class="btn ghost" id="ttf-liveclr">${L('清空記錄', 'Clear records')}</button>
         <button class="btn ghost" id="ttf-livediag">${L('直播診斷', 'Live diagnostics')}</button>
+        <button class="btn ghost" id="ttf-netdiag">${L('網路診斷', 'Network diagnostics')}</button>
       </div>
       <div class="btnrow" title="${L('評論大窗（給主播看）：可拖到第二個螢幕或全螢幕，設定都在窗口上方', 'Big comment window for the host — drag to a second screen; settings are at the top of the window')}">
         <button class="btn dark" id="ttf-feedwin">${L('⧉ 彈出評論窗', '⧉ Pop out comments')}</button>
@@ -2746,6 +2826,94 @@
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { if (feed.win) feedTick(); if (live.on) try { liveTick(); } catch (e) { /* 空 */ } } else if (feed.win) feedStatus(); });
   let updFeedBtns = () => {};
 
+  /* ================= 網路診斷：找出留言 / 得標資料從哪條網路連線進來 ================= */
+  const b64 = (u8) => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
+  async function gunzipAt(u8, off) {
+    if (typeof DecompressionStream === 'undefined') return null;
+    try {
+      const ds = new DecompressionStream('gzip');
+      const w = ds.writable.getWriter(); w.write(u8.subarray(off)).catch(() => {}); w.close().catch(() => {});
+      const r = ds.readable.getReader(); const parts = []; let n = 0;
+      for (;;) { const { done, value } = await r.read(); if (done) break; parts.push(value); n += value.length; if (n > 2e6) break; }
+      const out = new Uint8Array(n); let p = 0; for (const c of parts) { out.set(c.subarray(0, Math.min(c.length, n - p)), p); p += c.length; }
+      return n ? out : null;
+    } catch (e) { return null; }
+  }
+  // 一條訊息 → 可讀內容（文字原樣；二進位先試解壓，再抽出裡面的文字）
+  async function netDecode(e) {
+    if (e.dec) return e.dec;
+    if (e.kind === 'text') return (e.dec = { text: e.text || '', raw: null, gz: false });
+    let u8 = e.bytes || new Uint8Array(0), gz = false;
+    for (let i = 0, tries = 0; i < Math.min(u8.length - 3, 4096) && tries < 3; i++) {
+      if (u8[i] === 0x1f && u8[i + 1] === 0x8b && u8[i + 2] === 0x08) { tries++; const d = await gunzipAt(u8, i); if (d) { u8 = d; gz = true; break; } }
+    }
+    const text = new TextDecoder('utf-8', { fatal: false }).decode(u8);
+    return (e.dec = { text, raw: u8, gz });
+  }
+  const netStrings = (text) => (text.match(/[^\u0000-\u001f\u007f-\u009f�]{3,}/g) || []).map((x) => x.trim()).filter((x) => x.length >= 3);
+  async function netDiagnose() {
+    const NET = window.__ttNet, out = [];
+    out.push('TikTok Live 小助手 · 網路診斷 · v' + ((typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.version) || '?') + ' · ' + new Date().toISOString());
+    if (!NET) { out.push('沒有網路記錄（腳本太晚載入）：請重新整理 TikTok 頁面再試'); return out.join('\n'); }
+    out.push(`recording for ${Math.round((Date.now() - NET.t0) / 1000)}s · buffered ${NET.buf.length} msgs / ${Math.round(NET.bytes / 1024)} KB`);
+    out.push('', '== WebSockets ==');
+    if (!NET.socks.length) out.push('(none seen on the page — the connection may live in a worker)');
+    for (const s of NET.socks) out.push(`${s.url}  via=${s.how} msgs=${s.n} (binary ${s.bin}) bytes=${s.bytes}`);
+    out.push('', '== HTTP endpoints (fetch/XHR) ==');
+    for (const [k, v] of Object.entries(NET.http).sort((a, b) => b[1] - a[1]).slice(0, 40)) out.push(`${v}×  ${k}`);
+    try {
+      const res = performance.getEntriesByType('resource').map((r) => r.name).filter((n) => /webcast|\/im\/|frontier|wss?:/i.test(n));
+      const uniq = [...new Set(res.map((n) => { try { const x = new URL(n); return x.origin + x.pathname; } catch (e) { return n.split('?')[0]; } }))];
+      out.push('', '== resource timing (webcast / im) ==', ...uniq.slice(0, 30));
+    } catch (e) { /* 空 */ }
+    // 畫面上現在看得到的留言、付款紀錄、得標卡片 → 拿來在網路資料裡找
+    const cl = chatLists();
+    const cm = listItems(cl.comments, true).map((it) => parseComment((it.innerText || '').trim(), it)).filter(Boolean).slice(-8);
+    const sys = listItems(cl.system).map((it) => sysMatch(it.innerText)).filter(Boolean).slice(-4);
+    const card = readAuctionCard();
+    const needles = [];
+    for (const c of cm) { needles.push({ what: 'comment', a: c.name, b: c.msg }); }
+    for (const m of sys) needles.push({ what: 'paid', a: cleanName(m[1]), b: m[2] });
+    if (card && card.who) needles.push({ what: 'card-' + card.status, a: card.who, b: card.no });
+    out.push('', '== visible on screen ==', ...needles.map((n) => `${n.what}: ${JSON.stringify(n.a)} / ${JSON.stringify(n.b)}`));
+    // 解碼全部記錄
+    const decs = [];
+    for (const e of NET.buf) decs.push({ e, d: await netDecode(e) });
+    out.push('', '== where the on-screen data appears ==');
+    const score = new Map(); // channel → hits
+    const hitMsgs = [];
+    for (const n of needles) {
+      const name = String(n.a || ''), msg = String(n.b || '');
+      const hits = decs.filter(({ d }) => name.length >= 2 && d.text.includes(name) && (msg.length < 2 || d.text.includes(msg)));
+      const nameOnly = hits.length ? [] : decs.filter(({ d }) => name.length >= 3 && d.text.includes(name));
+      const chans = [...new Set((hits.length ? hits : nameOnly).map(({ e }) => e.src + ' ' + e.url))];
+      out.push(`${n.what} ${JSON.stringify(name)}: ${hits.length ? 'name+text in ' + hits.length : nameOnly.length ? 'name only in ' + nameOnly.length : 'NOT FOUND'}${chans.length ? ' → ' + chans.join(' | ') : ''}`);
+      for (const h of hits) { const k = h.e.src + ' ' + h.e.url; score.set(k, (score.get(k) || 0) + 1); if (!hitMsgs.includes(h)) hitMsgs.push(h); }
+    }
+    // 樣本：命中的訊息（最多 4 條）+ 每條連線最近 2 條
+    const dump = (title, { e, d }) => {
+      out.push('', `--- ${title} · ${e.src} ${e.url} · ${new Date(e.t).toISOString().slice(11, 19)} · ${e.kind} len=${e.full}${d.gz ? ' (gzip inside → ' + (d.raw ? d.raw.length : 0) + ')' : ''}${e.full > e.len ? ' TRUNCATED' : ''}`);
+      if (e.kind === 'text') out.push(d.text.slice(0, 6000));
+      else {
+        out.push('strings: ' + JSON.stringify(netStrings(d.text).slice(0, 220)));
+        out.push('base64(first 3000 bytes' + (d.gz ? ', after gunzip' : '') + '): ' + b64(d.raw.subarray(0, 3000)));
+        if (d.gz && e.bytes) out.push('base64(frame head 200 bytes): ' + b64(e.bytes.subarray(0, 200)));
+      }
+    };
+    out.push('', '== samples: messages containing on-screen data ==');
+    hitMsgs.sort((x, y) => (x.e.full || 0) - (y.e.full || 0));
+    for (const h of hitMsgs.slice(0, 4)) dump('HIT', h);
+    if (!hitMsgs.length) out.push('(none)');
+    out.push('', '== samples: latest per channel ==');
+    const byChan = new Map();
+    for (const x of decs) { const k = x.e.src + ' ' + x.e.url; if (!byChan.has(k)) byChan.set(k, []); byChan.get(k).push(x); }
+    for (const [k, arr] of byChan) {
+      out.push('', `## ${k} · ${arr.length} buffered · hits ${score.get(k) || 0}`);
+      for (const x of arr.slice(-2)) dump('LAST', x);
+    }
+    return out.join('\n');
+  }
+
   /* ---- 建立整個面板（切換語言時重建） ---- */
   function buildUI() {
     root.innerHTML = html();
@@ -2976,6 +3144,15 @@
       if (!b.dataset.c) { b.dataset.c = '1'; b.textContent = L('再按一次確認清空', 'Press again to clear'); setTimeout(() => { delete b.dataset.c; b.textContent = L('清空記錄', 'Clear records'); }, 3000); return; }
       live.orders = []; saveLive(); renderLive();
     };
+    $('ttf-netdiag').onclick = async () => {
+      const el = $('ttf-livemsg');
+      el.textContent = L('正在整理網路記錄…', 'Collecting network records…'); el.className = 'msg';
+      let txt = '';
+      try { txt = await netDiagnose(); } catch (e) { txt = 'netDiagnose error: ' + (e && e.stack || e); }
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain;charset=utf-8' })); a.download = `tiktok-net-diag-${stamp()}.txt`;
+      document.body.appendChild(a); a.click(); a.remove();
+      el.textContent = L('已下載「tiktok-net-diag-….txt」，請把這個檔案傳給 Claude（裡面有畫面上的客人名稱和留言）', 'Downloaded “tiktok-net-diag-….txt” — send that file to Claude (it contains on-screen customer names and comments)'); el.className = 'msg ok';
+    };
     $('ttf-livediag').onclick = async () => {
       const txt = liveDiagnose(); LOG(txt);
       const el = $('ttf-livemsg');
@@ -3125,4 +3302,7 @@
   }, true);
 
   LOG('已載入');
-})();
+}
+// 網路記錄要在 document-start 就裝好；面板等頁面載入後才建立
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(ttfillMain, 800));
+else setTimeout(ttfillMain, document.readyState === 'complete' ? 0 : 800);
