@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.11
+// @version      7.12
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -1602,6 +1602,7 @@ function ttfillMain() {
     if (!live.on) return;
     const now = Date.now();
     let changed = false;
+    const backfill = []; // 這一輪才補記、但得標時間較早的單：把之後已經收到的留言補進去
     // 得標：同一個結果要隔 1.2 秒以上連續讀到兩次才算（避開換場時一閃而過的畫面）
     const w = readWonCard();
     const sig = w ? [w.no, w.winner, w.price, listingKey(w.listing)].join('|') : '';
@@ -1612,7 +1613,8 @@ function ttfillMain() {
       // 同一個 listing 的同一個編號只能有一個得標者
       const dup = live.orders.find((o) => o.no === w.no && listingKey(o.listing) && (listingKey(o.listing).startsWith(listingKey(w.listing)) || listingKey(w.listing).startsWith(listingKey(o.listing))));
       if (!dup) {
-        live.orders.push({ no: w.no, listing: w.listing, winner: w.winner, price: w.price, at, paid: false, replies: [], src });
+        const o = { no: w.no, listing: w.listing, winner: w.winner, price: w.price, at, paid: false, replies: [], src };
+        live.orders.push(o); if (now - at > 1500) backfill.push(o);
         changed = true;
         LOG('得標', src, w);
       } else if (!sameName(dup.winner, w.winner)) {
@@ -1628,17 +1630,21 @@ function ttfillMain() {
     // 得標直接從網路資料來（拍賣一結束就有，不用等畫面）；對不上編號的留給畫面上的 won! 卡片
     if (live.endSeq == null) live.endSeq = wire.endSeq;
     for (const e of wire.ends) {
-      if (e.seq <= live.endSeq) continue;
-      if (!wireResolveEnd(e)) { if (now - e.t < 6000) break; live.endSeq = e.seq; continue; }
-      live.endSeq = e.seq;
+      if (e.seq <= live.endSeq || e.liveDone) continue; // endSeq = 開始檢測時已經有的不算
+      if (!wireResolveEnd(e)) { if (now - e.t > 10 * 60000) e.liveDone = true; continue; } // 對不上編號：等出價 / 付款資料，或由畫面補
+      e.liveDone = true;
       applyWin({ no: e.no, listing: e.listing, winner: cleanName(e.winner), price: e.price }, e.t, 'wire');
     }
     const { comments, system } = chatLists();
     if (!primed) { primedEls = new WeakSet(); primeList(comments); primeList(system); scanBase(system, comments); saveLive(); }
     const cNew = newItems(comments, true);
     // 付款確認：「X won auction item 47 (Shoes)… $13.00」（Quick LIVE 可能混在留言裡）
-    for (const s of [...newItems(system), ...cNew.filter((c) => sysMatch(c.text))]) {
-      const m = sysMatch(s.text);
+    // 付款也直接從網路資料來（ManagerMessage type 7）；畫面上的 Activity 作後備，兩邊重複不會記兩次
+    if (live.paidSeq == null) live.paidSeq = wire.paidSeq;
+    const wirePaid = [];
+    for (const pd of wire.paids) { if (pd.seq <= live.paidSeq) continue; live.paidSeq = pd.seq; wirePaid.push({ wire: true, m: [null, pd.name, pd.no, pd.title, pd.price.replace(/^\$\s*/, '')] }); }
+    for (const s of [...wirePaid, ...newItems(system), ...cNew.filter((c) => sysMatch(c.text))]) {
+      const m = s.wire ? s.m : sysMatch(s.text);
       if (!m || !primed) continue;
       const name = cleanName(m[1]), no = m[2];
       let o = live.orders.find((x) => x.no === no && sameName(x.winner, name));
@@ -1647,10 +1653,14 @@ function ttfillMain() {
         const wrong = live.orders.find((x) => x.no === no && !x.paid && (listingKey(x.listing).startsWith(listingKey(m[3])) || listingKey(m[3]).startsWith(listingKey(x.listing))));
         if (wrong) { LOG('以付款訊息修正得標者', wrong.winner, '→', name); wrong.winner = name; wrong.replies = []; if (m[4]) wrong.price = m[4]; wrong.src = 'card'; o = wrong; }
       }
-      if (!o && +no <= baseFor(m[3])) continue; // 開始檢測之前的舊單（聊天清單重新顯示舊訊息時會出現）
+      if (!o && !s.wire && +no <= baseFor(m[3])) continue; // 開始檢測之前的舊單（聊天清單重新顯示舊訊息時會出現）
       if (!o) { // 開始檢測前沒看到 won! 卡片：用聊天記錄補上
-        o = { no, listing: fullListing(m[3]), winner: name, price: m[4] || '', at: now, paid: false, replies: [], fromChat: true };
-        live.orders.push(o);
+        // 得標時間：有對應的拍賣結束資料就用它的時間
+        const money = (x) => String(x || '').replace(/[^\d.]/g, '');
+        const end = wire.ends.slice().reverse().find((e) => strictKey(cleanName(e.winner)) === strictKey(name) && (!m[4] || money(e.price) === money(m[4])) && now - e.t < 10 * 60000 && e.seq > (live.endSeq || 0) && !e.liveDone);
+        if (end) end.liveDone = true;
+        o = { no, listing: fullListing(m[3]), winner: name, price: m[4] || '', at: end ? end.t : now, paid: false, replies: [], fromChat: true, src: s.wire ? 'wire' : undefined };
+        live.orders.push(o); if (end) backfill.push(o);
       }
       if (!o.price && m[4]) o.price = m[4];
       if (!o.paid) { o.paid = true; o.paidAt = now; changed = true; }
@@ -1669,6 +1679,7 @@ function ttfillMain() {
         o.replies.push({ t: at, msg: pc.msg, loose: !exact.length, from: pc.name }); changed = true;
       }
     };
+    for (const o of backfill) for (const c of wire.all) { if (c.seq > (live.wireSeq || 0) || c.old || c.t < o.at || c.t - o.at > win) continue; const nm = cleanName(c.name); if ((strictKey(nm) === strictKey(o.winner) || sameName(nm, o.winner)) && !isMuted(c.msg) && !o.replies.some((r) => r.t === c.t && r.msg === c.msg)) { o.replies.push({ t: c.t, msg: c.msg, loose: strictKey(nm) !== strictKey(o.winner), from: nm }); changed = true; } }
     const useWire = wireAlive();
     if (live.wireSeq == null) live.wireSeq = wire.seq;
     if (useWire) { // 留言直接從網路資料來：不受畫面有沒有畫出來影響
@@ -1687,7 +1698,7 @@ function ttfillMain() {
     liveTick();
     liveObs = new MutationObserver(() => { if (!liveTimer) liveTimer = setTimeout(() => { liveTimer = null; liveTick(); }, 250); });
     liveObs.observe(document.body, { childList: true, subtree: true, characterData: true });
-    live.wireSeq = wire.seq; live.endSeq = wire.endSeq;
+    live.wireSeq = wire.seq; live.endSeq = wire.endSeq; live.paidSeq = wire.paidSeq;
     if (live._stop) live._stop();
     live._stop = bgInterval(liveTick, 1000, 'live');
     renderLive();
@@ -2561,6 +2572,11 @@ function ttfillMain() {
     }
     const { comments, system } = chatLists();
     let added = 0;
+    if (feed.paidSeq == null) feed.paidSeq = 0;
+    for (const pd of wire.paids) {
+      if (pd.seq <= feed.paidSeq) continue; feed.paidSeq = pd.seq;
+      if (fset.sys && feedPush({ kind: 's', name: cleanName(pd.name), msg: '#' + pd.no + (pd.price ? '  ' + pd.price : ''), no: pd.no, t: pd.t })) added++;
+    }
     const annTexts = (ann.hist || []).filter((h) => now - h.t < 10 * 60000).map((h) => h.text.trim());
     const useWire = wireAlive();
     feed.src = useWire ? 'wire' : 'dom';
@@ -2749,7 +2765,7 @@ function ttfillMain() {
       // 頂部只顯示「最近一單 won!」，下面高亮這位客人得標後的回覆（直到下一單得標）
       // 同一單在直播檢測裡已經有記錄：用它的得標時間（比評論窗自己看到的準）
       const pool = [...live.orders, ...feedWins.filter((o) => o.src === 'card' && !live.orders.some((x) => x.no === o.no && strictKey(x.winner) === strictKey(o.winner)))];
-      const pick = (arr) => arr.slice().sort((x, y) => x.at - y.at).pop();
+      const pick = (arr) => arr.slice().sort((x, y) => (Math.abs(x.at - y.at) < 1000 ? (+x.no || 0) - (+y.no || 0) : x.at - y.at)).pop();
       const c = pick(pool);
       const reps = c ? feed.items.filter((x) => x.kind === 'c' && !x.host && x.t >= c.at && !isMuted(x.msg) && (strictKey(x.name) === strictKey(c.winner) || sameName(x.name, c.winner))).slice(-4) : [];
       const sig = c ? [c.no, c.price, c.winner, c.listing, c.at, reps.map((r) => r.t + r.msg).join('|'), fset.lang].join('|') : '';
@@ -2872,7 +2888,7 @@ function ttfillMain() {
   /* ================= 直接讀 TikTok 收到的留言資料（不靠畫面） =================
      留言從 webcast 的 WebSocket 進來（protobuf：PushFrame → Response → WebcastChatMessage）。
      這條連線有資料時，評論窗和訂單回覆都用它；沒有資料時（連線斷了 / 格式改了）自動退回看畫面。 */
-  const wire = { all: [], seq: 0, ids: new Set(), lastFrame: 0, frames: 0, bad: 0, methods: {}, kinds: {}, samples: {}, bids: [], ends: [], endSeq: 0, endIds: new Set(), chain: Promise.resolve() };
+  const wire = { all: [], seq: 0, ids: new Set(), lastFrame: 0, frames: 0, bad: 0, methods: {}, kinds: {}, samples: {}, bids: [], ends: [], endSeq: 0, endIds: new Set(), paids: [], paidSeq: 0, paidIds: new Set(), chain: Promise.resolve() };
   const WIRE_KEEP = 3000;
   function pbFields(u8) { // 最簡 protobuf 讀法：回傳 [{f, w, v|b}]；讀不通就回 null
     const out = []; let i = 0; const n = u8.length;
@@ -2897,9 +2913,16 @@ function ttfillMain() {
   function wireOec(name, payload, recvT) {
     const fs = pbFields(payload); if (!fs) return;
     if (name === 'WebcastOecLiveManagerMessage') {
-      const ty = pbGet(fs, 2); if (!ty || ty.v == null || Number(ty.v) !== 8) return;
+      const ty = pbGet(fs, 2); const tyN = ty && ty.v != null ? Number(ty.v) : 0;
+      if (tyN !== 8 && tyN !== 7) return;
       const bid = { t: recvT, name: pbText(payload, 11, 1, 3), title: pbText(payload, 11, 2, 1), price: pbText(payload, 11, 2, 3, 1), no: pbText(payload, 11, 3, 1) };
       if (!bid.name || !/^\d+$/.test(bid.no)) return;
+      if (tyN === 7) { // 「X won auction item N …」= 已付款（和右邊 Activity 那一行是同一件事）
+        const k = bid.no + '|' + bid.name + '|' + bid.title;
+        if (wire.paidIds.has(k)) return; wire.paidIds.add(k);
+        wire.paids.push(Object.assign(bid, { seq: ++wire.paidSeq })); if (wire.paids.length > 300) wire.paids.shift();
+        return;
+      }
       wire.bids.push(bid); if (wire.bids.length > 300) wire.bids.shift();
       return;
     }
@@ -2915,7 +2938,7 @@ function ttfillMain() {
   function wireResolveEnd(e) {
     if (e.no) return true;
     const money = (x) => String(x || '').replace(/[^\d.]/g, '');
-    const cands = wire.bids.filter((b) => b.t <= e.t + 4000 && e.t - b.t < 15 * 60000);
+    const cands = [...wire.bids, ...wire.paids].sort((x, y) => x.t - y.t).filter((b) => b.t <= e.t + 5 * 60000 && e.t - b.t < 15 * 60000);
     const hit = cands.slice().reverse().find((b) => strictKey(b.name) === strictKey(e.winner) && money(b.price) === money(e.price))
       || cands.slice().reverse().find((b) => strictKey(b.name) === strictKey(e.winner));
     if (!hit) return false;
@@ -3024,6 +3047,7 @@ function ttfillMain() {
     out.push('wire methods: ' + JSON.stringify(wire.methods));
     out.push('wire kinds: ' + JSON.stringify(wire.kinds));
     out.push('wire ends: ' + JSON.stringify(wire.ends.slice(-6).map((e) => [hhmmss(e.t), e.no || '?', e.winner, e.price, e.listing || ''])));
+    out.push('wire paids: ' + JSON.stringify(wire.paids.slice(-6).map((b) => [hhmmss(b.t), b.no, b.name, b.price])));
     out.push('wire bids: ' + JSON.stringify(wire.bids.slice(-6).map((b) => [hhmmss(b.t), b.no, b.name, b.price])));
     out.push('wire last chats: ' + JSON.stringify(wire.all.slice(-6).map((c) => [hhmmss(c.t), c.name, c.msg])));
     out.push('', '== WebSockets ==');
