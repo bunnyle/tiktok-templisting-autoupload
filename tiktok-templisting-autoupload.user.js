@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.12
+// @version      7.13
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -139,7 +139,7 @@ function ttfillMain() {
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   let langOverride = null; // 評論窗可以用自己的語言
@@ -1664,6 +1664,17 @@ function ttfillMain() {
       }
       if (!o.price && m[4]) o.price = m[4];
       if (!o.paid) { o.paid = true; o.paidAt = now; changed = true; }
+      if (o.payFail) { o.payFailBefore = o.payFail; delete o.payFail; changed = true; } // 失敗後又付成功
+    }
+    // 付款失敗：標在那一單上（之後付款成功的話，「已付款」會蓋過它）
+    if (live.failSeq == null) live.failSeq = wire.failSeq;
+    for (const f of wire.fails) {
+      if (f.seq <= live.failSeq) continue; live.failSeq = f.seq;
+      if (!primed) continue;
+      const nm = cleanName(f.name), fl = fullListing(f.title);
+      let o = live.orders.find((x) => x.no === f.no && sameName(x.winner, nm) && (listingKey(x.listing).startsWith(listingKey(fl)) || listingKey(fl).startsWith(listingKey(x.listing))));
+      if (!o) { o = { no: f.no, listing: fl, winner: nm, price: f.price.replace(/^\$\s*/, ''), at: f.t, paid: false, replies: [], src: 'wire' }; live.orders.push(o); }
+      if (!o.paid) { o.payFail = (o.payFail || 0) + 1; o.payFailAt = f.t; changed = true; }
     }
     // 留言 → 放進該客人得標後 N 分鐘內的每一單
     const win = Math.max(0.5, +live.mins || 3) * 60000;
@@ -1698,7 +1709,7 @@ function ttfillMain() {
     liveTick();
     liveObs = new MutationObserver(() => { if (!liveTimer) liveTimer = setTimeout(() => { liveTimer = null; liveTick(); }, 250); });
     liveObs.observe(document.body, { childList: true, subtree: true, characterData: true });
-    live.wireSeq = wire.seq; live.endSeq = wire.endSeq; live.paidSeq = wire.paidSeq;
+    live.wireSeq = wire.seq; live.endSeq = wire.endSeq; live.paidSeq = wire.paidSeq; live.failSeq = wire.failSeq;
     if (live._stop) live._stop();
     live._stop = bgInterval(liveTick, 1000, 'live');
     renderLive();
@@ -1713,7 +1724,7 @@ function ttfillMain() {
   function liveCSV() {
     const esc = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
     const head = ['No', 'Listing', 'Customer', 'Price', 'Won time', 'Paid', 'Replies'];
-    const rows = live.orders.map((o) => [o.no, o.listing, o.winner, o.price, new Date(o.at).toLocaleString(), o.paid ? 'Y' : '', o.replies.map((r) => `[${hhmmss(r.t)}]${r.loose ? ' (≈' + (r.from || '') + ')' : ''} ${r.msg}`).join(' | ')]);
+    const rows = live.orders.map((o) => [o.no, o.listing, o.winner, o.price, new Date(o.at).toLocaleString(), o.paid ? 'Y' : o.payFail ? 'PAYMENT FAILED' + (o.payFail > 1 ? ' x' + o.payFail : '') : '', o.replies.map((r) => `[${hhmmss(r.t)}]${r.loose ? ' (≈' + (r.from || '') + ')' : ''} ${r.msg}`).join(' | ')]);
     return '﻿' + [head, ...rows].map((r) => r.map(esc).join(',')).join('\n');
   }
   function liveDiagnose() {
@@ -1916,7 +1927,7 @@ function ttfillMain() {
     .chk:checked{background:var(--accent);border-color:var(--accent)}
     .chk:checked::after{content:"";width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
     .tag{font-size:10.5px;font-weight:600;padding:1px 6px;border-radius:99px;white-space:nowrap;flex:none}
-    .t-muted{background:var(--soft);color:var(--muted)} .t-ok{background:var(--ok-soft);color:var(--ok)}
+    .t-muted{background:var(--soft);color:var(--muted)} .t-ok{background:var(--ok-soft);color:var(--ok)} .t-fail{background:#e5132f;color:#fff;font-weight:700}
     .t-warn{background:var(--warn-soft);color:var(--warn)} .t-err{background:var(--err-soft);color:var(--err)}
     .t-info{background:var(--info-soft);color:var(--info)}
     .empty{padding:18px;text-align:center;color:var(--muted);font-size:12px}
@@ -2577,6 +2588,11 @@ function ttfillMain() {
       if (pd.seq <= feed.paidSeq) continue; feed.paidSeq = pd.seq;
       if (fset.sys && feedPush({ kind: 's', name: cleanName(pd.name), msg: '#' + pd.no + (pd.price ? '  ' + pd.price : ''), no: pd.no, t: pd.t })) added++;
     }
+    if (feed.failSeq == null) feed.failSeq = 0;
+    for (const f of wire.fails) {
+      if (f.seq <= feed.failSeq) continue; feed.failSeq = f.seq;
+      feed.items.push({ kind: 'f', name: cleanName(f.name), msg: '#' + f.no + (f.price ? '  ' + f.price : ''), no: f.no, t: f.t, sig: 'f|' + f.seq }); added++;
+    }
     const annTexts = (ann.hist || []).filter((h) => now - h.t < 10 * 60000).map((h) => h.text.trim());
     const useWire = wireAlive();
     feed.src = useWire ? 'wire' : 'dom';
@@ -2648,7 +2664,7 @@ function ttfillMain() {
     .c.win{background:rgba(229,19,47,.12);border-left-color:#e5132f}
     .c.host{background:var(--host);border-left-color:#4f8cff}
     .c.host .n::after{content:" ${L('主播', 'Host')}";font-size:.8em;font-weight:700;color:#fff;background:#4f8cff;border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:.2em}
-    .c.sys{font-size:.62em;color:var(--mute)} .c.sys .ok{color:#22c55e;font-weight:800}
+    .c.sys{font-size:.62em;color:var(--mute)} .c.sys .ok{color:#22c55e;font-weight:800} .c.sys.fail{font-size:.8em;background:rgba(229,19,47,.18);border-left-color:#e5132f;color:var(--fg)} .c.sys .bad{color:#ff4d6a;font-weight:800} .auc .pf{background:#e5132f;color:#fff;font-weight:800;border-radius:.3em;padding:.05em .4em;font-size:.8em;white-space:nowrap} .auc .pok{color:#22c55e;font-weight:800;font-size:.8em;white-space:nowrap}
     .empty{color:var(--mute);text-align:center;padding:40px 10px;font-size:16px}
     @keyframes ttin{from{opacity:0;transform:translateY(-12px);background:rgba(250,204,21,.25)}to{opacity:1;transform:none}}
     .c.new{animation:ttin .45s ease-out}
@@ -2768,11 +2784,13 @@ function ttfillMain() {
       const pick = (arr) => arr.slice().sort((x, y) => (Math.abs(x.at - y.at) < 1000 ? (+x.no || 0) - (+y.no || 0) : x.at - y.at)).pop();
       const c = pick(pool);
       const reps = c ? feed.items.filter((x) => x.kind === 'c' && !x.host && x.t >= c.at && !isMuted(x.msg) && (strictKey(x.name) === strictKey(c.winner) || sameName(x.name, c.winner))).slice(-4) : [];
-      const sig = c ? [c.no, c.price, c.winner, c.listing, c.at, reps.map((r) => r.t + r.msg).join('|'), fset.lang].join('|') : '';
+      const mine = (x) => c && x.no === c.no && strictKey(cleanName(x.name)) === strictKey(c.winner) && x.t >= c.at - 5000;
+      const cPaid = !!c && (c.paid || wire.paids.some(mine)), cFail = c && !cPaid ? (c.payFail || wire.fails.filter(mine).length) : 0;
+      const sig = c ? [c.no, c.price, c.winner, c.listing, c.at, cPaid, cFail, reps.map((r) => r.t + r.msg).join('|'), fset.lang].join('|') : '';
       if (sig !== lastAucSig) {
         lastAucSig = sig;
         auc.className = 'auc';
-        auc.innerHTML = c ? `<div class="r1"><span class="no">#${escapeHtml(c.no)}</span><span class="w" style="color:${nameColor(c.winner)}">${escapeHtml(c.winner)}</span><span class="st">won!</span>${c.price ? `<span class="pr">$${escapeHtml(c.price)}</span>` : ''}</div>
+        auc.innerHTML = c ? `<div class="r1"><span class="no">#${escapeHtml(c.no)}</span><span class="w" style="color:${nameColor(c.winner)}">${escapeHtml(c.winner)}</span><span class="st">won!</span>${c.price ? `<span class="pr">$${escapeHtml(c.price)}</span>` : ''}${cPaid ? `<span class="pok">✓ ${L('已付款', 'Paid')}</span>` : cFail ? `<span class="pf">✗ ${L('付款失敗', 'Payment failed')}${cFail > 1 ? ' ×' + cFail : ''}</span>` : ''}</div>
             ${c.listing ? `<div class="t" title="${escapeHtml(c.listing)}">${escapeHtml(c.listing)}</div>` : ''}
             <div class="reps">${reps.map((r) => `<div class="rp">${escapeHtml(r.msg)}<span class="tm">${hhmmss(r.t)}</span></div>`).join('') || `<div class="wait">${L('等待客人回覆…', 'Waiting for the winner’s reply…')}</div>`}</div>`
           : `<div class="wait">${L('（還沒有得標）', '(No winner yet)')}</div>`;
@@ -2824,6 +2842,7 @@ function ttfillMain() {
     if (onlyWin && x.kind === 'c' && !x.host && !nos.length) return '';
     const tm = x.old ? '' : `<span class="tm">${hhmmss(x.t)}</span>`;
     const nm = `<span class="n" data-n="${escapeHtml(x.name)}" style="color:${nameColor(x.name)}">${hl(x.name, q)}</span>`;
+    if (x.kind === 'f') return `<div class="c sys fail"><span class="bad">✗ ${L('付款失敗', 'Payment failed')}</span> <span class="no">${escapeHtml(x.msg.split(' ')[0])}</span>${nm} ${escapeHtml(x.msg.split(' ').slice(1).join(' '))}${tm}</div>`;
     if (x.kind === 's') return `<div class="c sys"><span class="ok">✓ ${L('已付款', 'Paid')}</span> <span class="no">${escapeHtml(x.msg.split(' ')[0])}</span>${nm} ${escapeHtml(x.msg.split(' ').slice(1).join(' '))}${tm}</div>`;
     const mu = x.host ? '' : `<button class="mu" data-m="${escapeHtml(x.msg)}" title="${L('不再顯示包含這句的留言', 'Hide comments with this text')}">🚫</button>`;
     return `<div class="c${x.host ? ' host' : ''}${nos.length ? ' win' : ''}"><div class="hd">${nos.map((n) => `<span class="no">#${escapeHtml(n)}</span>`).join('')}${nm}${mu}${tm}</div><span class="m">${hl(x.msg, q)}</span></div>`;
@@ -2888,7 +2907,7 @@ function ttfillMain() {
   /* ================= 直接讀 TikTok 收到的留言資料（不靠畫面） =================
      留言從 webcast 的 WebSocket 進來（protobuf：PushFrame → Response → WebcastChatMessage）。
      這條連線有資料時，評論窗和訂單回覆都用它；沒有資料時（連線斷了 / 格式改了）自動退回看畫面。 */
-  const wire = { all: [], seq: 0, ids: new Set(), lastFrame: 0, frames: 0, bad: 0, methods: {}, kinds: {}, samples: {}, bids: [], ends: [], endSeq: 0, endIds: new Set(), paids: [], paidSeq: 0, paidIds: new Set(), chain: Promise.resolve() };
+  const wire = { all: [], seq: 0, ids: new Set(), lastFrame: 0, frames: 0, bad: 0, methods: {}, kinds: {}, samples: {}, bids: [], ends: [], endSeq: 0, endIds: new Set(), paids: [], paidSeq: 0, paidIds: new Set(), fails: [], failSeq: 0, chain: Promise.resolve() };
   const WIRE_KEEP = 3000;
   function pbFields(u8) { // 最簡 protobuf 讀法：回傳 [{f, w, v|b}]；讀不通就回 null
     const out = []; let i = 0; const n = u8.length;
@@ -2914,9 +2933,13 @@ function ttfillMain() {
     const fs = pbFields(payload); if (!fs) return;
     if (name === 'WebcastOecLiveManagerMessage') {
       const ty = pbGet(fs, 2); const tyN = ty && ty.v != null ? Number(ty.v) : 0;
-      if (tyN !== 8 && tyN !== 7) return;
+      if (tyN !== 8 && tyN !== 7 && tyN !== 9) return;
       const bid = { t: recvT, name: pbText(payload, 11, 1, 3), title: pbText(payload, 11, 2, 1), price: pbText(payload, 11, 2, 3, 1), no: pbText(payload, 11, 3, 1) };
       if (!bid.name || !/^\d+$/.test(bid.no)) return;
+      if (tyN === 9) { // 付款失敗（同一單可能出現兩次：得標後幾秒一次，5 分鐘期限到再一次）
+        wire.fails.push(Object.assign(bid, { seq: ++wire.failSeq })); if (wire.fails.length > 300) wire.fails.shift();
+        return;
+      }
       if (tyN === 7) { // 「X won auction item N …」= 已付款（和右邊 Activity 那一行是同一件事）
         const k = bid.no + '|' + bid.name + '|' + bid.title;
         if (wire.paidIds.has(k)) return; wire.paidIds.add(k);
@@ -3048,6 +3071,7 @@ function ttfillMain() {
     out.push('wire kinds: ' + JSON.stringify(wire.kinds));
     out.push('wire ends: ' + JSON.stringify(wire.ends.slice(-6).map((e) => [hhmmss(e.t), e.no || '?', e.winner, e.price, e.listing || ''])));
     out.push('wire paids: ' + JSON.stringify(wire.paids.slice(-6).map((b) => [hhmmss(b.t), b.no, b.name, b.price])));
+    out.push('wire fails: ' + JSON.stringify(wire.fails.slice(-6).map((b) => [hhmmss(b.t), b.no, b.name, b.price])));
     out.push('wire bids: ' + JSON.stringify(wire.bids.slice(-6).map((b) => [hhmmss(b.t), b.no, b.name, b.price])));
     out.push('wire last chats: ' + JSON.stringify(wire.all.slice(-6).map((c) => [hhmmss(c.t), c.name, c.msg])));
     out.push('', '== WebSockets ==');
@@ -3311,7 +3335,7 @@ function ttfillMain() {
         const left = o.at + win - Date.now();
         d.innerHTML = `<div class="h"><span class="no">#${escapeHtml(o.no)}</span><span class="who" title="${escapeHtml(o.winner)}">${escapeHtml(o.winner)}</span>
             ${o.price ? `<span class="tag t-muted">$${escapeHtml(o.price)}</span>` : ''}
-            ${o.paid ? `<span class="tag t-ok">${L('已付款', 'Paid')}</span>` : ''}
+            ${o.paid ? `<span class="tag t-ok">${L('已付款', 'Paid')}</span>` : o.payFail ? `<span class="tag t-fail" title="${L('TikTok 通知付款失敗', 'TikTok reported a payment failure')} ${hhmmss(o.payFailAt)}">${L('付款失敗', 'Payment failed')}${o.payFail > 1 ? ' ×' + o.payFail : ''}</span>` : ''}
             <span class="tag ${left > 0 ? 't-info' : 't-muted'}" data-left="${o.at + win}">${left > 0 ? Math.ceil(left / 1000) + 's' : L('已結束', 'Closed')}</span>
             <button class="link odel" title="${L('刪除這一單', 'Delete this order')}" style="color:var(--muted);padding:0 2px">×</button></div>
           <div class="meta" title="${escapeHtml(o.listing)}">${escapeHtml(o.listing)}</div>
