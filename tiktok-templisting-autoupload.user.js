@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.8
+// @version      7.9
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -48,6 +48,7 @@
         const len = typeof d === 'string' ? d.length : (d && (d.byteLength || d.size)) || 0;
         info.bytes += len; if (typeof d !== 'string') info.bin++;
         record('ws', info.url, d);
+        try { if (NET.onWs) NET.onWs(info.url, d); } catch (e) { /* 空 */ }
       });
     };
     if (WS && WS.prototype) {
@@ -138,7 +139,7 @@ function ttfillMain() {
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   let langOverride = null; // 評論窗可以用自己的語言
@@ -1644,18 +1645,26 @@ function ttfillMain() {
     }
     // 留言 → 放進該客人得標後 N 分鐘內的每一單
     const win = Math.max(0.5, +live.mins || 3) * 60000;
-    for (const c of cNew) {
-      if (!primed || sysMatch(c.text)) continue; // 開始之前的舊留言不算
-      const pc = parseComment(c.text, c.el);
-      if (!pc || isMuted(pc.msg)) continue; // 過濾掉的留言（例如 giveaway 指定句）不記
+    const addReply = (pc, at, viaWire) => {
+      if (!pc || isMuted(pc.msg)) return; // 過濾掉的留言（例如 giveaway 指定句）不記
       // 先找名字完全一樣（含表情）的單；沒有才用「忽略表情」的近似比對，並標 ≈ 提醒核對
-      const open = live.orders.filter((o) => now >= o.at && now - o.at <= win);
+      const open = live.orders.filter((o) => at >= o.at && at - o.at <= win);
       const exact = open.filter((o) => strictKey(o.winner) === strictKey(pc.name));
       const hits = exact.length ? exact : open.filter((o) => sameName(o.winner, pc.name));
       for (const o of hits) {
-        if (o.replies.some((r) => r.msg === pc.msg && strictKey(r.from || o.winner) === strictKey(pc.name))) continue; // 同一句不重複記
-        o.replies.push({ t: now, msg: pc.msg, loose: !exact.length, from: pc.name }); changed = true;
+        // 看畫面時同一句不重複記（畫面會重畫）；網路資料每條有編號，客人真的重複發就照記
+        if (o.replies.some((r) => r.msg === pc.msg && strictKey(r.from || o.winner) === strictKey(pc.name) && !viaWire)) continue;
+        o.replies.push({ t: at, msg: pc.msg, loose: !exact.length, from: pc.name }); changed = true;
       }
+    };
+    const useWire = wireAlive();
+    if (live.wireSeq == null) live.wireSeq = wire.seq;
+    if (useWire) { // 留言直接從網路資料來：不受畫面有沒有畫出來影響
+      for (const c of wire.all) { if (c.seq <= live.wireSeq) continue; live.wireSeq = c.seq; if (primed && !c.old) addReply({ name: cleanName(c.name), msg: c.msg }, c.t, true); }
+    } else live.wireSeq = wire.seq;
+    for (const c of cNew) {
+      if (!primed || useWire || sysMatch(c.text)) continue; // 開始之前的舊留言不算
+      addReply(parseComment(c.text, c.el), now, false);
     }
     if (!primed) { primed = true; } // 第一次只把畫面上已有的訊息標記為「看過」
     if (changed) { saveLive(); renderLive(); } else updLiveTimers();
@@ -1666,6 +1675,7 @@ function ttfillMain() {
     liveTick();
     liveObs = new MutationObserver(() => { if (!liveTimer) liveTimer = setTimeout(() => { liveTimer = null; liveTick(); }, 250); });
     liveObs.observe(document.body, { childList: true, subtree: true, characterData: true });
+    live.wireSeq = wire.seq;
     if (live._stop) live._stop();
     live._stop = bgInterval(liveTick, 1000, 'live');
     renderLive();
@@ -2503,7 +2513,8 @@ function ttfillMain() {
   function feedPush(it) {
     const sig = it.kind + '|' + strictKey(it.name) + '|' + it.msg;
     const tail = feed.items.slice(-150);
-    if (tail.some((x) => x.sig === sig && it.t - x.t < 10 * 60000)) return false; // 清單重新顯示舊留言：不重複
+    // 看畫面：清單重新顯示舊留言時不重複。網路資料：每條有編號，只擋掉剛從畫面讀過的同一條
+    if (it.wire ? tail.some((x) => x.sig === sig && !x.wire && Math.abs(it.t - x.t) < 60000) : tail.some((x) => x.sig === sig && it.t - x.t < 10 * 60000)) return false;
     it.sig = sig; feed.items.push(it);
     if (feed.items.length > FEED_KEEP) feed.items.splice(0, feed.items.length - FEED_KEEP);
     return true;
@@ -2520,23 +2531,36 @@ function ttfillMain() {
     const el = w.document.getElementById('stat'); if (!el) return;
     const comments = (chatLists() || {}).comments;
     let msg = '', cls = 'stat';
-    if (document.hidden) { cls += ' warn'; msg = L('⚠ TikTok 分頁被遮住、最小化或切到別的分頁 — Chrome 會暫停 TikTok 更新留言。請讓 TikTok 視窗露出一部分。', '⚠ The TikTok tab is covered, minimised or in the background — Chrome pauses TikTok’s comment updates. Keep part of the TikTok window visible.'); }
-    else if (!comments) { cls += ' warn'; msg = L('⚠ 找不到評論區（TikTok 頁面是否在直播控制台？）', '⚠ Comment area not found (is the TikTok page on the LIVE console?)'); }
+    if (document.hidden && !wireAlive()) { cls += ' warn'; msg = L('⚠ TikTok 分頁被遮住、最小化或切到別的分頁 — Chrome 會暫停 TikTok 更新留言。請讓 TikTok 視窗露出一部分。', '⚠ The TikTok tab is covered, minimised or in the background — Chrome pauses TikTok’s comment updates. Keep part of the TikTok window visible.'); }
+    else if (!comments && !wireAlive()) { cls += ' warn'; msg = L('⚠ 找不到評論區（TikTok 頁面是否在直播控制台？）', '⚠ Comment area not found (is the TikTok page on the LIVE console?)'); }
     else if (tickErr.feed) { cls += ' warn'; msg = '⚠ ' + tickErr.feed; }
-    else msg = L('● 更新中 ', '● Live ') + hhmmss(Date.now());
+    else msg = L('● 更新中 ', '● Live ') + hhmmss(Date.now()) + (feed.src === 'wire' ? L(' · 直接讀取', ' · direct feed') : L(' · 看畫面', ' · screen'));
     el.className = cls; el.textContent = msg;
   }
   function feedTick2() {
     const now = Date.now();
     const card = readAuctionCard();
-    if (card && card.status === 'won' && card.who && !feedWins.some((o) => o.no === card.no && strictKey(o.winner) === strictKey(card.who))) feedWins.push({ no: card.no, winner: card.who, price: card.price, listing: card.listing, at: now, src: 'card' });
+    if (card && card.status === 'won' && card.who && !feedWins.some((o) => o.no === card.no && strictKey(o.winner) === strictKey(card.who))) feedWins.push({ no: card.no, winner: card.who, price: card.price, listing: card.listing, at: feed.first ? now - 180000 : now, src: 'card' });
     const { comments, system } = chatLists();
     let added = 0;
     const annTexts = (ann.hist || []).filter((h) => now - h.t < 10 * 60000).map((h) => h.text.trim());
+    const useWire = wireAlive();
+    feed.src = useWire ? 'wire' : 'dom';
+    if (feed.wireSeq == null) feed.wireSeq = 0; // 評論窗打開前收到的留言也補進來
+    if (useWire) {
+      for (const c of wire.all) {
+        if (c.seq <= feed.wireSeq) continue; feed.wireSeq = c.seq;
+        const name = cleanName(c.name);
+        let host = isHostName(name);
+        if (!host && annTexts.includes(c.msg.trim())) { host = true; if (!fset.host) { fset.host = name; saveState(); } }
+        if (feedPush({ kind: 'c', name, msg: c.msg, t: c.t, host, wire: true })) added++;
+      }
+    } else feed.wireSeq = wire.seq;
     for (const it of listItems(comments, true)) {
       const t = (it.innerText || '').trim();
       if (feed.seen.get(it) === t) continue;
       feed.seen.set(it, t);
+      if (useWire && !sysMatch(t)) continue; // 留言已經從網路資料拿到，畫面上的只標記為看過
       if (sysMatch(t)) { const m = sysMatch(t); if (fset.sys && feedPush({ kind: 's', name: cleanName(m[1]), msg: '#' + m[2] + (m[4] ? '  $' + m[4] : ''), no: m[2], t: now, old: feed.first })) added++; continue; }
       const pc = parseComment(t, it); if (!pc) continue;
       const head = (it.firstElementChild && it.firstElementChild.innerText) || '';
@@ -2705,7 +2729,8 @@ function ttfillMain() {
     if (!list) return;
     if (card !== null) {
       // 頂部只顯示「最近一單 won!」，下面高亮這位客人得標後的回覆（直到下一單得標）
-      const pool = [...live.orders, ...feedWins.filter((o) => o.src === 'card')];
+      // 同一單在直播檢測裡已經有記錄：用它的得標時間（比評論窗自己看到的準）
+      const pool = [...live.orders, ...feedWins.filter((o) => o.src === 'card' && !live.orders.some((x) => x.no === o.no && strictKey(x.winner) === strictKey(o.winner)))];
       const pick = (arr) => arr.slice().sort((x, y) => x.at - y.at).pop();
       const c = pick(pool);
       const reps = c ? feed.items.filter((x) => x.kind === 'c' && !x.host && x.t >= c.at && !isMuted(x.msg) && (strictKey(x.name) === strictKey(c.winner) || sameName(x.name, c.winner))).slice(-4) : [];
@@ -2826,6 +2851,89 @@ function ttfillMain() {
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { if (feed.win) feedTick(); if (live.on) try { liveTick(); } catch (e) { /* 空 */ } } else if (feed.win) feedStatus(); });
   let updFeedBtns = () => {};
 
+  /* ================= 直接讀 TikTok 收到的留言資料（不靠畫面） =================
+     留言從 webcast 的 WebSocket 進來（protobuf：PushFrame → Response → WebcastChatMessage）。
+     這條連線有資料時，評論窗和訂單回覆都用它；沒有資料時（連線斷了 / 格式改了）自動退回看畫面。 */
+  const wire = { all: [], seq: 0, ids: new Set(), lastFrame: 0, frames: 0, bad: 0, methods: {}, samples: {}, chain: Promise.resolve() };
+  const WIRE_KEEP = 3000;
+  function pbFields(u8) { // 最簡 protobuf 讀法：回傳 [{f, w, v|b}]；讀不通就回 null
+    const out = []; let i = 0; const n = u8.length;
+    while (i < n) {
+      let k = 0, s = 0, c;
+      do { if (i >= n) return null; c = u8[i++]; k += (c & 0x7f) * Math.pow(2, s); s += 7; } while (c & 0x80);
+      const f = Math.floor(k / 8), w = k % 8;
+      if (f < 1) return null;
+      if (w === 0) { let v = 0n, sh = 0n; do { if (i >= n) return null; c = u8[i++]; v |= BigInt(c & 0x7f) << sh; sh += 7n; } while (c & 0x80); out.push({ f, w, v }); }
+      else if (w === 2) { let l = 0; s = 0; do { if (i >= n) return null; c = u8[i++]; l += (c & 0x7f) * Math.pow(2, s); s += 7; } while (c & 0x80); if (i + l > n) return null; out.push({ f, w, b: u8.subarray(i, i + l) }); i += l; }
+      else if (w === 1) { if (i + 8 > n) return null; i += 8; }
+      else if (w === 5) { if (i + 4 > n) return null; i += 4; }
+      else return null;
+    }
+    return out;
+  }
+  const pbStr = (b) => { try { return new TextDecoder('utf-8').decode(b); } catch (e) { return ''; } };
+  const pbGet = (fs, f) => { const x = fs && fs.find((y) => y.f === f); return x || null; };
+  function wireChat(payload, recvT) {
+    const fs = pbFields(payload); if (!fs) return;
+    const common = pbGet(fs, 1), user = pbGet(fs, 2), content = pbGet(fs, 3);
+    if (!user || !user.b || !content || !content.b) return;
+    const cf = common && common.b ? pbFields(common.b) : null, uf = pbFields(user.b);
+    if (!uf) return;
+    const idF = pbGet(cf, 2), ctF = pbGet(cf, 4), nick = pbGet(uf, 3), uniq = pbGet(uf, 38), uidF = pbGet(uf, 1);
+    const id = idF && idF.v != null ? String(idF.v) : '';
+    if (id) { if (wire.ids.has(id)) return; wire.ids.add(id); }
+    const name = nick && nick.b ? pbStr(nick.b).trim() : '';
+    const msg = pbStr(content.b).replace(/\s+/g, ' ').trim();
+    if (!name || !msg) return;
+    const ct = ctF && ctF.v != null ? Number(ctF.v) : 0;
+    const t = ct > 1e12 && recvT - ct > 10000 ? ct : recvT; // 連線時補發的舊留言用它原本的時間
+    wire.all.push({ seq: ++wire.seq, id, name, uniq: uniq && uniq.b ? pbStr(uniq.b) : '', uid: uidF && uidF.v != null ? String(uidF.v) : '', msg, t, old: t !== recvT });
+    if (wire.all.length > WIRE_KEEP) { const drop = wire.all.splice(0, wire.all.length - WIRE_KEEP); for (const d of drop) wire.ids.delete(d.id); }
+    wire.lastChat = recvT;
+  }
+  async function wireFrame(u8, recvT) {
+    const top = pbFields(u8); if (!top) { wire.bad++; return; }
+    const pl = pbGet(top, 8); if (!pl || !pl.b) return;
+    let gz = false;
+    for (const h of top) if (h.f === 5 && h.b) { const hf = pbFields(h.b); const k = pbGet(hf, 1), v = pbGet(hf, 2); if (k && k.b && pbStr(k.b) === 'compress_type' && v && v.b && pbStr(v.b) === 'gzip') gz = true; }
+    let body = pl.b;
+    if (gz || (body[0] === 0x1f && body[1] === 0x8b)) { body = await gunzipAt(body, 0); if (!body) { wire.bad++; return; } }
+    const resp = pbFields(body); if (!resp) { wire.bad++; return; }
+    wire.frames++; wire.lastFrame = recvT;
+    for (const m of resp) {
+      if (m.f !== 1 || !m.b) continue;
+      const mf = pbFields(m.b); if (!mf) continue;
+      const meth = pbGet(mf, 1), data = pbGet(mf, 2);
+      const name = meth && meth.b ? pbStr(meth.b) : '?';
+      wire.methods[name] = (wire.methods[name] || 0) + 1;
+      if (data && data.b) {
+        // 留樣本給「網路診斷」：每種訊息最近 2 條（留言以外的，用來找拍賣 / 得標訊息的格式）
+        if (name !== 'WebcastChatMessage') { const arr = wire.samples[name] || (wire.samples[name] = []); arr.push({ t: recvT, b: data.b.slice(0, 6000), full: data.b.length }); if (arr.length > 2) arr.shift(); }
+        if (name === 'WebcastChatMessage') { try { wireChat(data.b, recvT); } catch (e) { wire.bad++; } }
+      }
+    }
+  }
+  function wireFeed(url, d, recvT) {
+    if (!/webcast/i.test(url) || typeof d === 'string') return;
+    const t = recvT || Date.now();
+    wire.chain = wire.chain.then(async () => {
+      try {
+        let u8 = null;
+        if (d instanceof ArrayBuffer) u8 = new Uint8Array(d);
+        else if (d instanceof Uint8Array) u8 = d;
+        else if (typeof Blob !== 'undefined' && d instanceof Blob) u8 = new Uint8Array(await d.arrayBuffer());
+        if (u8) await wireFrame(u8, t);
+      } catch (e) { wire.bad++; }
+    });
+  }
+  // 這條連線最近有資料 = 可以信它（留言少的時候也會一直有進房 / 點讚等訊息）
+  const wireAlive = () => wire.frames > 0 && Date.now() - wire.lastFrame < 45000;
+  if (window.__ttNet) {
+    // 面板載入之前已經收到的（連線時補發的最近留言）先補讀，之後即時處理
+    for (const e of window.__ttNet.buf) if (e.src === 'ws' && e.kind === 'bin' && e.bytes && e.full <= e.len) wireFeed(e.url, e.bytes, e.t);
+    window.__ttNet.onWs = (url, d) => wireFeed(url, d, Date.now());
+  }
+
   /* ================= 網路診斷：找出留言 / 得標資料從哪條網路連線進來 ================= */
   const b64 = (u8) => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
   async function gunzipAt(u8, off) {
@@ -2856,6 +2964,9 @@ function ttfillMain() {
     out.push('TikTok Live 小助手 · 網路診斷 · v' + ((typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.version) || '?') + ' · ' + new Date().toISOString());
     if (!NET) { out.push('沒有網路記錄（腳本太晚載入）：請重新整理 TikTok 頁面再試'); return out.join('\n'); }
     out.push(`recording for ${Math.round((Date.now() - NET.t0) / 1000)}s · buffered ${NET.buf.length} msgs / ${Math.round(NET.bytes / 1024)} KB`);
+    out.push(`wire: frames=${wire.frames} bad=${wire.bad} chat=${wire.all.length} alive=${wireAlive()} lastFrame=${wire.lastFrame ? hhmmss(wire.lastFrame) : '-'}`);
+    out.push('wire methods: ' + JSON.stringify(wire.methods));
+    out.push('wire last chats: ' + JSON.stringify(wire.all.slice(-6).map((c) => [hhmmss(c.t), c.name, c.msg])));
     out.push('', '== WebSockets ==');
     if (!NET.socks.length) out.push('(none seen on the page — the connection may live in a worker)');
     for (const s of NET.socks) out.push(`${s.url}  via=${s.how} msgs=${s.n} (binary ${s.bin}) bytes=${s.bytes}`);
@@ -2904,10 +3015,33 @@ function ttfillMain() {
     hitMsgs.sort((x, y) => (x.e.full || 0) - (y.e.full || 0));
     for (const h of hitMsgs.slice(0, 4)) dump('HIT', h);
     if (!hitMsgs.length) out.push('(none)');
+    // 留言以外的訊息樣本（拍賣 / 得標 / 訂單的格式要靠這個）
+    out.push('', '== wire samples by method (non-chat) ==');
+    const boring = /^Webcast(Member|Like|RoomUserSeq|Social|Gift|RankUpdate|RankText|InRoomBanner|LinkMic|Barrage|Envelope|LiveIntro|Caption|ImDelete|Hourly|Unauthorized|Control|RoomVerify|Poll|Emote|Goal|MsgDetect|LinkLayer|Link|Guide|PerceptionMessage|WallpaperRoomEvent)/;
+    for (const [name, arr] of Object.entries(wire.samples)) {
+      if (boring.test(name)) continue;
+      for (const sm of arr) {
+        out.push('', `--- METHOD ${name} · ${hhmmss(sm.t)} · len=${sm.full}`);
+        out.push('strings: ' + JSON.stringify(netStrings(new TextDecoder('utf-8', { fatal: false }).decode(sm.b)).filter((x) => !/^https?:|tiktokcdn/.test(x)).slice(0, 120)));
+        out.push('base64: ' + b64(sm.b.subarray(0, 4500)));
+      }
+    }
+    // frontier 連線：內容是 JSON，按欄位分組，每組留最後一條（找拍賣 / 訂單事件）
+    out.push('', '== frontier payload shapes ==');
+    const shapes = new Map();
+    for (const { e, d } of decs) {
+      if (e.src !== 'ws' || !/frontier/.test(e.url) || !d.raw) continue;
+      const top = pbFields(d.raw); const p8 = top && pbGet(top, 8); if (!p8 || !p8.b) continue;
+      const txt = pbStr(p8.b); let keys = '(not json)';
+      try { keys = Object.keys(JSON.parse(txt)).sort().join(','); } catch (er) { /* 空 */ }
+      const g = shapes.get(keys) || { n: 0 }; g.n++; g.last = txt; g.t = e.t; shapes.set(keys, g);
+    }
+    for (const [k, g] of shapes) out.push('', `${g.n}× keys=[${k.slice(0, 300)}] last ${hhmmss(g.t)}:`, g.last.slice(0, 2500));
     out.push('', '== samples: latest per channel ==');
     const byChan = new Map();
     for (const x of decs) { const k = x.e.src + ' ' + x.e.url; if (!byChan.has(k)) byChan.set(k, []); byChan.get(k).push(x); }
     for (const [k, arr] of byChan) {
+      if (!/^ws /.test(k) && !score.get(k) && !/auction|message\/chat|activity|order|\/pin/.test(k)) continue;
       out.push('', `## ${k} · ${arr.length} buffered · hits ${score.get(k) || 0}`);
       for (const x of arr.slice(-2)) dump('LAST', x);
     }
