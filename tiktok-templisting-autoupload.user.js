@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.13
+// @version      7.14
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -17,7 +17,7 @@
   'use strict';
   if (window.__ttNet) return;
   const NET = window.__ttNet = { buf: [], bytes: 0, socks: [], http: {}, t0: Date.now(), on: true };
-  const MAX_BYTES = 12 * 1024 * 1024, MAX_ONE = 300 * 1024;
+  const MAX_BYTES = 3 * 1024 * 1024, MAX_ONE = 200 * 1024;
   const cleanUrl = (u) => { try { const x = new URL(String(u), location.href); return x.origin + x.pathname + (x.search ? '?' + [...x.searchParams.keys()].join('&') : ''); } catch (e) { return String(u).split('?')[0]; } };
   const push = (e) => {
     NET.buf.push(e); NET.bytes += e.len || 0;
@@ -139,7 +139,7 @@ function ttfillMain() {
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   let langOverride = null; // 評論窗可以用自己的語言
@@ -1420,7 +1420,15 @@ function ttfillMain() {
   const outerOnly = (arr) => arr.filter((e) => !arr.some((o) => o !== e && o.contains(e)));
   const biggest = (arr) => arr.sort((x, y) => y.getBoundingClientRect().height - x.getBoundingClientRect().height)[0] || null;
   const leafText = (root, re) => xp('.//*[normalize-space(text())]', root).filter((e) => !inPanel(e) && visible(e) && re.test((e.textContent || '').trim()));
+  // 找聊天區要掃整頁，很花力氣：結果留 3 秒重用（元素還在頁面上才用）
+  let clCache = null, clAt = 0;
   function chatLists() {
+    const ok = (e) => !e || e.isConnected;
+    if (clCache && Date.now() - clAt < 3000 && ok(clCache.comments) && ok(clCache.system)) return clCache;
+    clCache = chatLists0() || {}; clAt = Date.now();
+    return clCache;
+  }
+  function chatLists0() {
     const input = [...document.querySelectorAll('input, textarea')].find((i) => /type something/i.test(i.placeholder || '') && !inPanel(i));
     if (!input) return {};
     const ir = input.getBoundingClientRect();
@@ -1604,11 +1612,16 @@ function ttfillMain() {
     let changed = false;
     const backfill = []; // 這一輪才補記、但得標時間較早的單：把之後已經收到的留言補進去
     // 得標：同一個結果要隔 1.2 秒以上連續讀到兩次才算（避開換場時一閃而過的畫面）
-    const w = readWonCard();
-    const sig = w ? [w.no, w.winner, w.price, listingKey(w.listing)].join('|') : '';
-    if (!w) wonSeen = null;
-    else if (!wonSeen || wonSeen.sig !== sig) wonSeen = { sig, t: now };
-    else if (now - wonSeen.t >= 1200) applyWin(w, wonSeen.t, 'card');
+    // 直接讀取正常時，看畫面只是後備：每 4 秒才掃一次畫面，省電腦資源
+    const domDue = !primed || !wireAlive() || now - (live.domAt || 0) >= 4000;
+    if (domDue) {
+      live.domAt = now;
+      const w = readWonCard();
+      const sig = w ? [w.no, w.winner, w.price, listingKey(w.listing)].join('|') : '';
+      if (!w) wonSeen = null;
+      else if (!wonSeen || wonSeen.sig !== sig) wonSeen = { sig, t: now };
+      else if (now - wonSeen.t >= 1200) applyWin(w, wonSeen.t, 'card');
+    }
     function applyWin(w, at, src) {
       // 同一個 listing 的同一個編號只能有一個得標者
       const dup = live.orders.find((o) => o.no === w.no && listingKey(o.listing) && (listingKey(o.listing).startsWith(listingKey(w.listing)) || listingKey(w.listing).startsWith(listingKey(o.listing))));
@@ -1635,15 +1648,15 @@ function ttfillMain() {
       e.liveDone = true;
       applyWin({ no: e.no, listing: e.listing, winner: cleanName(e.winner), price: e.price }, e.t, 'wire');
     }
-    const { comments, system } = chatLists();
+    const { comments, system } = domDue ? chatLists() : {};
     if (!primed) { primedEls = new WeakSet(); primeList(comments); primeList(system); scanBase(system, comments); saveLive(); }
-    const cNew = newItems(comments, true);
+    const cNew = domDue ? newItems(comments, true) : [];
     // 付款確認：「X won auction item 47 (Shoes)… $13.00」（Quick LIVE 可能混在留言裡）
     // 付款也直接從網路資料來（ManagerMessage type 7）；畫面上的 Activity 作後備，兩邊重複不會記兩次
     if (live.paidSeq == null) live.paidSeq = wire.paidSeq;
     const wirePaid = [];
     for (const pd of wire.paids) { if (pd.seq <= live.paidSeq) continue; live.paidSeq = pd.seq; wirePaid.push({ wire: true, m: [null, pd.name, pd.no, pd.title, pd.price.replace(/^\$\s*/, '')] }); }
-    for (const s of [...wirePaid, ...newItems(system), ...cNew.filter((c) => sysMatch(c.text))]) {
+    for (const s of [...wirePaid, ...(domDue ? newItems(system) : []), ...cNew.filter((c) => sysMatch(c.text))]) {
       const m = s.wire ? s.m : sysMatch(s.text);
       if (!m || !primed) continue;
       const name = cleanName(m[1]), no = m[2];
@@ -1707,7 +1720,7 @@ function ttfillMain() {
     if (fresh) live.base = {};
     live.on = true; primed = false; saveLive();
     liveTick();
-    liveObs = new MutationObserver(() => { if (!liveTimer) liveTimer = setTimeout(() => { liveTimer = null; liveTick(); }, 250); });
+    liveObs = new MutationObserver(() => { if (wireAlive()) return; if (!liveTimer) liveTimer = setTimeout(() => { liveTimer = null; liveTick(); }, 250); });
     liveObs.observe(document.body, { childList: true, subtree: true, characterData: true });
     live.wireSeq = wire.seq; live.endSeq = wire.endSeq; live.paidSeq = wire.paidSeq; live.failSeq = wire.failSeq;
     if (live._stop) live._stop();
@@ -2563,7 +2576,7 @@ function ttfillMain() {
   function feedStatus0() {
     const w = feed.win; if (!w || w.closed) return;
     const el = w.document.getElementById('stat'); if (!el) return;
-    const comments = (chatLists() || {}).comments;
+    const comments = wireAlive() ? null : (chatLists() || {}).comments;
     let msg = '', cls = 'stat';
     if (document.hidden && !wireAlive()) { cls += ' warn'; msg = L('⚠ TikTok 分頁被遮住、最小化或切到別的分頁 — Chrome 會暫停 TikTok 更新留言。請讓 TikTok 視窗露出一部分。', '⚠ The TikTok tab is covered, minimised or in the background — Chrome pauses TikTok’s comment updates. Keep part of the TikTok window visible.'); }
     else if (!comments && !wireAlive()) { cls += ' warn'; msg = L('⚠ 找不到評論區（TikTok 頁面是否在直播控制台？）', '⚠ Comment area not found (is the TikTok page on the LIVE console?)'); }
@@ -2573,7 +2586,9 @@ function ttfillMain() {
   }
   function feedTick2() {
     const now = Date.now();
-    const card = readAuctionCard();
+    const domDue = feed.first || !wireAlive() || now - (feed.domAt || 0) >= 4000; // 直接讀取正常時，每 4 秒才掃一次畫面
+    if (domDue) feed.domAt = now;
+    const card = domDue ? readAuctionCard() : null;
     if (card && card.status === 'won' && card.who && !feedWins.some((o) => o.no === card.no && strictKey(o.winner) === strictKey(card.who))) feedWins.push({ no: card.no, winner: card.who, price: card.price, listing: card.listing, at: feed.first ? now - 180000 : now, src: 'card' });
     for (const e of wire.ends) {
       if (e.fed || (!wireResolveEnd(e) && now - e.t < 6000)) continue;
@@ -2581,7 +2596,7 @@ function ttfillMain() {
       const nm = cleanName(e.winner);
       if (!feedWins.some((o) => o.no === e.no && strictKey(o.winner) === strictKey(nm) && Math.abs(o.at - e.t) < 10 * 60000)) feedWins.push({ no: e.no, winner: nm, price: e.price, listing: e.listing, at: e.t, src: 'card' });
     }
-    const { comments, system } = chatLists();
+    const { comments, system } = domDue ? chatLists() : {};
     let added = 0;
     if (feed.paidSeq == null) feed.paidSeq = 0;
     for (const pd of wire.paids) {
@@ -2606,7 +2621,7 @@ function ttfillMain() {
         if (feedPush({ kind: 'c', name, msg: c.msg, t: c.t, host, wire: true })) added++;
       }
     } else feed.wireSeq = wire.seq;
-    for (const it of listItems(comments, true)) {
+    for (const it of (domDue ? listItems(comments, true) : [])) {
       const t = (it.innerText || '').trim();
       if (feed.seen.get(it) === t) continue;
       feed.seen.set(it, t);
@@ -2618,7 +2633,7 @@ function ttfillMain() {
       if (!host && annTexts.includes(pc.msg.trim())) { host = true; if (!fset.host) { fset.host = pc.name; saveState(); } } // 自動公告的那條 = 主播自己
       if (feedPush({ kind: 'c', name: pc.name, msg: pc.msg, t: now, host, old: feed.first })) added++;
     }
-    if (fset.sys) for (const it of listItems(system)) {
+    if (fset.sys && domDue) for (const it of listItems(system)) {
       const t = (it.innerText || '').trim();
       if (feed.seen.get(it) === t) continue;
       feed.seen.set(it, t);
@@ -2881,7 +2896,7 @@ function ttfillMain() {
     try { feedSetup(w); } catch (e) { LOG('feed setup fail', e); feed.win = null; try { w.close(); } catch (er) { /* 空 */ } return 'blocked'; }
     feedTick();
     feedRender(null, 0, true);
-    feed.obs = new MutationObserver(() => { if (!feed.timer) feed.timer = setTimeout(() => { feed.timer = null; feedTick(); }, 200); });
+    feed.obs = new MutationObserver(() => { if (wireAlive()) return; if (!feed.timer) feed.timer = setTimeout(() => { feed.timer = null; feedTick(); }, 200); });
     feed.obs.observe(document.body, { childList: true, subtree: true, characterData: true });
     if (feed.stopIv) feed.stopIv();
     feed.stopIv = bgInterval(feedTick, 1000, 'feed');
@@ -2995,6 +3010,7 @@ function ttfillMain() {
     if (gz || (body[0] === 0x1f && body[1] === 0x8b)) { body = await gunzipAt(body, 0); if (!body) { wire.bad++; return; } }
     const resp = pbFields(body); if (!resp) { wire.bad++; return; }
     wire.frames++; wire.lastFrame = recvT;
+    const before = wire.seq + wire.endSeq + wire.paidSeq + wire.failSeq;
     for (const m of resp) {
       if (m.f !== 1 || !m.b) continue;
       const mf = pbFields(m.b); if (!mf) continue;
@@ -3003,7 +3019,7 @@ function ttfillMain() {
       wire.methods[name] = (wire.methods[name] || 0) + 1;
       if (data && data.b) {
         // 留樣本給「網路診斷」：每種訊息最近 2 條（留言以外的，用來找拍賣 / 得標訊息的格式）
-        if (name !== 'WebcastChatMessage') {
+        if (name !== 'WebcastChatMessage' && /oec|ec[A-Z]|auction|order|shop/i.test(name)) { // 進房 / 點讚這些大量又用不到的訊息不留樣本
           // 電商訊息按「事件種類」分開留樣本（auction.start / auction.new_bid / 得標 / 付款…各留 3 條）
           let key = name;
           if (/oec/i.test(name)) { try { const df = pbFields(data.b); const ev = pbGet(df, 4), ty = pbGet(df, 2); const evf = ev && ev.b ? pbFields(ev.b) : null; const en = pbGet(evf, 3); key = name + (en && en.b ? ' ' + pbStr(en.b) : '') + (ty && ty.v != null ? ' type=' + ty.v : ''); } catch (e) { /* 空 */ } }
@@ -3014,6 +3030,8 @@ function ttfillMain() {
         else if (name === 'WebcastOecLiveManagerMessage' || name === 'WebcastOecLiveCreatorMessage') { try { wireOec(name, data.b, recvT); } catch (e) { wire.bad++; } }
       }
     }
+    // 有新留言 / 得標 / 付款：馬上更新一次，不用等下一秒
+    if (wire.seq + wire.endSeq + wire.paidSeq + wire.failSeq !== before && !wire.kick) wire.kick = setTimeout(() => { wire.kick = null; try { if (wire.onNew) wire.onNew(); } catch (e) { /* 空 */ } }, 60);
   }
   function wireFeed(url, d, recvT) {
     if (!/webcast/i.test(url) || typeof d === 'string') return;
@@ -3030,6 +3048,7 @@ function ttfillMain() {
   }
   // 這條連線最近有資料 = 可以信它（留言少的時候也會一直有進房 / 點讚等訊息）
   const wireAlive = () => wire.frames > 0 && Date.now() - wire.lastFrame < 45000;
+  wire.onNew = () => { if (live.on) liveTick(); if (feed.win && !feed.win.closed) feedTick(); };
   if (window.__ttNet) {
     // 面板載入之前已經收到的（連線時補發的最近留言）先補讀，之後即時處理
     for (const e of window.__ttNet.buf) if (e.src === 'ws' && e.kind === 'bin' && e.bytes && e.full <= e.len) wireFeed(e.url, e.bytes, e.t);
