@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.14
+// @version      7.15
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -17,7 +17,7 @@
   'use strict';
   if (window.__ttNet) return;
   const NET = window.__ttNet = { buf: [], bytes: 0, socks: [], http: {}, t0: Date.now(), on: true };
-  const MAX_BYTES = 3 * 1024 * 1024, MAX_ONE = 200 * 1024;
+  const MAX_BYTES = 1024 * 1024, MAX_ONE = 100 * 1024;
   const cleanUrl = (u) => { try { const x = new URL(String(u), location.href); return x.origin + x.pathname + (x.search ? '?' + [...x.searchParams.keys()].join('&') : ''); } catch (e) { return String(u).split('?')[0]; } };
   const push = (e) => {
     NET.buf.push(e); NET.bytes += e.len || 0;
@@ -64,7 +64,9 @@
   // fetch / XHR：只記可能和直播留言有關的網址
   const WANT = /webcast|\/im\/|chat|comment|message|room|auction|live|frontier|push/i;
   const SKIP = /\.(js|css|png|jpe?g|gif|webp|svg|woff2?|ttf|mp4|m3u8|ts|flv)(\?|$)|\/log|monitor|slardar|mcs\.|tea\.|\/collect|stat|report/i;
-  const wantUrl = (u) => WANT.test(u) && !SKIP.test(u);
+  // 預設不記 fetch / XHR 的內容（留言和訂單都在 WebSocket）；要查問題時在 Console 輸入 localStorage.ttfill_netfull=1 再重新整理
+  let FULL = false; try { FULL = localStorage.getItem('ttfill_netfull') === '1'; } catch (e) { /* 空 */ }
+  const wantUrl = (u) => FULL && WANT.test(u) && !SKIP.test(u);
   const tally = (u) => { const k = cleanUrl(u); NET.http[k] = (NET.http[k] || 0) + 1; return k; };
   try {
     const f = window.fetch;
@@ -102,6 +104,17 @@ function ttfillMain() {
   // 背景計時器：TikTok 視窗被遮住或切到別的分頁時，Chrome 會把普通計時器放慢到一分鐘一次；
   // 用 Worker 計時不會被這樣放慢。Worker 開不了（網站不允許）就退回普通計時器。
   const tickErr = {};
+  // 量腳本自己用了多少時間（每分鐘結算一次），用來分辨是腳本還是 TikTok 頁面本身吃資源
+  const perf = { by: {}, t0: Date.now(), last: null };
+  const timed = (name, fn) => {
+    const a = performance.now();
+    try { return fn(); } finally {
+      perf.by[name] = (perf.by[name] || 0) + performance.now() - a;
+      const el = Date.now() - perf.t0;
+      if (el >= 60000) { const tot = Object.values(perf.by).reduce((x, y) => x + y, 0); perf.last = { pct: tot / el * 100, by: Object.fromEntries(Object.entries(perf.by).map(([k, v]) => [k, Math.round(v)])), secs: Math.round(el / 1000) }; perf.by = {}; perf.t0 = Date.now(); }
+    }
+  };
+  const perfNow = () => { const el = Math.max(1, Date.now() - perf.t0); const tot = Object.values(perf.by).reduce((x, y) => x + y, 0); return (el < 10000 && perf.last) ? perf.last.pct : tot / el * 100; };
   function bgInterval(fn, ms, name) {
     const run = () => { try { fn(); tickErr[name] = null; } catch (e) { tickErr[name] = (e && e.message) || String(e); console.warn('[TTFill]', name, e); } };
     let beat = 0, w = null, url = null;
@@ -1606,7 +1619,9 @@ function ttfillMain() {
     }
     live.base = base;
   }
-  function liveTick() {
+  const domRecent = [];
+  function liveTick() { return timed('live', liveTick0); }
+  function liveTick0() {
     if (!live.on) return;
     const now = Date.now();
     let changed = false;
@@ -1627,7 +1642,7 @@ function ttfillMain() {
       const dup = live.orders.find((o) => o.no === w.no && listingKey(o.listing) && (listingKey(o.listing).startsWith(listingKey(w.listing)) || listingKey(w.listing).startsWith(listingKey(o.listing))));
       if (!dup) {
         const o = { no: w.no, listing: w.listing, winner: w.winner, price: w.price, at, paid: false, replies: [], src };
-        live.orders.push(o); if (now - at > 1500) backfill.push(o);
+        live.orders.push(o); backfill.push(o);
         changed = true;
         LOG('得標', src, w);
       } else if (!sameName(dup.winner, w.winner)) {
@@ -1704,6 +1719,8 @@ function ttfillMain() {
       }
     };
     for (const o of backfill) for (const c of wire.all) { if (c.seq > (live.wireSeq || 0) || c.old || c.t < o.at || c.t - o.at > win) continue; const nm = cleanName(c.name); if ((strictKey(nm) === strictKey(o.winner) || sameName(nm, o.winner)) && !isMuted(c.msg) && !o.replies.some((r) => r.t === c.t && r.msg === c.msg)) { o.replies.push({ t: c.t, msg: c.msg, loose: strictKey(nm) !== strictKey(o.winner), from: nm }); changed = true; } }
+    // 看畫面時：得標要等 1.2 秒確認，這段時間裡客人已經發的留言補回去
+    for (const o of backfill) for (const c of domRecent) { if (c.t < o.at || c.t - o.at > win || isMuted(c.msg)) continue; if ((strictKey(c.name) === strictKey(o.winner) || sameName(c.name, o.winner)) && !o.replies.some((r) => r.msg === c.msg)) { o.replies.push({ t: c.t, msg: c.msg, loose: strictKey(c.name) !== strictKey(o.winner), from: c.name }); changed = true; } }
     const useWire = wireAlive();
     if (live.wireSeq == null) live.wireSeq = wire.seq;
     if (useWire) { // 留言直接從網路資料來：不受畫面有沒有畫出來影響
@@ -1711,7 +1728,9 @@ function ttfillMain() {
     } else live.wireSeq = wire.seq;
     for (const c of cNew) {
       if (!primed || useWire || sysMatch(c.text)) continue; // 開始之前的舊留言不算
-      addReply(parseComment(c.text, c.el), now, false);
+      const pc = parseComment(c.text, c.el);
+      if (pc) { domRecent.push({ name: pc.name, msg: pc.msg, t: now }); while (domRecent.length && now - domRecent[0].t > 20000) domRecent.shift(); }
+      addReply(pc, now, false);
     }
     if (!primed) { primed = true; } // 第一次只把畫面上已有的訊息標記為「看過」
     if (changed) { saveLive(); renderLive(); } else updLiveTimers();
@@ -1720,7 +1739,7 @@ function ttfillMain() {
     if (fresh) live.base = {};
     live.on = true; primed = false; saveLive();
     liveTick();
-    liveObs = new MutationObserver(() => { if (wireAlive()) return; if (!liveTimer) liveTimer = setTimeout(() => { liveTimer = null; liveTick(); }, 250); });
+    liveObs = new MutationObserver(() => { if (wireAlive()) return; if (!liveTimer) liveTimer = setTimeout(() => { liveTimer = null; liveTick(); }, 400); });
     liveObs.observe(document.body, { childList: true, subtree: true, characterData: true });
     live.wireSeq = wire.seq; live.endSeq = wire.endSeq; live.paidSeq = wire.paidSeq; live.failSeq = wire.failSeq;
     if (live._stop) live._stop();
@@ -1745,6 +1764,7 @@ function ttfillMain() {
     const wons = xp("//*[contains(normalize-space(text()),'won!')]").filter((e) => !inPanel(e));
     out.push('version: ' + ((typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.version) || '?'));
     out.push('hidden: ' + document.hidden + ' · tick errors: ' + JSON.stringify(tickErr));
+    out.push('script cpu: ' + perfNow().toFixed(1) + '% of one core · last minute: ' + JSON.stringify(perf.last) + ' · now(ms): ' + JSON.stringify(Object.fromEntries(Object.entries(perf.by).map(([k, v]) => [k, Math.round(v)]))) + ' over ' + Math.round((Date.now() - perf.t0) / 1000) + 's');
     out.push('won! nodes: ' + wons.length);
     wons.slice(0, 2).forEach((w) => { let c = w; for (let i = 0; i < 5 && c.parentElement; i++) c = c.parentElement; out.push('  card: ' + c.tagName + '.' + String(c.className).slice(0, 60) + ' text=' + JSON.stringify((c.innerText || '').slice(0, 200))); });
     out.push('parsed card: ' + JSON.stringify(readWonCard()));
@@ -2568,8 +2588,8 @@ function ttfillMain() {
   }
   function feedTick() {
     if (!feed.win || feed.win.closed) { feedStop(); return; }
-    try { feedTick2(); } catch (e) { tickErr.feed = (e && e.message) || String(e); console.warn('[TTFill] feed', e); }
-    feedStatus();
+    try { timed('feed', feedTick2); } catch (e) { tickErr.feed = (e && e.message) || String(e); console.warn('[TTFill] feed', e); }
+    timed('feed', feedStatus);
   }
   // 窗口頂部的狀態：最後更新時間，TikTok 頁面被遮住時提醒
   function feedStatus() { return inFeedLang(feedStatus0)(); }
@@ -2581,7 +2601,7 @@ function ttfillMain() {
     if (document.hidden && !wireAlive()) { cls += ' warn'; msg = L('⚠ TikTok 分頁被遮住、最小化或切到別的分頁 — Chrome 會暫停 TikTok 更新留言。請讓 TikTok 視窗露出一部分。', '⚠ The TikTok tab is covered, minimised or in the background — Chrome pauses TikTok’s comment updates. Keep part of the TikTok window visible.'); }
     else if (!comments && !wireAlive()) { cls += ' warn'; msg = L('⚠ 找不到評論區（TikTok 頁面是否在直播控制台？）', '⚠ Comment area not found (is the TikTok page on the LIVE console?)'); }
     else if (tickErr.feed) { cls += ' warn'; msg = '⚠ ' + tickErr.feed; }
-    else msg = L('● 更新中 ', '● Live ') + hhmmss(Date.now()) + (feed.src === 'wire' ? L(' · 直接讀取', ' · direct feed') : L(' · 看畫面', ' · screen'));
+    else msg = L('● 更新中 ', '● Live ') + hhmmss(Date.now()) + (feed.src === 'wire' ? L(' · 直接讀取', ' · direct feed') : L(' · 看畫面', ' · screen')) + L(' · 腳本用量 ', ' · script load ') + perfNow().toFixed(1) + '%';
     el.className = cls; el.textContent = msg;
   }
   function feedTick2() {
@@ -2896,7 +2916,7 @@ function ttfillMain() {
     try { feedSetup(w); } catch (e) { LOG('feed setup fail', e); feed.win = null; try { w.close(); } catch (er) { /* 空 */ } return 'blocked'; }
     feedTick();
     feedRender(null, 0, true);
-    feed.obs = new MutationObserver(() => { if (wireAlive()) return; if (!feed.timer) feed.timer = setTimeout(() => { feed.timer = null; feedTick(); }, 200); });
+    feed.obs = new MutationObserver(() => { if (wireAlive()) return; if (!feed.timer) feed.timer = setTimeout(() => { feed.timer = null; feedTick(); }, 400); });
     feed.obs.observe(document.body, { childList: true, subtree: true, characterData: true });
     if (feed.stopIv) feed.stopIv();
     feed.stopIv = bgInterval(feedTick, 1000, 'feed');
@@ -3009,6 +3029,9 @@ function ttfillMain() {
     let body = pl.b;
     if (gz || (body[0] === 0x1f && body[1] === 0x8b)) { body = await gunzipAt(body, 0); if (!body) { wire.bad++; return; } }
     const resp = pbFields(body); if (!resp) { wire.bad++; return; }
+    timed('wire', () => wireFrame2(resp, recvT));
+  }
+  function wireFrame2(resp, recvT) {
     wire.frames++; wire.lastFrame = recvT;
     const before = wire.seq + wire.endSeq + wire.paidSeq + wire.failSeq;
     for (const m of resp) {
@@ -3550,7 +3573,7 @@ function ttfillMain() {
   if (state.pos && state.pos.b === undefined && state.pos.y !== undefined) state.pos = { x: state.pos.x, b: Math.max(8, window.innerHeight - state.pos.y - 500) };
   buildUI();
   if (live.on) startLive();
-  bgInterval(() => { if (live.on) updLiveTimers(); if (ann.on) { annTick(); try { updAnnSub(); } catch (e) { /* 面板重建中 */ } } }, 1000, 'ann');
+  bgInterval(() => timed('ann', () => { if (live.on) updLiveTimers(); if (ann.on) { annTick(); try { updAnnSub(); } catch (e) { /* 面板重建中 */ } } }), 1000, 'ann');
   if (ann.on) annNext = Date.now() + 5000;
   if (state.pos) requestAnimationFrame(() => { state.pos = place(state.pos.x, state.pos.b); });
   window.addEventListener('resize', () => { if (state.pos) place(state.pos.x, state.pos.b); });
