@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.15
+// @version      7.16
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -43,7 +43,10 @@
       if (!ws || seen.has(ws)) return; seen.add(ws);
       const info = { url: cleanUrl(ws.url), how, n: 0, bytes: 0, bin: 0, t: Date.now() };
       NET.socks.push(info);
+      ws.addEventListener('close', (ev) => { info.closed = Date.now(); info.code = ev.code; });
+      ws.addEventListener('error', () => { info.err = Date.now(); });
       ws.addEventListener('message', (ev) => {
+        info.last = Date.now();
         const d = ev.data; info.n++;
         const len = typeof d === 'string' ? d.length : (d && (d.byteLength || d.size)) || 0;
         info.bytes += len; if (typeof d !== 'string') info.bin++;
@@ -67,6 +70,9 @@
   // 預設不記 fetch / XHR 的內容（留言和訂單都在 WebSocket）；要查問題時在 Console 輸入 localStorage.ttfill_netfull=1 再重新整理
   let FULL = false; try { FULL = localStorage.getItem('ttfill_netfull') === '1'; } catch (e) { /* 空 */ }
   const wantUrl = (u) => FULL && WANT.test(u) && !SKIP.test(u);
+  const POLL = /\/webcast\/im\/fetch/i; // WebSocket 斷了之後 TikTok 改用這個輪詢拿留言
+  const WEB = /webcast|\/im\//i;
+  const poll = (k, d) => { record('poll', k, d); try { if (NET.onPoll) NET.onPoll(k, d); } catch (e) { /* 空 */ } };
   const tally = (u) => { const k = cleanUrl(u); NET.http[k] = (NET.http[k] || 0) + 1; return k; };
   try {
     const f = window.fetch;
@@ -74,7 +80,9 @@
       const p = f.apply(this, a);
       try {
         const u = String((a[0] && a[0].url) || a[0] || '');
-        if (wantUrl(u)) p.then((res) => { try { const k = tally(u); const ct = res.headers.get('content-type') || ''; const c = res.clone(); (/json|text/i.test(ct) ? c.text() : c.arrayBuffer()).then((d) => record('fetch', k, d)).catch(() => {}); } catch (e) { /* 空 */ } }).catch(() => {});
+        if (POLL.test(u)) p.then((res) => { try { const k = tally(u); res.clone().arrayBuffer().then((d) => poll(k, d)).catch(() => {}); } catch (e) { /* 空 */ } }).catch(() => {});
+        else if (WEB.test(u) && !SKIP.test(u)) tally(u);
+        if (wantUrl(u) && !POLL.test(u)) p.then((res) => { try { const k = tally(u); const ct = res.headers.get('content-type') || ''; const c = res.clone(); (/json|text/i.test(ct) ? c.text() : c.arrayBuffer()).then((d) => record('fetch', k, d)).catch(() => {}); } catch (e) { /* 空 */ } }).catch(() => {});
       } catch (e) { /* 空 */ }
       return p;
     };
@@ -85,7 +93,9 @@
     XMLHttpRequest.prototype.send = function (...a) {
       try {
         const u = this.__ttUrl || '';
-        if (wantUrl(u)) this.addEventListener('load', () => { try { const k = tally(u); const rt = this.responseType; if (rt === '' || rt === 'text') record('xhr', k, this.responseText); else if (rt === 'arraybuffer') record('xhr', k, this.response); else if (rt === 'json') record('xhr', k, JSON.stringify(this.response)); else if (rt === 'blob') record('xhr', k, this.response); } catch (e) { /* 空 */ } });
+        if (POLL.test(u)) this.addEventListener('load', () => { try { const k = tally(u); const rt = this.responseType; if (rt === 'arraybuffer') poll(k, this.response); else if (rt === 'blob') this.response.arrayBuffer().then((d) => poll(k, d)).catch(() => {}); else NET.pollText = (NET.pollText || 0) + 1; } catch (e) { /* 空 */ } });
+        else if (WEB.test(u) && !SKIP.test(u)) tally(u);
+        if (wantUrl(u) && !POLL.test(u)) this.addEventListener('load', () => { try { const k = tally(u); const rt = this.responseType; if (rt === '' || rt === 'text') record('xhr', k, this.responseText); else if (rt === 'arraybuffer') record('xhr', k, this.response); else if (rt === 'json') record('xhr', k, JSON.stringify(this.response)); else if (rt === 'blob') record('xhr', k, this.response); } catch (e) { /* 空 */ } });
       } catch (e) { /* 空 */ }
       return XS.apply(this, a);
     };
@@ -152,7 +162,7 @@ function ttfillMain() {
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   let langOverride = null; // 評論窗可以用自己的語言
@@ -2542,7 +2552,7 @@ function ttfillMain() {
   const feed = { win: null, items: [], seen: new WeakMap(), iv: null, obs: null, timer: null, kind: '', stick: true };
   // 過濾留言：每行一句，留言包含這句就不顯示（不分大小寫、忽略標點和空格）
   const muteNorm = (t) => String(t || '').toLowerCase().replace(/[\s\p{P}\p{S}]+/gu, '');
-  const muteList = () => String(fset.mute || '').split('\n').map(muteNorm).filter((x) => x.length >= 2);
+  const muteList = () => String(fset.mute || '').split('\n').map(muteNorm).filter((x) => x.length >= 4);
   function isMuted(msg) { const m = muteNorm(msg); return !!m && muteList().some((k) => m.includes(k)); }
   const FEED_MAX = 400; // 畫面上最多幾條
   const FEED_KEEP = 3000; // 記住幾條（給點名字看歷史）
@@ -2581,7 +2591,7 @@ function ttfillMain() {
     const sig = it.kind + '|' + strictKey(it.name) + '|' + it.msg;
     const tail = feed.items.slice(-150);
     // 看畫面：清單重新顯示舊留言時不重複。網路資料：每條有編號，只擋掉剛從畫面讀過的同一條
-    if (it.wire ? tail.some((x) => x.sig === sig && !x.wire && Math.abs(it.t - x.t) < 60000) : tail.some((x) => x.sig === sig && it.t - x.t < 10 * 60000)) return false;
+    if (it.wire ? tail.some((x) => x.sig === sig && !x.wire && Math.abs(it.t - x.t) < 60000) : tail.some((x) => x.sig === sig && it.t - x.t < (it.atEnd ? 8000 : 10 * 60000))) return false;
     it.sig = sig; feed.items.push(it);
     if (feed.items.length > FEED_KEEP) feed.items.splice(0, feed.items.length - FEED_KEEP);
     return true;
@@ -2601,6 +2611,7 @@ function ttfillMain() {
     if (document.hidden && !wireAlive()) { cls += ' warn'; msg = L('⚠ TikTok 分頁被遮住、最小化或切到別的分頁 — Chrome 會暫停 TikTok 更新留言。請讓 TikTok 視窗露出一部分。', '⚠ The TikTok tab is covered, minimised or in the background — Chrome pauses TikTok’s comment updates. Keep part of the TikTok window visible.'); }
     else if (!comments && !wireAlive()) { cls += ' warn'; msg = L('⚠ 找不到評論區（TikTok 頁面是否在直播控制台？）', '⚠ Comment area not found (is the TikTok page on the LIVE console?)'); }
     else if (tickErr.feed) { cls += ' warn'; msg = '⚠ ' + tickErr.feed; }
+    else if (feed.src !== 'wire' && wire.frames > 0) { cls += ' warn'; msg = L(`⚠ 直接讀取在 ${hhmmss(wire.lastFrame)} 中斷，現在改看畫面（TikTok 聊天區請保持在最新、不要被遮住）`, `⚠ Direct feed dropped at ${hhmmss(wire.lastFrame)} — reading the screen now (keep TikTok’s chat at the latest and uncovered)`) + ' · ' + hhmmss(Date.now()); }
     else msg = L('● 更新中 ', '● Live ') + hhmmss(Date.now()) + (feed.src === 'wire' ? L(' · 直接讀取', ' · direct feed') : L(' · 看畫面', ' · screen')) + L(' · 腳本用量 ', ' · script load ') + perfNow().toFixed(1) + '%';
     el.className = cls; el.textContent = msg;
   }
@@ -2641,7 +2652,9 @@ function ttfillMain() {
         if (feedPush({ kind: 'c', name, msg: c.msg, t: c.t, host, wire: true })) added++;
       }
     } else feed.wireSeq = wire.seq;
-    for (const it of (domDue ? listItems(comments, true) : [])) {
+    const domItems = domDue ? listItems(comments, true) : [];
+    for (let di = 0; di < domItems.length; di++) {
+      const it = domItems[di];
       const t = (it.innerText || '').trim();
       if (feed.seen.get(it) === t) continue;
       feed.seen.set(it, t);
@@ -2651,7 +2664,8 @@ function ttfillMain() {
       const head = (it.firstElementChild && it.firstElementChild.innerText) || '';
       let host = isHostName(pc.name) || /\b(host|creator)\b/i.test(head.replace(pc.name, ''));
       if (!host && annTexts.includes(pc.msg.trim())) { host = true; if (!fset.host) { fset.host = pc.name; saveState(); } } // 自動公告的那條 = 主播自己
-      if (feedPush({ kind: 'c', name: pc.name, msg: pc.msg, t: now, host, old: feed.first })) added++;
+      // 清單最下面 3 條之內 = 剛發的新留言（同一個人重複同一句也照顯示）；上面重新出現的是舊留言重畫
+      if (feedPush({ kind: 'c', name: pc.name, msg: pc.msg, t: now, host, old: feed.first, atEnd: !feed.first && domItems.length >= 5 && di >= domItems.length - 3 })) added++;
     }
     if (fset.sys && domDue) for (const it of listItems(system)) {
       const t = (it.innerText || '').trim();
@@ -2789,6 +2803,7 @@ function ttfillMain() {
       const b = e.target.closest && e.target.closest('.mu'); if (!b) return;
       e.stopPropagation();
       const t = b.dataset.m || ''; if (!t) return;
+      if (muteNorm(t).length < 6) { b.textContent = L('太短，不能過濾', 'Too short to filter'); return; }
       fset.mute = (String(fset.mute || '').trim() ? String(fset.mute).trim() + '\n' : '') + t; saveState();
       $$('mt').value = fset.mute; feedRender(null, 0, true);
     }, true);
@@ -2972,6 +2987,7 @@ function ttfillMain() {
       const bid = { t: recvT, name: pbText(payload, 11, 1, 3), title: pbText(payload, 11, 2, 1), price: pbText(payload, 11, 2, 3, 1), no: pbText(payload, 11, 3, 1) };
       if (!bid.name || !/^\d+$/.test(bid.no)) return;
       if (tyN === 9) { // 付款失敗（同一單可能出現兩次：得標後幾秒一次，5 分鐘期限到再一次）
+        if (wire.fails.some((f) => f.no === bid.no && f.name === bid.name && f.title === bid.title && Math.abs(f.t - recvT) < 20000)) return;
         wire.fails.push(Object.assign(bid, { seq: ++wire.failSeq })); if (wire.fails.length > 300) wire.fails.shift();
         return;
       }
@@ -3056,6 +3072,20 @@ function ttfillMain() {
     // 有新留言 / 得標 / 付款：馬上更新一次，不用等下一秒
     if (wire.seq + wire.endSeq + wire.paidSeq + wire.failSeq !== before && !wire.kick) wire.kick = setTimeout(() => { wire.kick = null; try { if (wire.onNew) wire.onNew(); } catch (e) { /* 空 */ } }, 60);
   }
+  function wirePoll(d, recvT) {
+    const t = recvT || Date.now();
+    wire.chain = wire.chain.then(async () => {
+      try {
+        let u8 = d instanceof ArrayBuffer ? new Uint8Array(d) : d;
+        if (!(u8 instanceof Uint8Array) || !u8.length) return;
+        if (u8[0] === 0x1f && u8[1] === 0x8b) { u8 = await gunzipAt(u8, 0); if (!u8) return; }
+        const resp = pbFields(u8);
+        if (!resp || !resp.some((m) => m.f === 1 && m.b)) { wire.pollBad = (wire.pollBad || 0) + 1; return; }
+        wire.polls = (wire.polls || 0) + 1; wire.lastPoll = t;
+        timed('wire', () => wireFrame2(resp, t));
+      } catch (e) { wire.bad++; }
+    });
+  }
   function wireFeed(url, d, recvT) {
     if (!/webcast/i.test(url) || typeof d === 'string') return;
     const t = recvT || Date.now();
@@ -3074,7 +3104,8 @@ function ttfillMain() {
   wire.onNew = () => { if (live.on) liveTick(); if (feed.win && !feed.win.closed) feedTick(); };
   if (window.__ttNet) {
     // 面板載入之前已經收到的（連線時補發的最近留言）先補讀，之後即時處理
-    for (const e of window.__ttNet.buf) if (e.src === 'ws' && e.kind === 'bin' && e.bytes && e.full <= e.len) wireFeed(e.url, e.bytes, e.t);
+    for (const e of window.__ttNet.buf) { if (e.kind !== 'bin' || !e.bytes || e.full > e.len) continue; if (e.src === 'ws') wireFeed(e.url, e.bytes, e.t); else if (e.src === 'poll') wirePoll(e.bytes, e.t); }
+    window.__ttNet.onPoll = (url, d) => wirePoll(d, Date.now());
     window.__ttNet.onWs = (url, d) => wireFeed(url, d, Date.now());
   }
 
@@ -3118,7 +3149,9 @@ function ttfillMain() {
     out.push('wire last chats: ' + JSON.stringify(wire.all.slice(-6).map((c) => [hhmmss(c.t), c.name, c.msg])));
     out.push('', '== WebSockets ==');
     if (!NET.socks.length) out.push('(none seen on the page — the connection may live in a worker)');
-    for (const s of NET.socks) out.push(`${s.url}  via=${s.how} msgs=${s.n} (binary ${s.bin}) bytes=${s.bytes}`);
+    for (const s of NET.socks) out.push(`${s.url}  via=${s.how} msgs=${s.n} (binary ${s.bin}) bytes=${s.bytes} opened=${hhmmss(s.t)} last=${s.last ? hhmmss(s.last) : '-'} closed=${s.closed ? hhmmss(s.closed) + ' code ' + s.code : 'no'}${s.err ? ' error=' + hhmmss(s.err) : ''}`);
+    out.push(`polls: ok=${wire.polls || 0} bad=${wire.pollBad || 0} last=${wire.lastPoll ? hhmmss(wire.lastPoll) : '-'} text-mode=${NET.pollText || 0}`);
+    out.push('mute list: ' + JSON.stringify(String(fset.mute || '').split('\n').filter(Boolean)));
     out.push('', '== HTTP endpoints (fetch/XHR) ==');
     for (const [k, v] of Object.entries(NET.http).sort((a, b) => b[1] - a[1]).slice(0, 40)) out.push(`${v}×  ${k}`);
     try {
@@ -3190,7 +3223,7 @@ function ttfillMain() {
     const byChan = new Map();
     for (const x of decs) { const k = x.e.src + ' ' + x.e.url; if (!byChan.has(k)) byChan.set(k, []); byChan.get(k).push(x); }
     for (const [k, arr] of byChan) {
-      if (!/^ws /.test(k) && !score.get(k) && !/auction|message\/chat|activity|order|\/pin/.test(k)) continue;
+      if (!/^ws /.test(k) && !score.get(k) && !/auction|message\/chat|activity|order|\/pin|im\/fetch/.test(k)) continue;
       out.push('', `## ${k} · ${arr.length} buffered · hits ${score.get(k) || 0}`);
       for (const x of arr.slice(-2)) dump('LAST', x);
     }
