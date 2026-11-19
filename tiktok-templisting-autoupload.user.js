@@ -1,7 +1,9 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.17
+// @author       Lok
+// @copyright    2026 Lok. All rights reserved.
+// @version      7.18
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -162,6 +164,7 @@ function ttfillMain() {
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
+  const VER = '7.18'; // 要和上面的 @version 一致
   const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
@@ -1772,7 +1775,7 @@ function ttfillMain() {
   function liveDiagnose() {
     const out = [];
     const wons = xp("//*[contains(normalize-space(text()),'won!')]").filter((e) => !inPanel(e));
-    out.push('version: ' + ((typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.version) || '?'));
+    out.push('version: ' + VER);
     out.push('hidden: ' + document.hidden + ' · tick errors: ' + JSON.stringify(tickErr));
     out.push('script cpu: ' + perfNow().toFixed(1) + '% of one core · last minute: ' + JSON.stringify(perf.last) + ' · now(ms): ' + JSON.stringify(Object.fromEntries(Object.entries(perf.by).map(([k, v]) => [k, Math.round(v)]))) + ' over ' + Math.round((Date.now() - perf.t0) / 1000) + 's');
     out.push('won! nodes: ' + wons.length);
@@ -1930,6 +1933,9 @@ function ttfillMain() {
     .logo{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#25f4ee 0 45%,#fe2c55 55%);flex:none}
     .ttl{font-weight:650;font-size:14px;letter-spacing:.2px}
     .sub{font-size:11px;color:#a9aab0}
+    .ft{flex:none;border-top:1px solid var(--line,#e8e8ec);padding:6px 14px 8px;font-size:11px;color:#8a8d96;line-height:1.5}
+    .ft1{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+    .ft1 i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
     .grow{flex:1;min-width:0}
     .pill{font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.14)}
     .pill:empty{display:none}
@@ -2136,7 +2142,7 @@ function ttfillMain() {
   <div class="card" id="card">
     <div class="hd" id="hd">
       <div class="logo"></div>
-      <div class="grow"><div class="ttl">${L('TikTok Live小助手', 'TikTok Live Helper')}</div><div class="sub">${L('一鍵上架 · Temporary listing', 'Quick upload · Temporary listing')}</div></div>
+      <div class="grow"><div class="ttl">${L('TikTok Live小助手', 'TikTok Live Helper')}</div><div class="sub">${L('一鍵上架 · Temporary listing', 'Quick upload · Temporary listing')} · v${VER}</div></div>
       <span class="pill" id="ttf-count"></span>
       <select class="langsel" id="ttf-lang" title="Language">
         <option value="hant">繁</option><option value="hans">简</option><option value="en">EN</option>
@@ -2262,6 +2268,7 @@ function ttfillMain() {
       <input class="inp search" type="text" id="ttf-lq" placeholder="${L('搜尋商品庫…', 'Search library…')}" style="margin-top:10px">
       <div id="ttf-lib"></div>
     </div>
+    <div class="ft"><div class="ft1"><span id="ttf-src"></span><span>v${VER}</span></div><div>${L('作者', 'Author')} Lok · © 2026 Lok. All rights reserved.</div></div>
     </div></div>
   </div>`;
   }
@@ -2616,7 +2623,7 @@ function ttfillMain() {
     el.className = cls; el.textContent = msg;
     // 右上角：版本號 + 資料來源（綠點 = 直接獲取，紅點 = 看屏幕）
     const sEl = w.document.getElementById('src'), vEl = w.document.getElementById('ver');
-    if (vEl && !vEl.textContent) vEl.textContent = 'v' + ((typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.version) || '?');
+    if (vEl && !vEl.textContent) vEl.textContent = 'v' + VER;
     if (sEl && feed.src) {
       const direct = feed.src === 'wire', sig = direct + '|' + fset.lang;
       if (sEl.dataset.sig !== sig) { sEl.dataset.sig = sig; const c = direct ? '#22c55e' : '#ef4444'; sEl.innerHTML = `<i class="dot" style="background:${c}"></i><span style="color:${c}">${direct ? L('直接獲取', 'Direct feed') : L('看屏幕', 'Screen')}</span>`; }
@@ -3241,7 +3248,7 @@ function ttfillMain() {
   const netStrings = (text) => (text.match(/[^\u0000-\u001f\u007f-\u009f�]{3,}/g) || []).map((x) => x.trim()).filter((x) => x.length >= 3);
   async function netDiagnose() {
     const NET = window.__ttNet, out = [];
-    out.push('TikTok Live 小助手 · 網路診斷 · v' + ((typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.version) || '?') + ' · ' + new Date().toISOString());
+    out.push('TikTok Live 小助手 · 網路診斷 · v' + VER + ' · ' + new Date().toISOString());
     if (!NET) { out.push('沒有網路記錄（腳本太晚載入）：請重新整理 TikTok 頁面再試'); return out.join('\n'); }
     out.push(`recording for ${Math.round((Date.now() - NET.t0) / 1000)}s · buffered ${NET.buf.length} msgs / ${Math.round(NET.bytes / 1024)} KB`);
     out.push(`wire: frames=${wire.frames} bad=${wire.bad} chat=${wire.all.length} alive=${wireAlive()} lastFrame=${wire.lastFrame ? hhmmss(wire.lastFrame) : '-'}`);
@@ -3335,12 +3342,23 @@ function ttfillMain() {
     return out.join('\n');
   }
 
+  // 面板底部：資料來源（綠點 = 直接獲取，紅點 = 看屏幕）
+  function paintSrc() {
+    const el = root && root.querySelector && root.querySelector('#ttf-src'); if (!el) return;
+    let direct = false; try { direct = wireAlive(); } catch (e) { /* 還沒初始化 */ }
+    const sig = direct + '|' + lang();
+    if (el.dataset.sig === sig) return; el.dataset.sig = sig;
+    const c = direct ? '#16a34a' : '#ef4444';
+    el.innerHTML = `<i style="background:${c}"></i><span style="color:${c}">${direct ? L('直接獲取', 'Direct feed') : L('看屏幕', 'Screen')}</span>`;
+  }
+  setInterval(() => { try { paintSrc(); } catch (e) { /* 空 */ } }, 2000);
   /* ---- 建立整個面板（切換語言時重建） ---- */
   function buildUI() {
     root.innerHTML = html();
     $('ttf-lang').value = lang();
     $('card').classList.toggle('min', !!state.min);
     $('ttf-min').textContent = state.min ? '+' : '–';
+    paintSrc();
 
     // 分頁
     const tabs = root.querySelectorAll('.tabs button');
