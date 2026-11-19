@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TikTok Live小助手 / TikTok Live Helper
 // @namespace    lok.laliquidation
-// @version      7.16
+// @version      7.17
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -162,7 +162,7 @@ function ttfillMain() {
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐"};
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   let langOverride = null; // 評論窗可以用自己的語言
@@ -2612,8 +2612,60 @@ function ttfillMain() {
     else if (!comments && !wireAlive()) { cls += ' warn'; msg = L('⚠ 找不到評論區（TikTok 頁面是否在直播控制台？）', '⚠ Comment area not found (is the TikTok page on the LIVE console?)'); }
     else if (tickErr.feed) { cls += ' warn'; msg = '⚠ ' + tickErr.feed; }
     else if (feed.src !== 'wire' && wire.frames > 0) { cls += ' warn'; msg = L(`⚠ 直接讀取在 ${hhmmss(wire.lastFrame)} 中斷，現在改看畫面（TikTok 聊天區請保持在最新、不要被遮住）`, `⚠ Direct feed dropped at ${hhmmss(wire.lastFrame)} — reading the screen now (keep TikTok’s chat at the latest and uncovered)`) + ' · ' + hhmmss(Date.now()); }
-    else msg = L('● 更新中 ', '● Live ') + hhmmss(Date.now()) + (feed.src === 'wire' ? L(' · 直接讀取', ' · direct feed') : L(' · 看畫面', ' · screen')) + L(' · 腳本用量 ', ' · script load ') + perfNow().toFixed(1) + '%';
+    else cls += ' ok';
     el.className = cls; el.textContent = msg;
+    // 右上角：版本號 + 資料來源（綠點 = 直接獲取，紅點 = 看屏幕）
+    const sEl = w.document.getElementById('src'), vEl = w.document.getElementById('ver');
+    if (vEl && !vEl.textContent) vEl.textContent = 'v' + ((typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.version) || '?');
+    if (sEl && feed.src) {
+      const direct = feed.src === 'wire', sig = direct + '|' + fset.lang;
+      if (sEl.dataset.sig !== sig) { sEl.dataset.sig = sig; const c = direct ? '#22c55e' : '#ef4444'; sEl.innerHTML = `<i class="dot" style="background:${c}"></i><span style="color:${c}">${direct ? L('直接獲取', 'Direct feed') : L('看屏幕', 'Screen')}</span>`; }
+      sEl.title = L('腳本用量 ', 'Script load ') + perfNow().toFixed(1) + '% · ' + hhmmss(Date.now());
+    }
+  }
+  // 頂部拍賣條：進行中的拍賣，出價時名字像老虎機一樣滾動；沒人出價 = No Bidding
+  let aucBar = null;
+  function feedAucBar() { return inFeedLang(feedAucBar0)(); }
+  function feedAucBar0() {
+    const w = feed.win; if (!w || w.closed) return;
+    const d = w.document, al = d.getElementById('al'); if (!al) return;
+    const a = wire.auc, now = Date.now(), alive = wireAlive();
+    let kind = 'idle';
+    if (alive && a) {
+      if (a.state === 'nobid') kind = now - a.endT > 180000 ? 'idle' : 'nob';
+      else if (a.state === 'won') kind = now - a.endT > 180000 ? 'idle' : 'live';
+      else kind = now - a.t > 15 * 60000 ? 'idle' : (a.bids ? 'live' : 'spin');
+    }
+    const skel = kind + '|' + fset.lang;
+    const nmRows = () => { const out = []; for (let i = feed.items.length - 1; i >= 0 && out.length < 6; i--) { const x = feed.items[i]; if (x.kind === 'c' && !x.host && !out.includes(x.name)) out.push(x.name); } return out; };
+    const row = (n) => `<div style="color:${n === '…' ? 'inherit' : nameColor(n)}">${escapeHtml(n)}</div>`;
+    if (!aucBar || aucBar.skel !== skel) {
+      aucBar = { skel, name: null };
+      if (kind === 'idle') al.innerHTML = `<span class="idle">${alive ? L('等待下一個拍賣…', 'Waiting for the next auction…') : L('（直接獲取時才顯示拍賣）', '(Auction bar needs the direct feed)')}</span>`;
+      else if (kind === 'nob') al.innerHTML = `<span class="ano" id="ano" style="display:none"></span><span class="nob">No Bidding</span>`;
+      else if (kind === 'spin') {
+        const names = nmRows(); if (!names.length) names.push('…');
+        const rows = names.concat(names).map(row).join('');
+        al.innerHTML = `<span class="ano" id="ano" style="display:none"></span><span class="reel"><div class="strip spin" style="animation-duration:${Math.max(.6, names.length * .15)}s">${rows}</div></span><span class="acn">${L('競標中…', 'Bidding…')}</span>`;
+      } else al.innerHTML = `<span class="ano" id="ano" style="display:none"></span><span class="reel"><div class="strip" id="st"></div></span><span class="apr" id="apr"></span><span class="acn" id="acn"></span><span class="tag sold" id="tg" style="display:none">${L('得標', 'SOLD')}</span>`;
+    }
+    if (kind === 'idle' || kind === 'spin') return;
+    const ano = d.getElementById('ano');
+    if (ano) { ano.textContent = a.no ? '#' + a.no : ''; ano.style.display = a.no ? '' : 'none'; }
+    if (kind === 'nob') return;
+    const st = d.getElementById('st'); if (!st) return;
+    d.getElementById('apr').textContent = a.price;
+    d.getElementById('acn').textContent = a.state === 'won' ? '' : L(`${a.bids} 次出價`, `${a.bids} bid${a.bids === 1 ? '' : 's'}`);
+    d.getElementById('tg').style.display = a.state === 'won' ? '' : 'none';
+    if (aucBar.name === a.name) return;
+    const prev = aucBar.name; aucBar.name = a.name;
+    // 滾動：幾個舊名字快速滑過，停在目前最高出價的人
+    const fill = [...a.list.slice(0, -1), ...nmRows()].filter((n, i, arr) => n !== a.name && arr.indexOf(n) === i).slice(0, 5);
+    while (fill.length < 3) fill.push('…');
+    const rows = [prev || fill[0], ...fill, a.name];
+    st.innerHTML = rows.map(row).join('');
+    st.style.transition = 'none'; st.style.transform = 'translateY(0)'; void st.offsetHeight;
+    st.style.transition = 'transform .9s cubic-bezier(.15,.8,.25,1)'; st.style.transform = `translateY(-${(rows.length - 1) * 1.5}em)`;
   }
   function feedTick2() {
     const now = Date.now();
@@ -2675,6 +2727,7 @@ function ttfillMain() {
       if (m && feedPush({ kind: 's', name: cleanName(m[1]), msg: '#' + m[2] + (m[4] ? '  $' + m[4] : ''), no: m[2], t: now, old: feed.first })) added++;
     }
     feed.first = false;
+    feedAucBar();
     feedRender(card || undefined, added);
   }
   function feedHTML() {
@@ -2684,10 +2737,33 @@ function ttfillMain() {
     *{box-sizing:border-box} html,body{margin:0;height:100%}
     body{--bg:#0e0f13;--fg:#f3f4f6;--mute:#9aa0aa;--line:#262a33;--card:#171a21;--host:#1d2a44;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Microsoft JhengHei","Segoe UI",sans-serif;background:var(--bg);color:var(--fg);display:flex;flex-direction:column;overflow:hidden}
     body.light{--bg:#ffffff;--fg:#111317;--mute:#636a75;--line:#e4e6ea;--card:#f5f6f8;--host:#e6efff}
-    .bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:13px;color:var(--mute)}
-    .bar label{display:flex;align-items:center;gap:5px;white-space:nowrap;cursor:pointer}
-    .bar input[type=range]{width:120px}
-    .bar button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;padding:3px 9px;cursor:pointer}
+    .bar{display:flex;align-items:center;gap:6px;padding:4px 8px;border-bottom:1px solid var(--line);font-size:12px;color:var(--mute)}
+    .bar label{display:flex;align-items:center;gap:4px;white-space:nowrap;cursor:pointer}
+    .bar input[type=range]{width:64px}
+    .bar button{font:inherit;line-height:1.2;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;padding:2px 7px;cursor:pointer}
+    .opts{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin-bottom:8px}
+    .mutep label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;color:var(--fg);white-space:nowrap}
+    .mutep select{font:inherit;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;padding:2px 6px}
+    .ab{display:flex;align-items:center;gap:10px;padding:5px 10px;background:#0b0c10;color:#fff;border-bottom:2px solid #e5132f;min-height:2.3em}
+    body.light .ab{background:#fff1f2;color:#111}
+    .ab .al{flex:1;min-width:0;display:flex;align-items:center;gap:10px;font-size:clamp(18px,calc(var(--fs) * .95),42px);font-weight:800;line-height:1.5}
+    .ab .ano{background:#e5132f;color:#fff;border-radius:.3em;padding:0 .3em;font-size:.8em;white-space:nowrap}
+    .ab .reel{flex:1;min-width:0;height:1.5em;overflow:hidden;position:relative;border-radius:.25em;background:rgba(255,255,255,.07)}
+    body.light .ab .reel{background:rgba(0,0,0,.06)}
+    .ab .strip{will-change:transform}
+    .ab .strip>div{height:1.5em;padding:0 .35em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ab .apr{color:#facc15;white-space:nowrap}
+    body.light .ab .apr{color:#b45309}
+    .ab .acn{font-size:.5em;font-weight:600;color:var(--mute);white-space:nowrap}
+    .ab .tag{font-size:.55em;border-radius:.3em;padding:0 .4em;white-space:nowrap}
+    .ab .tag.sold{background:#22c55e;color:#04210f}
+    .ab .nob{color:#ff6b81}
+    .ab .idle{color:var(--mute);font-weight:600;font-size:.7em}
+    @keyframes ttspin{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+    .ab .strip.spin{animation:ttspin .5s linear infinite}
+    .ab .ar{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-size:11px;color:var(--mute);white-space:nowrap}
+    .ab .ar .src{display:inline-flex;align-items:center;gap:4px;font-weight:700}
+    .ab .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
     .bar .grow{flex:1}
     .bar select{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;padding:3px 6px;cursor:pointer}
     .auc{padding:12px 14px;border-bottom:3px solid #e5132f;background:var(--card);font-size:calc(var(--fs) * 1.15)}
@@ -2722,10 +2798,11 @@ function ttfillMain() {
     @keyframes ttup{from{opacity:0;transform:translateY(12px);background:rgba(250,204,21,.25)}to{opacity:1;transform:none}}
     body.newtop #more{top:auto;bottom:16px}
     #more{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#e5132f;color:#fff;border:0;border-radius:20px;padding:8px 16px;font-size:15px;font-weight:700;cursor:pointer;display:none;box-shadow:0 4px 14px rgba(0,0,0,.35)}
-    .bar input[type=search]{font:inherit;font-size:14px;flex:1 1 160px;min-width:120px;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;padding:4px 9px}
+    .bar input[type=search]{font:inherit;font-size:14px;flex:1 1 80px;min-width:60px;width:0;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;padding:2px 8px}
     mark{background:#facc15;color:#111;border-radius:3px;padding:0 1px}
     .c .n{cursor:pointer} .c .n:hover{text-decoration:underline}
     .stat{padding:3px 14px;font-size:12px;color:#22c55e;border-bottom:1px solid var(--line)}
+    .stat.ok{display:none}
     .stat.warn{color:#fff;background:#b45309;font-size:14px;padding:6px 14px}
     .qinfo{padding:4px 14px;font-size:13px;color:var(--mute);border-bottom:1px solid var(--line);display:none}
     .hist{flex:none;max-height:55%;display:flex;flex-direction:column;background:var(--card);border-top:3px solid #4f8cff;box-shadow:0 -8px 24px rgba(0,0,0,.4);font-size:var(--fs);z-index:5}
@@ -2751,18 +2828,20 @@ function ttfillMain() {
     d.head.querySelectorAll('style[data-tt]').forEach((x) => x.remove());
     const st = d.createElement('style'); st.dataset.tt = '1'; st.textContent = feedCSS(); d.head.appendChild(st);
     d.body.innerHTML = `
+      <div class="ab" id="ab"><div class="al" id="al"></div><div class="ar"><span id="ver"></span><span class="src" id="src"></span></div></div>
       <div class="bar">
-        <label>A<input type="range" id="fs" min="14" max="64" step="1"><b id="fsv"></b></label>
+        <label title="${L('字體大小', 'Font size')}">A<input type="range" id="fs" min="14" max="64" step="1"><b id="fsv"></b></label>
+        <input type="search" id="q" placeholder="${L('🔍 搜尋', '🔍 Search')}" title="${L('搜尋客人 / 留言 / #編號', 'Search customer / comment / #no.')}">
+        <button id="mb" title="${L('設定 / 過濾', 'Settings / filter')}">⚙<span id="mc"></span></button>
+        <button id="th" title="${L('深色 / 淺色', 'Dark / Light')}">◐</button>
+        <button id="fsc" title="${L('全螢幕', 'Full screen')}">⛶</button>
+      </div>
+      <div class="mutep" id="mp"><div class="opts">
         <label><input type="checkbox" id="ow">${L('只看得標客人', 'Winners only')}</label>
         <label><input type="checkbox" id="sy">${L('付款通知', 'Payments')}</label>
         <label><input type="checkbox" id="nt">${L('最新在上面', 'Newest on top')}</label>
-        <input type="search" id="q" placeholder="${L('🔍 搜尋客人 / 留言 / #編號', '🔍 Search customer / comment / #no.')}">
-        <select id="lg" title="Language"><option value="hant">繁體</option><option value="hans">简体</option><option value="en">English</option></select>
-        <button id="mb">⚙ ${L('過濾 / 設定', 'Filter / settings')} <span id="mc"></span></button>
-        <button id="th">${L('深色 / 淺色', 'Dark / Light')}</button>
-        <button id="fsc">${L('全螢幕', 'Full screen')}</button>
-      </div>
-      <div class="mutep" id="mp">${L('包含以下句子的留言不顯示（每行一句，例如 giveaway 指定要留的話）。也可以把滑鼠移到留言上按「🚫」加入。', 'Comments containing any of these lines are hidden (one per line, e.g. the giveaway entry phrase). You can also hover a comment and press “🚫”.')}<textarea id="mt" placeholder="Final Sale! Bid responsible! Bundle Ship"></textarea>
+        <select id="lg" title="Language"><option value="hant">繁體</option><option value="hans">简体</option><option value="en">English</option></select></div>
+        ${L('包含以下句子的留言不顯示（每行一句，例如 giveaway 指定要留的話）。也可以把滑鼠移到留言上按「🚫」加入。', 'Comments containing any of these lines are hidden (one per line, e.g. the giveaway entry phrase). You can also hover a comment and press “🚫”.')}<textarea id="mt" placeholder="Final Sale! Bid responsible! Bundle Ship"></textarea>
         <div style="margin-top:6px">${L('主播帳號名稱（發公告時會自動認出，也可以自己填）', 'Host account name (auto-detected from notices, or type it)')}<input type="text" id="hostn" style="width:100%;font:inherit;font-size:14px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 8px;margin-top:4px"></div></div>
       <div class="auc" id="auc"></div>
       <div class="stat" id="stat"></div>
@@ -2819,6 +2898,7 @@ function ttfillMain() {
     d.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (feed.hist != null) histClose(); else if ($$('q').value) { $$('q').value = ''; feed.q = ''; feedRender(null, 0, true); } } });
     if (!feed.hideBound) { feed.hideBound = true; w.addEventListener('pagehide', () => setTimeout(() => { if (feed.win && feed.win.closed) feedStop(); }, 300)); }
     // 評論窗語言（和面板分開設定）
+    aucBar = null; feedAucBar();
     $$('lg').value = fset.lang || lang();
     $$('lg').onchange = (e) => { fset.lang = e.target.value; saveState(); lastAucSig = null; feedSetup(w); feedRender(undefined, 0, true); if (feed.hist != null) histRender(true); };
   });
@@ -2957,7 +3037,7 @@ function ttfillMain() {
   /* ================= 直接讀 TikTok 收到的留言資料（不靠畫面） =================
      留言從 webcast 的 WebSocket 進來（protobuf：PushFrame → Response → WebcastChatMessage）。
      這條連線有資料時，評論窗和訂單回覆都用它；沒有資料時（連線斷了 / 格式改了）自動退回看畫面。 */
-  const wire = { all: [], seq: 0, ids: new Set(), lastFrame: 0, frames: 0, bad: 0, methods: {}, kinds: {}, samples: {}, bids: [], ends: [], endSeq: 0, endIds: new Set(), paids: [], paidSeq: 0, paidIds: new Set(), fails: [], failSeq: 0, chain: Promise.resolve() };
+  const wire = { all: [], seq: 0, ids: new Set(), lastFrame: 0, frames: 0, bad: 0, methods: {}, kinds: {}, samples: {}, bids: [], ends: [], endSeq: 0, endIds: new Set(), paids: [], paidSeq: 0, paidIds: new Set(), fails: [], failSeq: 0, auc: null, aucSeq: 0, chain: Promise.resolve() };
   const WIRE_KEEP = 3000;
   function pbFields(u8) { // 最簡 protobuf 讀法：回傳 [{f, w, v|b}]；讀不通就回 null
     const out = []; let i = 0; const n = u8.length;
@@ -2998,15 +3078,40 @@ function ttfillMain() {
         return;
       }
       wire.bids.push(bid); if (wire.bids.length > 300) wire.bids.shift();
+      aucSet('bid', recvT, { name: bid.name, price: bid.price, no: bid.no, title: bid.title });
       return;
     }
-    if (pbText(payload, 4, 3) !== 'auction.end') return;
+    const evn = pbText(payload, 4, 3);
+    if (evn === 'auction.start') { aucSet('start', recvT); return; }
+    if (evn === 'auction.new_bid') { aucSet('bid', recvT, { name: pbText(payload, 3, 2, 1, 5), price: pbText(payload, 3, 2, 1, 7) }); return; }
+    if (evn !== 'auction.end') return;
     const id = pbText(payload, 3, 2, 1, 1), who = pbText(payload, 3, 2, 1, 5), price = pbText(payload, 3, 2, 1, 7);
-    if (!who) return; // 沒人出價
+    if (!who) { aucSet('nobid', recvT); return; } // 沒人出價 = 流拍
+    aucSet('won', recvT, { name: who, price });
     const key = id + '|' + who + '|' + price;
     if (wire.endIds.has(key)) return; wire.endIds.add(key);
     wire.ends.push({ seq: ++wire.endSeq, t: recvT, id, winner: who, price: price.replace(/^\$\s*/, '') });
     if (wire.ends.length > 300) wire.ends.shift();
+  }
+  // 目前進行中的拍賣（評論窗頂部的滾動條用）：start → bid… → won / nobid
+  const aucMoney = (p) => { const n = String(p || '').replace(/[^\d.]/g, ''); return n ? '$' + n : ''; };
+  function aucSet(ev, t, d) {
+    let a = wire.auc; d = d || {};
+    const ended = a && a.state !== 'on';
+    if (ev === 'start') a = wire.auc = { state: 'on', t, bids: 0, no: '', title: '', name: '', price: '', list: [] };
+    else if (ev === 'bid') {
+      if (ended && t - a.endT < 1500) return; // 剛結束後才到的舊出價
+      if (!a || ended) a = wire.auc = { state: 'on', t, bids: 0, no: '', title: '', name: '', price: '', list: [] }; // 中途才開始接收
+      const nm = d.name || a.name, pr = aucMoney(d.price) || a.price;
+      if (d.no) a.no = d.no; if (d.title) a.title = d.title;
+      if (!(nm === a.name && pr === a.price)) { a.bids++; a.list.push(nm); if (a.list.length > 12) a.list.shift(); a.name = nm; a.price = pr; }
+    } else if (ev === 'won' || ev === 'nobid') {
+      if (ended && t - a.endT < 5000 && ev === 'nobid') return; // 重複的結束訊息
+      if (!a) a = wire.auc = { state: 'on', t, bids: 0, no: '', title: '', name: '', price: '', list: [] };
+      if (ev === 'won') { a.name = d.name || a.name; a.price = aucMoney(d.price) || a.price; }
+      a.state = ev; a.endT = t;
+    }
+    wire.aucSeq++;
   }
   // 得標事件本身沒有「#幾號」和 listing 名稱：用同一個人、同一個價錢的那次出價補上
   function wireResolveEnd(e) {
