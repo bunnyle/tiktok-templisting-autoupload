@@ -3,7 +3,7 @@
 // @namespace    lok.laliquidation
 // @author       Lok
 // @copyright    2026 Lok. All rights reserved.
-// @version      7.18
+// @version      7.19
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -164,7 +164,7 @@ function ttfillMain() {
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const VER = '7.18'; // 要和上面的 @version 一致
+  const VER = '7.19'; // 要和上面的 @version 一致
   const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
@@ -2653,7 +2653,7 @@ function ttfillMain() {
       else if (kind === 'spin') {
         const names = nmRows(); if (!names.length) names.push('…');
         const rows = names.concat(names).map(row).join('');
-        al.innerHTML = `<span class="ano" id="ano" style="display:none"></span><span class="reel"><div class="strip spin" style="animation-duration:${Math.max(.6, names.length * .15)}s">${rows}</div></span><span class="acn">${L('競標中…', 'Bidding…')}</span>`;
+        al.innerHTML = `<span class="ano" id="ano" style="display:none"></span><span class="reel"><div class="strip spin" style="animation-duration:${Math.max(3, names.length * 1.2)}s">${rows}</div></span><span class="acn">${L('競標中…', 'Bidding…')}</span>`;
       } else al.innerHTML = `<span class="ano" id="ano" style="display:none"></span><span class="reel"><div class="strip" id="st"></div></span><span class="apr" id="apr"></span><span class="acn" id="acn"></span><span class="tag sold" id="tg" style="display:none">${L('得標', 'SOLD')}</span>`;
     }
     if (kind === 'idle' || kind === 'spin') return;
@@ -2668,11 +2668,11 @@ function ttfillMain() {
     const prev = aucBar.name; aucBar.name = a.name;
     // 滾動：幾個舊名字快速滑過，停在目前最高出價的人
     const fill = [...a.list.slice(0, -1), ...nmRows()].filter((n, i, arr) => n !== a.name && arr.indexOf(n) === i).slice(0, 5);
-    while (fill.length < 3) fill.push('…');
-    const rows = [prev || fill[0], ...fill, a.name];
+    while (fill.length < 2) fill.push('…');
+    const rows = [prev || fill[0], ...fill.slice(0, 2), a.name];
     st.innerHTML = rows.map(row).join('');
     st.style.transition = 'none'; st.style.transform = 'translateY(0)'; void st.offsetHeight;
-    st.style.transition = 'transform .9s cubic-bezier(.15,.8,.25,1)'; st.style.transform = `translateY(-${(rows.length - 1) * 1.5}em)`;
+    st.style.transition = 'transform 1.6s cubic-bezier(.2,.7,.2,1)'; st.style.transform = `translateY(-${(rows.length - 1) * 1.5}em)`;
   }
   function feedTick2() {
     const now = Date.now();
@@ -2767,9 +2767,13 @@ function ttfillMain() {
     .ab .nob{color:#ff6b81}
     .ab .idle{color:var(--mute);font-weight:600;font-size:.7em}
     @keyframes ttspin{from{transform:translateY(0)}to{transform:translateY(-50%)}}
-    .ab .strip.spin{animation:ttspin .5s linear infinite}
-    .ab .ar{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-size:11px;color:var(--mute);white-space:nowrap}
-    .ab .ar .src{display:inline-flex;align-items:center;gap:4px;font-weight:700}
+    .ab .strip.spin{animation:ttspin 6s linear infinite}
+    .auc{position:relative;overflow:hidden}
+    .auc .ghost{position:absolute;left:0;right:0;top:0;padding:12px 14px;background:var(--card);animation:ttout .75s cubic-bezier(.5,0,.9,.6) forwards;pointer-events:none;z-index:2}
+    @keyframes ttout{0%{transform:none;opacity:1}100%{transform:translateY(105%);opacity:0}}
+    .tp{display:flex;justify-content:space-between;align-items:center;padding:2px 10px;font-size:11px;color:var(--mute);border-bottom:1px solid var(--line)}
+    .tp .ar{display:flex;align-items:center;gap:10px;white-space:nowrap}
+    .tp .src{display:inline-flex;align-items:center;gap:4px;font-weight:700}
     .ab .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
     .bar .grow{flex:1}
     .bar select{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;padding:3px 6px;cursor:pointer}
@@ -2835,7 +2839,7 @@ function ttfillMain() {
     d.head.querySelectorAll('style[data-tt]').forEach((x) => x.remove());
     const st = d.createElement('style'); st.dataset.tt = '1'; st.textContent = feedCSS(); d.head.appendChild(st);
     d.body.innerHTML = `
-      <div class="ab" id="ab"><div class="al" id="al"></div><div class="ar"><span id="ver"></span><span class="src" id="src"></span></div></div>
+      <div class="tp"><span>TikTok Live</span><span class="ar"><span id="ver"></span><span class="src" id="src"></span></span></div>
       <div class="bar">
         <label title="${L('字體大小', 'Font size')}">A<input type="range" id="fs" min="14" max="64" step="1"><b id="fsv"></b></label>
         <input type="search" id="q" placeholder="${L('🔍 搜尋', '🔍 Search')}" title="${L('搜尋客人 / 留言 / #編號', 'Search customer / comment / #no.')}">
@@ -2843,6 +2847,7 @@ function ttfillMain() {
         <button id="th" title="${L('深色 / 淺色', 'Dark / Light')}">◐</button>
         <button id="fsc" title="${L('全螢幕', 'Full screen')}">⛶</button>
       </div>
+      <div class="ab" id="ab"><div class="al" id="al"></div></div>
       <div class="mutep" id="mp"><div class="opts">
         <label><input type="checkbox" id="ow">${L('只看得標客人', 'Winners only')}</label>
         <label><input type="checkbox" id="sy">${L('付款通知', 'Payments')}</label>
@@ -2909,7 +2914,7 @@ function ttfillMain() {
     $$('lg').value = fset.lang || lang();
     $$('lg').onchange = (e) => { fset.lang = e.target.value; saveState(); lastAucSig = null; feedSetup(w); feedRender(undefined, 0, true); if (feed.hist != null) histRender(true); };
   });
-  let lastAucSig = null;
+  let lastAucSig = null, lastAucNo = null;
   const feedRender = inFeedLang(function (card, added, full) {
     const w = feed.win; if (!w || w.closed) return;
     const d = w.document, list = d.getElementById('list'), auc = d.getElementById('auc');
@@ -2926,11 +2931,17 @@ function ttfillMain() {
       const sig = c ? [c.no, c.price, c.winner, c.listing, c.at, cPaid, cFail, reps.map((r) => r.t + r.msg).join('|'), fset.lang].join('|') : '';
       if (sig !== lastAucSig) {
         lastAucSig = sig;
+        const oldHtml = c && lastAucNo && lastAucNo !== c.no && auc.innerHTML.trim() ? auc.innerHTML : '';
+        lastAucNo = c ? c.no : lastAucNo;
         auc.className = 'auc';
         auc.innerHTML = c ? `<div class="r1"><span class="no">#${escapeHtml(c.no)}</span><span class="w" style="color:${nameColor(c.winner)}">${escapeHtml(c.winner)}</span><span class="st">won!</span>${c.price ? `<span class="pr">$${escapeHtml(c.price)}</span>` : ''}${cPaid ? `<span class="pok">✓ ${L('已付款', 'Paid')}</span>` : cFail ? `<span class="pf">✗ ${L('付款失敗', 'Payment failed')}${cFail > 1 ? ' ×' + cFail : ''}</span>` : ''}</div>
             ${c.listing ? `<div class="t" title="${escapeHtml(c.listing)}">${escapeHtml(c.listing)}</div>` : ''}
             <div class="reps">${reps.map((r) => `<div class="rp">${escapeHtml(r.msg)}<span class="tm">${hhmmss(r.t)}</span></div>`).join('') || `<div class="wait">${L('等待客人回覆…', 'Waiting for the winner’s reply…')}</div>`}</div>`
           : `<div class="wait">${L('（還沒有得標）', '(No winner yet)')}</div>`;
+        if (oldHtml) { // 新的得標：上一位 winner 向下滑走消失
+          const g = d.createElement('div'); g.className = 'ghost'; g.innerHTML = oldHtml; auc.appendChild(g);
+          g.addEventListener('animationend', () => g.remove()); setTimeout(() => { try { g.remove(); } catch (e) { /* 空 */ } }, 1200);
+        }
       }
     }
     if (!added && !full) return;
@@ -3014,7 +3025,7 @@ function ttfillMain() {
       w = window.open('', 'ttlive_comments', 'popup=yes,width=560,height=860');
       if (!w) return 'blocked';
     }
-    feed.win = w; feed.kind = kind; feed.stick = true; feed.first = true; feed.hideBound = false; feed.seen = new WeakMap(); lastAucSig = null;
+    feed.win = w; feed.kind = kind; feed.stick = true; feed.first = true; feed.hideBound = false; feed.seen = new WeakMap(); lastAucSig = null; lastAucNo = null;
     try { feedSetup(w); } catch (e) { LOG('feed setup fail', e); feed.win = null; try { w.close(); } catch (er) { /* 空 */ } return 'blocked'; }
     feedTick();
     feedRender(null, 0, true);
