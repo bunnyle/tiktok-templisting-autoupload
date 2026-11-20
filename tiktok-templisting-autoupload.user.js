@@ -3,7 +3,7 @@
 // @namespace    lok.laliquidation
 // @author       Lok
 // @copyright    2026 Lok. All rights reserved.
-// @version      7.19
+// @version      7.20
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -164,7 +164,7 @@ function ttfillMain() {
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const VER = '7.19'; // 要和上面的 @version 一致
+  const VER = '7.20'; // 要和上面的 @version 一致
   const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
@@ -2652,8 +2652,9 @@ function ttfillMain() {
       else if (kind === 'nob') al.innerHTML = `<span class="ano" id="ano" style="display:none"></span><span class="nob">No Bidding</span>`;
       else if (kind === 'spin') {
         const names = nmRows(); if (!names.length) names.push('…');
+        while (names.length < 8) names.push(...names.slice(0, 8 - names.length), ...(names.length ? [] : ['…']));
         const rows = names.concat(names).map(row).join('');
-        al.innerHTML = `<span class="ano" id="ano" style="display:none"></span><span class="reel"><div class="strip spin" style="animation-duration:${Math.max(3, names.length * 1.2)}s">${rows}</div></span><span class="acn">${L('競標中…', 'Bidding…')}</span>`;
+        al.innerHTML = `<span class="ano" id="ano" style="display:none"></span><span class="reel"><div class="strip spin" style="animation-duration:${Math.max(.3, names.length * .05)}s">${rows}</div></span><span class="acn">${L('競標中…', 'Bidding…')}</span>`;
       } else al.innerHTML = `<span class="ano" id="ano" style="display:none"></span><span class="reel"><div class="strip" id="st"></div></span><span class="apr" id="apr"></span><span class="acn" id="acn"></span><span class="tag sold" id="tg" style="display:none">${L('得標', 'SOLD')}</span>`;
     }
     if (kind === 'idle' || kind === 'spin') return;
@@ -2668,11 +2669,11 @@ function ttfillMain() {
     const prev = aucBar.name; aucBar.name = a.name;
     // 滾動：幾個舊名字快速滑過，停在目前最高出價的人
     const fill = [...a.list.slice(0, -1), ...nmRows()].filter((n, i, arr) => n !== a.name && arr.indexOf(n) === i).slice(0, 5);
-    while (fill.length < 2) fill.push('…');
-    const rows = [prev || fill[0], ...fill.slice(0, 2), a.name];
+    const pool = fill.length ? fill : ['…']; const mid = []; for (let i = 0; i < 16; i++) mid.push(pool[i % pool.length]);
+    const rows = [prev || mid[0], ...mid, a.name];
     st.innerHTML = rows.map(row).join('');
-    st.style.transition = 'none'; st.style.transform = 'translateY(0)'; void st.offsetHeight;
-    st.style.transition = 'transform 1.6s cubic-bezier(.2,.7,.2,1)'; st.style.transform = `translateY(-${(rows.length - 1) * 1.5}em)`;
+    st.style.transition = 'none'; st.style.transform = 'translateY(0)'; st.style.filter = 'blur(2.5px)'; void st.offsetHeight;
+    st.style.transition = 'transform 2.2s cubic-bezier(.12,.8,.2,1), filter .5s ease 1.5s'; st.style.transform = `translateY(-${(rows.length - 1) * 1.5}em)`; st.style.filter = 'blur(0px)';
   }
   function feedTick2() {
     const now = Date.now();
@@ -2767,7 +2768,7 @@ function ttfillMain() {
     .ab .nob{color:#ff6b81}
     .ab .idle{color:var(--mute);font-weight:600;font-size:.7em}
     @keyframes ttspin{from{transform:translateY(0)}to{transform:translateY(-50%)}}
-    .ab .strip.spin{animation:ttspin 6s linear infinite}
+    .ab .strip.spin{animation:ttspin .4s linear infinite;filter:blur(2.5px)}
     .auc{position:relative;overflow:hidden}
     .auc .ghost{position:absolute;left:0;right:0;top:0;padding:12px 14px;background:var(--card);animation:ttout .75s cubic-bezier(.5,0,.9,.6) forwards;pointer-events:none;z-index:2}
     @keyframes ttout{0%{transform:none;opacity:1}100%{transform:translateY(105%);opacity:0}}
