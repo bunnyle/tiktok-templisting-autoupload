@@ -3,7 +3,7 @@
 // @namespace    lok.laliquidation
 // @author       Lok
 // @copyright    2026 Lok. All rights reserved.
-// @version      7.21
+// @version      7.23
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -164,31 +164,14 @@ function ttfillMain() {
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const VER = '7.21'; // 要和上面的 @version 一致
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚"};
+  const VER = '7.23'; // 要和上面的 @version 一致
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚", "雲": "云", "報": "报", "順": "顺"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   let langOverride = null; // 評論窗可以用自己的語言
   const lang = () => langOverride || state.lang || 'hant';
   const L = (hant, en) => (lang() === 'en' ? en : lang() === 'hans' ? toHans(hant) : hant);
   const E = (hant, en, retry) => Object.assign(new Error(L(hant, en)), { retry: !!retry });
-
-  /* ---------------- 解析 Excel 貼上內容 ----------------
-     每行（Tab 分隔）: 名字 | 重量 | Height | Width | Length | Category
-     即 Excel 的 E:J 欄。若整行 A:J 一起複製（>=10 欄），自動取 E:J。 */
-  function parse(text) {
-    const rows = [];
-    for (const line of text.split(/\r?\n/)) {
-      if (!line.trim()) continue;
-      let c = line.split('\t').map((s) => s.trim());
-      if (c.length >= 10) c = c.slice(4, 10);
-      if (c.length < 5) continue;
-      const [name, weight, h, w, l, cat = ''] = c;
-      if (!name || isNaN(parseFloat(weight))) continue; // 表頭或空行
-      rows.push({ name, weight, h, w, l, cat, status: '待填' });
-    }
-    return rows;
-  }
 
   /* ---------------- 頁面操作 ---------------- */
   function setVal(input, val, { blur = true } = {}) {
@@ -407,7 +390,7 @@ function ttfillMain() {
 
     // 2) 打開下拉 → 搜索 → 點結果
     const b = box();
-    if (!b) throw E('找不到 Category 欄位', 'Can\'t find the Category field');
+    if (!b) throw E('找不到 Category 欄位', 'Can\'t find the Category field', true);
     const trigger = getTrigger(b);
     realClick(trigger);
     const search = await waitFor(() => {
@@ -415,7 +398,7 @@ function ttfillMain() {
         visible(i) && /search/i.test(i.placeholder || '') && !/product/i.test(i.placeholder || ''));
       return all.find((i) => b.contains(i)) || all[0];
     }, 3000);
-    if (!search) throw E('打不開 Category 搜索框', 'Couldn\'t open the Category search box');
+    if (!search) throw E('打不開 Category 搜索框', 'Couldn\'t open the Category search box', true);
     setVal(search, lastRaw, { blur: false });
 
     // 收集搜索結果（每行都是「A - B - C」這種路徑），取最深一層
@@ -462,10 +445,10 @@ function ttfillMain() {
     realClick(option);
     if (!(await waitFor(isChosen, 1500))) {
       realClick(option.closest('li, [role="option"], [class*="option"]') || option.parentElement);
-      if (!(await waitFor(isChosen, 2000))) throw E('Category 沒有選上: ' + cat, 'Category didn\'t get selected: ' + cat);
+      if (!(await waitFor(isChosen, 2000))) throw E('Category 沒有選上: ' + cat, 'Category didn\'t get selected: ' + cat, true);
     }
     await sleep(600);
-    if (!isChosen()) throw E('Category 選上後又被清空: ' + cat, 'Category got cleared right after selecting: ' + cat);
+    if (!isChosen()) throw E('Category 選上後又被清空: ' + cat, 'Category got cleared right after selecting: ' + cat, true);
     return res.exact ? true : option.innerText.trim();
   }
 
@@ -492,7 +475,7 @@ function ttfillMain() {
         row.catMissing = false;
         await sleep(900);
         row._catView = catNow();
-        if (!row._catView) { if (pass < 2) { await sleep(800); continue; } throw E('類目選了但沒有顯示（被清空）', 'Category was selected but the box is empty (cleared)'); }
+        if (!row._catView) { if (pass < 2) { await sleep(800); continue; } throw E('類目選了但沒有顯示（被清空）', 'Category was selected but the box is empty (cleared)', true); }
       } else {
         row.catNote = L('這個商品沒有設定類目', 'This product has no category set');
         row.catMissing = true;
@@ -540,9 +523,9 @@ function ttfillMain() {
       let okRounds = 0;
       for (let round = 0; round < 12 && okRounds < 2; round++) {
         const f = getFields();
-        if (!f.weight) throw E('找不到 Package weight 輸入框', 'Can\'t find the Package weight field');
-        if (row.qty && !f.qty) throw E('找不到 Quantity 欄位', 'Can\'t find the Quantity field');
-        if (!f.l || !f.w || !f.h) throw E('找不到 Package dimensions（Category 選了嗎？）', 'Can\'t find Package dimensions (is a Category selected?)');
+        if (!f.weight) throw E('找不到 Package weight 輸入框', 'Can\'t find the Package weight field', true);
+        if (row.qty && !f.qty) throw E('找不到 Quantity 欄位', 'Can\'t find the Quantity field', true);
+        if (!f.l || !f.w || !f.h) throw E('找不到 Package dimensions（Category 選了嗎？）', 'Can\'t find Package dimensions (is a Category selected?)', true);
         let allOk = true;
         for (const k of ['weight', 'l', 'w', 'h', ...(row.qty ? ['qty'] : [])]) {
           if (same(f[k], row[k])) continue;
@@ -556,7 +539,7 @@ function ttfillMain() {
       }
       if (okRounds < 2) {
         const f = getFields();
-        throw E(`重量/尺寸填不進去（現在是 ${f.weight && f.weight.value} / ${f.h && f.h.value}×${f.w && f.w.value}×${f.l && f.l.value}）`, `Weight/dimensions won't stick (now ${f.weight && f.weight.value} / ${f.h && f.h.value}×${f.w && f.w.value}×${f.l && f.l.value})`);
+        throw E(`重量/尺寸填不進去（現在是 ${f.weight && f.weight.value} / ${f.h && f.h.value}×${f.w && f.w.value}×${f.l && f.l.value}）`, `Weight/dimensions won't stick (now ${f.weight && f.weight.value} / ${f.h && f.h.value}×${f.w && f.w.value}×${f.l && f.l.value})`, true);
       }
 
       // 5. Product compliance：含電池 → 選鋰電池選項；不含 → None of the above
@@ -576,11 +559,12 @@ function ttfillMain() {
       setMsg(L(`類目被清空了，重新選擇（第 ${pass + 2} 次）…`, `Category was cleared — selecting again (try ${pass + 2})…`), 'warn');
       await sleep(800);
     }
-    throw E('類目選了但一直被 TikTok 清空（已重試 3 次）', 'The category kept getting cleared by TikTok (tried 3 times)');
+    throw E('類目選了但一直被 TikTok 清空（已重試 3 次）', 'The category kept getting cleared by TikTok (tried 3 times)', true);
   }
 
   /* ---------------- TikTok 類目庫：讀取、儲存、搜尋 ---------------- */
   const CAT_KEY = 'ttfill_cats_v1';
+  const CAT_CLOUD_URL = 'https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/categories.json';
   function loadCats() {
     try { const c = JSON.parse(localStorage.getItem(CAT_KEY)); if (c && Array.isArray(c.paths)) return c; } catch (e) { /* 空 */ }
     return { paths: [], done: {}, updated: 0 };
@@ -714,7 +698,7 @@ function ttfillMain() {
     if (full) cats.done = {};
     const dlg = await openDialog();
     const box = fieldBox(dlg, 'Category');
-    if (!box) throw E('找不到 Category 欄位', 'Can\'t find the Category field');
+    if (!box) throw E('找不到 Category 欄位', 'Can\'t find the Category field', true);
     realClick(catView(box));
     const search = await waitFor(() => catSearchInput(box), 4000);
     if (!search) throw E('打不開 Category 下拉', 'Couldn\'t open the Category dropdown');
@@ -1042,7 +1026,7 @@ function ttfillMain() {
     const blob = await imgGet(id).catch(() => null);
     if (!blob) throw E('圖片庫裡找不到這張圖片', 'Image not found in the image library');
     const input = box.querySelector('input[type="file"]') || dlg.querySelector('input[type="file"][accept*="image"]') || dlg.querySelector('input[type="file"]');
-    if (!input) throw E('找不到 TikTok 的圖片上傳欄', 'Can\'t find TikTok\'s image upload field');
+    if (!input) throw E('找不到 TikTok 的圖片上傳欄', 'Can\'t find TikTok\'s image upload field', true);
     const meta = state.imgs.find((x) => x.id === id) || {};
     const dt = new DataTransfer();
     dt.items.add(new File([blob], meta.name || 'image.jpg', { type: blob.type || 'image/jpeg' }));
@@ -1068,7 +1052,7 @@ function ttfillMain() {
       const b = editDone(); if (b) realClick(b);
       await waitFor(() => !editDone(), 4000);
     }
-    if (!done()) throw E('圖片上傳失敗（TikTok 沒有接受這張圖片）', 'Image upload failed (TikTok didn\'t accept the image)');
+    if (!done()) throw E('圖片上傳失敗（TikTok 沒有接受這張圖片）', 'Image upload failed (TikTok didn\'t accept the image)', true);
     await sleep(400);
   }
 
@@ -1116,18 +1100,20 @@ function ttfillMain() {
       document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
       await sleep(300);
     }
-    if (!isSet()) throw (target === 'None of the above' ? E('電池欄沒能改回 None of the above', 'Couldn\'t reset the battery field to None of the above') : E('電池選項沒有選上（Product compliance）', 'Battery option didn\'t get selected (Product compliance)'));
+    if (!isSet()) throw (target === 'None of the above' ? E('電池欄沒能改回 None of the above', 'Couldn\'t reset the battery field to None of the above', true) : E('電池選項沒有選上（Product compliance）', 'Battery option didn\'t get selected (Product compliance)', true));
   }
 
   /* ---------------- 提交判斷 ---------------- */
   // 先等彈窗關閉，再看有沒有「Product submitted」提示（避免把上一次殘留的提示當成這次的）
   // 監看某一行的提交結果。用「行物件」而不是序號，重新生成清單後舊的監看不會寫錯行。
   // 回傳 'ok' | 'cancel' | 'timeout' | 'stale'
+  let watchGen = 0;
   async function watchSubmit(row, timeout) {
+    const gen = ++watchGen; // 同一時間只有最新的監看有效，避免舊的監看把別的商品也標成已提交
     const token = (row._w = (row._w || 0) + 1);
     const toastSeen = () => findByText(document.body, 'product submitted', { exact: false }).length > 0;
     const res = await waitFor(() => (!getDialog() ? 'closed' : null), timeout, 300);
-    if (row._w !== token || !state.rows.includes(row)) return 'stale';
+    if (row._w !== token || gen !== watchGen || !state.rows.includes(row)) return 'stale';
     const i = state.rows.indexOf(row);
     let out;
     if (res === 'closed' && (await waitFor(toastSeen, 3000))) {
@@ -1170,7 +1156,7 @@ function ttfillMain() {
       for (const t of ['Discard', 'Leave', 'Confirm', 'OK', 'Yes', 'Exit']) {
         const cands = findByText(document.body, t).map((e) => e.closest('button, [role="button"]') || e).filter(visible);
         const inModal = cands.find((e) => e.closest('[class*="modal"], [class*="Modal"], [role="dialog"], [class*="popconfirm"]'));
-        if (inModal || cands.length) return inModal || cands[cands.length - 1];
+        if (inModal) return inModal; // 只點確認彈窗裡的按鈕，不要誤點頁面上其他的 OK / Yes
       }
       return null;
     };
@@ -1201,14 +1187,18 @@ function ttfillMain() {
     render();
     let dlg;
     try {
-      try {
-        dlg = await fillRow(row);
-      } catch (e) {
-        // 只有「彈窗還沒準備好」這類問題才重試；類目找不到之類的重試也沒用
-        if (!e.retry) throw e;
-        LOG('第一次失敗，重試', e);
-        await sleep(1000);
-        dlg = await fillRow(row);
+      // 暫時性的問題（彈窗還沒準備好、欄位暫時找不到、圖片沒傳上…）自動關掉彈窗重新開始，最多再試 2 次；
+      // 類目找不到、沒有圖片這類重試也沒用的問題直接報錯
+      for (let attempt = 0; ; attempt++) {
+        try { dlg = await fillRow(row); break; }
+        catch (e) {
+          if (!e.retry || attempt >= 2) throw e;
+          LOG(`第 ${attempt + 1} 次失敗，關掉彈窗重來`, e.message);
+          row.tries = attempt + 1;
+          setMsg(L(`遇到問題（${e.message}），重新開始（第 ${attempt + 2} 次）…`, `Hit a problem (${e.message}) — starting over (try ${attempt + 2})…`), 'warn');
+          if (getDialog()) await closeDialog();
+          await sleep(1500);
+        }
       }
     } catch (e) {
       LOG(e);
@@ -1312,7 +1302,7 @@ function ttfillMain() {
 
   /* ---------------- 商品庫 ----------------
      每個商品存一個名字模板：{PT} 和 {DATE} 會在生成清單時換成當天的值 */
-  // 預設商品庫：公開版是空的，每個人自己新增或從 Excel 匯入。{PT} = 場次，{DATE} = 日期
+  // 預設商品庫：公開版是空的，每個人自己新增，或用商品庫的「匯入商品庫」搬過來。{PT} = 場次，{DATE} = 日期
   const DEFAULT_LIB = [];
   const OLD_DEFAULTS = [];
   const uid = () => Math.random().toString(36).slice(2, 9);
@@ -1347,19 +1337,26 @@ function ttfillMain() {
     return n.trim();
   };
   const toTemplate = (name) => stripPtDate(name) + '  - {PT} - {DATE}';
-  const applyTpl = (tpl) => tpl.trim().replace(/\{PT\}/g, ptLabel()).replace(/\{DATE\}/g, $('ttf-date').value.trim() || today());
-  function importToLib(text) {
-    const rows = parse(text);
-    let added = 0, updated = 0;
-    for (const r of rows) {
-      const tpl = toTemplate(r.name);
-      const ex = state.lib.find((x) => norm(x.name) === norm(tpl));
-      const item = { name: tpl, cat: r.cat, weight: r.weight, h: r.h, w: r.w, l: r.l };
-      if (ex) { Object.assign(ex, item); updated++; } else { state.lib.push({ id: uid(), sel: true, ...item }); added++; }
-      if (ex) ex.sel = true;
-    }
-    saveState(); renderLib();
-    return { added, updated };
+  // 名稱格式：場次（PT）和日期各自可以「加在最後 / 加在最前 / 不加」，順序和分隔符號也能選
+  const NAMEFMT_DEF = { pt: 'after', date: 'after', order: 'pt-date', sep: '-' };
+  const nameFmt = () => ({ ...NAMEFMT_DEF, ...(state.nameFmt || {}) });
+  function composeName(base, pt, date) {
+    const f = nameFmt();
+    const parts = f.order === 'date-pt' ? [['date', date], ['pt', pt]] : [['pt', pt], ['date', date]];
+    const pick = (side) => parts.filter(([k, v]) => f[k] === side && v).map(([, v]) => v);
+    const d = f.sep === 'space' ? '' : f.sep, j = d ? ` ${d} ` : ' ';
+    const pre = pick('before'), suf = pick('after');
+    let out = String(base).trim();
+    if (pre.length) out = pre.join(j) + j + out;
+    if (suf.length) out += (f.sep === '-' ? '  - ' : j) + suf.join(j);
+    return out.trim();
+  }
+  // 商品名稱裡自己寫了 {PT} / {DATE}（放在中間）的，照原樣替換，不再另外加；其他的按「名稱格式」加
+  function applyTpl(tpl) {
+    const pt = ptLabel(), date = ($('ttf-date') && $('ttf-date').value.trim()) || today();
+    const base = baseName(tpl);
+    if (/\{(PT|DATE)\}/.test(base)) return base.replace(/\{PT\}/g, pt).replace(/\{DATE\}/g, date).trim();
+    return composeName(base, pt, date);
   }
 
   /* ================= 直播檢測：得標 + 客人回覆 ================= */
@@ -2027,6 +2024,9 @@ function ttfillMain() {
     .dims{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
     .err{color:var(--err);font-size:12px;margin-left:6px}
     .fields.f3{grid-template-columns:1fr 1fr 1fr}
+    .fmt{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:10px 0 2px;font-size:12px;color:#6b6e78}
+    .fmt select{height:28px;border:1px solid var(--line);border-radius:7px;background:#fff;padding:0 6px;font:inherit;color:#111}
+    .fmtprev{margin:2px 0 6px;font-size:11px;color:#8a8d96;word-break:break-all}
     .gallery{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
     .gallery:empty{display:none}
     .th{position:relative;width:58px;height:58px;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:var(--soft) center/cover no-repeat;cursor:pointer;flex:none}
@@ -2160,6 +2160,12 @@ function ttfillMain() {
           <label class="field"><span>${L('日期 (MMDD)', 'Date (MMDD)')}</span><input class="inp" type="text" id="ttf-date" placeholder="1027"></label>
           <label class="field"><span>${L('預設數量', 'Default qty')}</span><input class="inp" type="text" inputmode="numeric" id="ttf-qty" placeholder="500"></label>
         </div>
+        <div class="fmt"><b>${L('名稱格式', 'Name format')}</b>
+          <span>PT</span><select id="ttf-fpt"><option value="after">${L('加在最後', 'At the end')}</option><option value="before">${L('加在最前', 'At the start')}</option><option value="off">${L('不加', 'Off')}</option></select>
+          <span>${L('日期', 'Date')}</span><select id="ttf-fdate"><option value="after">${L('加在最後', 'At the end')}</option><option value="before">${L('加在最前', 'At the start')}</option><option value="off">${L('不加', 'Off')}</option></select>
+          <select id="ttf-ford"><option value="pt-date">${L('PT 在前', 'PT first')}</option><option value="date-pt">${L('日期在前', 'Date first')}</option></select>
+          <select id="ttf-fsep"><option value="-">${L('分隔 -', 'Separator -')}</option><option value="_">${L('分隔 _', 'Separator _')}</option><option value="space">${L('分隔 空格', 'Separator space')}</option></select></div>
+        <div class="fmtprev" id="ttf-fmtprev"></div>
         <div class="sec">${L('商品', 'Products')} <span class="grow" id="ttf-selcount"></span><button class="link" id="ttf-all">${L('全選', 'All')}</button><button class="link" id="ttf-none">${L('清空', 'None')}</button></div>
         <input class="inp search" type="text" id="ttf-q" placeholder="${L('搜尋商品…', 'Search products…')}">
         <div class="list tall" id="ttf-pick"></div>
@@ -2243,6 +2249,7 @@ function ttfillMain() {
           <button class="btn ghost" id="ttf-catdiag">${L('類目診斷', 'Category diagnostics')}</button>
         </div>
         <div class="btnrow">
+          <button class="btn primary" id="ttf-catcloud">${L('☁ 從雲端下載類目庫', '☁ Download category list from cloud')}</button>
           <button class="btn ghost" id="ttf-catexp">${L('⬇ 匯出類目庫', '⬇ Export categories')}</button>
           <button class="btn ghost" id="ttf-catimp">${L('⬆ 匯入類目庫', '⬆ Import categories')}</button>
         </div>
@@ -2257,17 +2264,10 @@ function ttfillMain() {
         <div class="msg" id="ttf-imgmsg"></div>
       </div>
       <details class="tools">
-        <summary>${L('匯入 · 備份 · 工具', 'Import · Backup · Tools')}</summary>
+        <summary>${L('診斷 · 工具', 'Diagnostics · Tools')}</summary>
         <div class="in">
-          <textarea id="ttf-in" placeholder="${L('Excel 選 E:J 複製後貼上（名稱、重量、H、W、L、類目）&#10;舊的 PT 和日期會自動換成今天的', 'Copy columns E:J in Excel and paste here (name, weight, H, W, L, category)&#10;Old PT and dates are replaced with today’s')}"></textarea>
-          <div class="btnrow">
-            <button class="btn dark" id="ttf-imp">${L('匯入', 'Import')}</button>
-            ${DEFAULT_LIB.length ? `<button class="btn ghost" id="ttf-def">${L('補回預設', 'Restore defaults')}</button>` : ''}
-            <button class="btn ghost" id="ttf-exp">${L('複製備份', 'Copy backup')}</button>
-            <button class="btn ghost" id="ttf-restore">${L('從備份還原', 'Restore backup')}</button>
-            <button class="btn ghost" id="ttf-diag">${L('診斷', 'Diagnose')}</button>
-          </div>
-          <div class="hint">${L('資料存在這台電腦的 Chrome 裡。要搬到別的電腦，請用這頁最上面的「下載商品庫 / 匯入商品庫」（包含圖片）。', 'Data is stored in this computer’s Chrome. use “Download library” / “Import library” at the top of this tab to move everything (with images) to another computer.')}</div>
+          <textarea id="ttf-in" readonly placeholder="${L('診斷結果會顯示在這裡，全選複製後貼給 Claude', 'Diagnostics show up here — select all, copy and paste them to Claude')}"></textarea>
+          <div class="btnrow"><button class="btn ghost" id="ttf-diag">${L('診斷', 'Diagnose')}</button></div>
         </div>
       </details>
       <div class="msg" id="ttf-libmsg"></div>
@@ -2275,7 +2275,7 @@ function ttfillMain() {
       <input class="inp search" type="text" id="ttf-lq" placeholder="${L('搜尋商品庫…', 'Search library…')}" style="margin-top:10px">
       <div id="ttf-lib"></div>
     </div>
-    <div class="ft"><div class="ft1"><span id="ttf-src"></span><span>v${VER}</span></div><div>${L('作者', 'Author')} Lok · © 2026 Lok. All rights reserved.</div></div>
+    <div class="ft"><div class="ft1"><span id="ttf-src"></span><span><button class="link" id="ttf-upd"></button> v${VER}</span></div><div>${L('作者', 'Author')} Lok · © 2026 Lok. All rights reserved.</div></div>
     </div></div>
   </div>`;
   }
@@ -2372,6 +2372,11 @@ function ttfillMain() {
     draw();
   }
 
+  function updFmtPrev() {
+    const el = $('ttf-fmtprev'); if (!el) return;
+    const it = state.lib.find((x) => x.sel) || state.lib[0];
+    el.textContent = L('預覽：', 'Preview: ') + applyTpl(it ? it.name : '(Shoes) item Shown on Screen - No Cancellation');
+  }
   function renderPick() {
     const box = $('ttf-pick');
     if (!box) return;
@@ -2386,8 +2391,10 @@ function ttfillMain() {
       box.appendChild(lab);
     });
     updSel();
+    updFmtPrev();
   }
   function updSel() {
+    updFmtPrev();
     $('ttf-selcount').textContent = state.lib.length ? L(`已選 ${state.lib.filter((x) => x.sel).length} / ${state.lib.length}`, `${state.lib.filter((x) => x.sel).length} / ${state.lib.length} selected`) : '';
   }
 
@@ -3372,13 +3379,47 @@ function ttfillMain() {
     el.innerHTML = `<i style="background:${c}"></i><span style="color:${c}">${direct ? L('直接獲取', 'Direct feed') : L('看屏幕', 'Screen')}</span>`;
   }
   setInterval(() => { try { paintSrc(); } catch (e) { /* 空 */ } }, 2000);
+
+  /* ---- 檢查更新 ----
+     Tampermonkey 本身會按 @updateURL 自動更新（預設每天查一次）。這裡另外：
+     載入後每 6 小時自己看一次 GitHub 上的版本號，有新版就在面板底部提示；也可以手動按「檢查更新」。 */
+  const UPDATE_URL = 'https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js';
+  const verCmp = (a, b) => { const x = String(a).split('.').map(Number), y = String(b).split('.').map(Number); for (let i = 0; i < Math.max(x.length, y.length); i++) { const d = (x[i] || 0) - (y[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; };
+  let updBusy = false, updNote = '';
+  function paintUpd() {
+    const el = root && root.querySelector && root.querySelector('#ttf-upd'); if (!el) return;
+    const nv = state.updRemote;
+    const has = nv && verCmp(nv, VER) > 0;
+    el.textContent = updBusy ? L('檢查中…', 'Checking…') : has ? L(`🆕 有新版 v${nv}，點這裡更新`, `🆕 v${nv} available — click to update`) : (updNote || L('檢查更新', 'Check for updates'));
+    el.style.color = has ? '#e5132f' : '';
+    el.style.fontWeight = has ? '700' : '';
+  }
+  async function checkUpdate(manual) {
+    if (updBusy) return;
+    updBusy = true; updNote = ''; paintUpd();
+    try {
+      const r = await fetch(UPDATE_URL + '?t=' + Date.now(), { cache: 'no-store' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const m = (await r.text()).slice(0, 4000).match(/@version\s+([\d.]+)/);
+      if (!m) throw new Error('no version');
+      state.updRemote = m[1]; state.updAt = Date.now(); saveState();
+      if (manual && verCmp(m[1], VER) <= 0) { updNote = L('✓ 已是最新版', '✓ Up to date'); setTimeout(() => { updNote = ''; paintUpd(); }, 6000); }
+    } catch (e) {
+      LOG('檢查更新失敗', e);
+      if (manual) { updNote = L('這個頁面查不到，已在新分頁打開更新頁', 'Can\'t check from this page — opened the update page'); try { window.open(UPDATE_URL, '_blank'); } catch (e2) { /* 空 */ } setTimeout(() => { updNote = ''; paintUpd(); }, 8000); }
+    } finally { updBusy = false; paintUpd(); }
+  }
+  const updTick = () => { if (!state.updAt || Date.now() - state.updAt > 6 * 3600e3) checkUpdate(false); };
+  setTimeout(updTick, 8000);
+  setInterval(updTick, 30 * 60e3);
   /* ---- 建立整個面板（切換語言時重建） ---- */
   function buildUI() {
     root.innerHTML = html();
     $('ttf-lang').value = lang();
     $('card').classList.toggle('min', !!state.min);
     $('ttf-min').textContent = state.min ? '+' : '–';
-    paintSrc();
+    paintSrc(); paintUpd();
+    $('ttf-upd').onclick = () => { if (state.updRemote && verCmp(state.updRemote, VER) > 0) { window.open(UPDATE_URL, '_blank'); } else checkUpdate(true); };
 
     // 分頁
     const tabs = root.querySelectorAll('.tabs button');
@@ -3411,7 +3452,7 @@ function ttfillMain() {
 
     // 今天上架
     $('ttf-pt').value = state.pt;
-    $('ttf-pt').onchange = (e) => { state.pt = e.target.value.trim() || 'PT1'; e.target.value = ptLabel(); saveState(); };
+    $('ttf-pt').onchange = (e) => { state.pt = e.target.value.trim() || 'PT1'; e.target.value = ptLabel(); saveState(); updFmtPrev(); };
     $('ttf-date').value = dateVal;
     $('ttf-qty').value = state.qty;
     $('ttf-qty').onchange = (e) => {
@@ -3419,7 +3460,12 @@ function ttfillMain() {
       if (!/^\d+$/.test(v) || +v < 1) { e.target.value = state.qty; return; }
       state.qty = v; saveState();
     };
-    $('ttf-date').oninput = (e) => { dateVal = e.target.value; };
+    $('ttf-date').oninput = (e) => { dateVal = e.target.value; updFmtPrev(); };
+    for (const [id, k] of [['ttf-fpt', 'pt'], ['ttf-fdate', 'date'], ['ttf-ford', 'order'], ['ttf-fsep', 'sep']]) {
+      $(id).value = nameFmt()[k];
+      $(id).onchange = (e) => { state.nameFmt = { ...nameFmt(), [k]: e.target.value }; saveState(); updFmtPrev(); };
+    }
+    updFmtPrev();
     const inFilter = (x) => { const q = norm($('ttf-q').value); return !q || norm(x.name + ' ' + x.cat).includes(q); };
     $('ttf-all').onclick = () => { state.lib.filter(inFilter).forEach((x) => (x.sel = true)); saveState(); renderPick(); };
     $('ttf-none').onclick = () => { state.lib.filter(inFilter).forEach((x) => (x.sel = false)); saveState(); renderPick(); };
@@ -3447,27 +3493,7 @@ function ttfillMain() {
     $('ttf-auto').onchange = (e) => { state.auto = e.target.checked; saveState(); };
 
     // 商品庫
-    $('ttf-imp').onclick = () => {
-      const r = importToLib($('ttf-in').value);
-      if (!r.added && !r.updated) { alertMsg(L('⚠️ 沒讀到內容：請在 Excel 選 E:J 這 6 欄複製', '⚠️ Nothing read: copy columns E:J (6 columns) in Excel'), 'warn'); return; }
-      $('ttf-in').value = '';
-      alertMsg(L(`匯入完成：新增 ${r.added} 個，更新 ${r.updated} 個`, `Imported: ${r.added} added, ${r.updated} updated`));
-    };
     $('ttf-add').onclick = () => { editing = 'new'; renderLib(); };
-    if ($('ttf-def')) $('ttf-def').onclick = () => { const n = mergeDefaults(); renderLib(); alertMsg(n ? L(`補回了 ${n} 個預設商品`, `Restored ${n} default products`) : L('預設商品都在，沒有缺少的', 'All default products are already there')); };
-    $('ttf-exp').onclick = async () => {
-      const txt = JSON.stringify(state.lib);
-      try { await navigator.clipboard.writeText(txt); alertMsg(L('備份已複製，可以貼到備忘錄保存', 'Backup copied — paste it into Notes to keep it')); }
-      catch (e) { $('ttf-in').value = txt; alertMsg(L('備份在上面輸入框裡，全選複製保存', 'The backup is in the box above — select all and copy it'), 'warn'); }
-    };
-    $('ttf-restore').onclick = () => {
-      try {
-        const lib = JSON.parse($('ttf-in').value);
-        if (!Array.isArray(lib)) throw new Error();
-        state.lib = lib; saveState(); renderLib(); $('ttf-in').value = '';
-        alertMsg(L(`已還原 ${lib.length} 個商品`, `Restored ${lib.length} products`));
-      } catch (e) { alertMsg(L('還原失敗：請把備份內容貼到上面輸入框再按', 'Restore failed: paste the backup into the box above first'), 'err'); }
-    };
     $('ttf-diag').onclick = async () => {
       const txt = diagnose();
       LOG(txt);
@@ -3683,6 +3709,26 @@ function ttfillMain() {
       catMsg(L(`已下載 ${cats.paths.length} 個類目。在別的電腦按「匯入類目庫」選這個檔案。`, `Downloaded ${cats.paths.length} categories. On another computer, press “Import categories” and pick this file.`), 'ok');
     };
     $('ttf-catimp').onclick = () => { if (!busy) pickFile('cats'); };
+    // 雲端類目庫：放在 GitHub 的 categories.json，新電腦按一下就有，不用逐層讀取
+    $('ttf-catcloud').onclick = async () => {
+      if (busy || catBusy) return;
+      const btn = $('ttf-catcloud'), oldTxt = btn.textContent; btn.disabled = true;
+      catMsg(L('下載中…', 'Downloading…'));
+      try {
+        const r = await fetch(CAT_CLOUD_URL + '?t=' + Date.now(), { cache: 'no-store' });
+        if (r.status === 404) { catMsg(L('雲端還沒有類目庫檔案（作者還沒上傳）', 'No category file in the cloud yet (the author hasn\'t uploaded it)'), 'warn'); return; }
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const before = cats.paths.length, c = await r.json(), n = mergeCats(c);
+        if (n < 0) { catMsg(L('雲端檔案格式不對', 'The cloud file has the wrong format'), 'err'); return; }
+        catInfo(); renderLib();
+        catMsg(L(`完成 🎉 雲端共 ${c.paths.length} 個類目，新增 ${n} 個（原本 ${before} 個），現在共 ${cats.paths.length} 個`, `Done 🎉 ${c.paths.length} categories in the cloud, ${n} new (had ${before}), ${cats.paths.length} in total`), 'ok');
+      } catch (e) {
+        LOG('雲端類目庫下載失敗', e);
+        // TikTok 頁面可能不允許連到 GitHub：改成開新分頁，存成檔案後用「匯入類目庫」
+        try { window.open(CAT_CLOUD_URL, '_blank'); } catch (e2) { /* 空 */ }
+        catMsg(L('這個頁面不能直接下載（' + e.message + '）。已在新分頁打開類目庫檔案：按 ⌘S / Ctrl+S 存成檔案，再按「匯入類目庫」選它。', 'This page can\'t download it directly (' + e.message + '). The category file opened in a new tab: press ⌘S / Ctrl+S to save it, then press “Import categories” and pick it.'), 'warn');
+      } finally { btn.disabled = false; btn.textContent = oldTxt; }
+    };
     const bk = (m, t) => { const el = $('ttf-bkmsg'); if (!el) return; el.textContent = m; el.className = 'msg ' + (t || 'ok'); };
     const bkInfo = () => { const el = $('ttf-bkinfo'); if (el) el.textContent = L(`${state.lib.length} 個商品 · ${state.imgs.length} 張圖片 · ${cats.paths.length} 個類目`, `${state.lib.length} products · ${state.imgs.length} images · ${cats.paths.length} categories`); };
     bkInfo();
@@ -3760,7 +3806,7 @@ function ttfillMain() {
       const txt = await catDiagnose();
       LOG(txt);
       try { await navigator.clipboard.writeText(txt); catMsg(L('類目診斷已複製，直接貼給 Claude', 'Category diagnostics copied — paste them to Claude'), 'ok'); }
-      catch (e) { $('ttf-in').value = txt; root.querySelector('details.tools').open = true; catMsg(L('診斷結果在「匯入 · 備份 · 工具」的輸入框裡，複製後貼給 Claude', 'Diagnostics are in the box under “Import · Backup · Tools” — copy and paste them to Claude'), 'warn'); }
+      catch (e) { $('ttf-in').value = txt; root.querySelector('details.tools').open = true; catMsg(L('診斷結果在「診斷 · 工具」的輸入框裡，複製後貼給 Claude', 'Diagnostics are in the box under “Diagnostics · Tools” — copy and paste them to Claude'), 'warn'); }
     };
 
     render();
