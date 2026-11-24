@@ -3,7 +3,7 @@
 // @namespace    lok.laliquidation
 // @author       Lok
 // @copyright    2026 Lok. All rights reserved.
-// @version      7.20
+// @version      7.21
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -164,7 +164,7 @@ function ttfillMain() {
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const VER = '7.20'; // 要和上面的 @version 一致
+  const VER = '7.21'; // 要和上面的 @version 一致
   const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
@@ -2227,6 +2227,15 @@ function ttfillMain() {
     <div class="bd hide" id="tab-lib">
       <button class="btn primary block" id="ttf-add" style="margin-top:4px">${L('＋ 新增商品', '＋ Add product')}</button>
       <div class="catcard">
+        <div class="top"><div class="grow"><div class="nm">${L('商品庫備份（含圖片）', 'Library backup (with images)')}</div><div class="meta" id="ttf-bkinfo"></div></div></div>
+        <div class="btnrow">
+          <button class="btn dark" id="ttf-fullexp">${L('⬇ 下載商品庫', '⬇ Download library')}</button>
+          <button class="btn ghost" id="ttf-fullimp">${L('⬆ 匯入商品庫', '⬆ Import library')}</button>
+        </div>
+        <div class="hint">${L('一個檔案包含商品、圖片、類目庫和設定。在另一台電腦按「匯入商品庫」選這個檔案；已有的商品會更新、圖片和類目已有的會跳過，不會重複。', 'One file with products, images, categories and settings. On another computer press “Import library” and pick it; existing products are updated and existing images/categories skipped — nothing is duplicated.')}</div>
+        <div class="msg" id="ttf-bkmsg"></div>
+      </div>
+      <div class="catcard">
         <div class="top"><div class="grow"><div class="nm">${L('TikTok 類目庫', 'TikTok category list')}</div><div class="meta" id="ttf-catinfo"></div></div></div>
         <div class="btnrow">
           <button class="btn dark" id="ttf-catup">${L('讀取 / 更新', 'Read / update')}</button>
@@ -2254,13 +2263,11 @@ function ttfillMain() {
           <div class="btnrow">
             <button class="btn dark" id="ttf-imp">${L('匯入', 'Import')}</button>
             ${DEFAULT_LIB.length ? `<button class="btn ghost" id="ttf-def">${L('補回預設', 'Restore defaults')}</button>` : ''}
-            <button class="btn ghost" id="ttf-fullexp">${L('⬇ 下載完整備份', '⬇ Download full backup')}</button>
-            <button class="btn ghost" id="ttf-fullimp">${L('⬆ 匯入備份檔', '⬆ Import backup file')}</button>
             <button class="btn ghost" id="ttf-exp">${L('複製備份', 'Copy backup')}</button>
             <button class="btn ghost" id="ttf-restore">${L('從備份還原', 'Restore backup')}</button>
             <button class="btn ghost" id="ttf-diag">${L('診斷', 'Diagnose')}</button>
           </div>
-          <div class="hint">${L('資料存在這台電腦的 Chrome 裡。「下載完整備份」會把商品庫、類目庫和設定存成一個檔案，在別的電腦按「匯入備份檔」就能搬過去。', 'Data is stored in this computer’s Chrome. “Download full backup” saves products, categories and settings in one file — use “Import backup file” on another computer to move everything.')}</div>
+          <div class="hint">${L('資料存在這台電腦的 Chrome 裡。要搬到別的電腦，請用這頁最上面的「下載商品庫 / 匯入商品庫」（包含圖片）。', 'Data is stored in this computer’s Chrome. use “Download library” / “Import library” at the top of this tab to move everything (with images) to another computer.')}</div>
         </div>
       </details>
       <div class="msg" id="ttf-libmsg"></div>
@@ -2455,6 +2462,7 @@ function ttfillMain() {
   function renderLib() {
     renderPick();
     renderGallery();
+    const bki = $('ttf-bkinfo'); if (bki) bki.textContent = L(`${state.lib.length} 個商品 · ${state.imgs.length} 張圖片 · ${cats.paths.length} 個類目`, `${state.lib.length} products · ${state.imgs.length} images · ${cats.paths.length} categories`);
     const box = $('ttf-lib');
     if (!box) return;
     box.innerHTML = '';
@@ -3675,18 +3683,39 @@ function ttfillMain() {
       catMsg(L(`已下載 ${cats.paths.length} 個類目。在別的電腦按「匯入類目庫」選這個檔案。`, `Downloaded ${cats.paths.length} categories. On another computer, press “Import categories” and pick this file.`), 'ok');
     };
     $('ttf-catimp').onclick = () => { if (!busy) pickFile('cats'); };
+    const bk = (m, t) => { const el = $('ttf-bkmsg'); if (!el) return; el.textContent = m; el.className = 'msg ' + (t || 'ok'); };
+    const bkInfo = () => { const el = $('ttf-bkinfo'); if (el) el.textContent = L(`${state.lib.length} 個商品 · ${state.imgs.length} 張圖片 · ${cats.paths.length} 個類目`, `${state.lib.length} products · ${state.imgs.length} images · ${cats.paths.length} categories`); };
+    bkInfo();
     $('ttf-fullexp').onclick = async () => {
-      const images = [];
-      for (const m of state.imgs) { const b = await imgGet(m.id).catch(() => null); if (b) images.push({ ...m, data: await blobToDataURL(b) }); }
-      downloadJSON({ type: 'ttfill-backup', version: 2, lib: state.lib, cats, images, settings: { pt: state.pt, qty: state.qty, lang: state.lang, auto: state.auto, defImg: state.defImg } }, `tiktok-upload-backup-${stamp()}.json`);
-      alertMsg(L(`已下載完整備份：${state.lib.length} 個商品、${cats.paths.length} 個類目、${images.length} 張圖片`, `Full backup downloaded: ${state.lib.length} products, ${cats.paths.length} categories, ${images.length} images`));
+      if (busy) return;
+      const btn = $('ttf-fullexp'); btn.disabled = true;
+      try {
+        const settings = { pt: state.pt, qty: state.qty, lang: state.lang, auto: state.auto, defImg: state.defImg };
+        const parts = ['{"type":"ttfill-backup","version":2,"lib":' + JSON.stringify(state.lib) + ',"cats":' + JSON.stringify(cats) + ',"settings":' + JSON.stringify(settings) + ',"images":['];
+        let n = 0, miss = 0;
+        for (let i = 0; i < state.imgs.length; i++) {
+          const m = state.imgs[i];
+          bk(L(`打包圖片… ${i + 1} / ${state.imgs.length}`, `Packing images… ${i + 1} / ${state.imgs.length}`), 'warn');
+          const bl = await imgGet(m.id).catch(() => null);
+          if (!bl) { miss++; continue; }
+          parts.push((n ? ',' : '') + JSON.stringify({ ...m, data: await blobToDataURL(bl) })); n++;
+        }
+        parts.push(']}');
+        const blob = new Blob(parts, { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = `TikTok-ProductLibrary_${stamp()}.json`;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+        bk(L(`已下載：${state.lib.length} 個商品、${n} 張圖片、${cats.paths.length} 個類目（${(blob.size / 1048576).toFixed(1)} MB）${miss ? `；有 ${miss} 張圖片讀不到，已略過` : ''}`, `Downloaded: ${state.lib.length} products, ${n} images, ${cats.paths.length} categories (${(blob.size / 1048576).toFixed(1)} MB)${miss ? `; ${miss} unreadable image(s) skipped` : ''}`), miss ? 'warn' : 'ok');
+      } catch (e) { LOG(e); bk(L('下載失敗：', 'Download failed: ') + e.message, 'err'); }
+      btn.disabled = false;
     };
     $('ttf-fullimp').onclick = () => { if (!busy) pickFile('full'); };
     $('ttf-file').onchange = async (e) => {
       const f = e.target.files && e.target.files[0];
       if (!f) return;
       let data;
-      try { data = JSON.parse(await f.text()); } catch (err) { (fileMode === 'cats' ? catMsg : alertMsg)(L('這個檔案讀不了（不是備份檔）', 'Can’t read this file (not a backup file)'), 'err'); return; }
+      try { data = JSON.parse(await f.text()); } catch (err) { (fileMode === 'cats' ? catMsg : bk)(L('這個檔案讀不了（不是備份檔）', 'Can’t read this file (not a backup file)'), 'err'); return; }
       const c = data.type === 'ttfill-categories' ? data : data.cats;
       const lib = data.type === 'ttfill-backup' ? data.lib : Array.isArray(data) ? data : null;
       if (fileMode === 'cats') {
@@ -3694,9 +3723,10 @@ function ttfillMain() {
         if (n < 0) { catMsg(L('這個檔案裡沒有類目庫', 'This file has no category list'), 'err'); return; }
         catMsg(L(`匯入完成：新增 ${n} 個類目，已有的跳過，共 ${cats.paths.length} 個`, `Imported: ${n} new categories (existing ones skipped), ${cats.paths.length} total`), 'ok');
       } else {
-        if (!lib && !c) { alertMsg(L('這個檔案裡沒有可匯入的資料', 'Nothing to import in this file'), 'err'); return; }
-        let ni = 0;
-        for (const m of data.images || []) {
+        if (!lib && !c) { bk(L('這個檔案裡沒有可匯入的資料', 'Nothing to import in this file'), 'err'); return; }
+        let ni = 0, k = 0; const imgsIn = data.images || [];
+        for (const m of imgsIn) {
+          bk(L(`匯入圖片… ${++k} / ${imgsIn.length}`, `Importing images… ${k} / ${imgsIn.length}`), 'warn');
           if (!m || !m.id || !m.data || state.imgs.some((x) => x.id === m.id)) continue;
           await imgPut(m.id, await dataURLToBlob(m.data));
           state.imgs.push({ id: m.id, name: m.name, w: m.w, h: m.h }); ni++;
@@ -3705,7 +3735,7 @@ function ttfillMain() {
         const n = c ? mergeCats(c) : 0;
         if (data.settings) { for (const k of ['pt', 'qty', 'lang', 'auto', 'defImg']) if (data.settings[k] !== undefined && (k !== 'defImg' || !state.defImg)) state[k] = data.settings[k]; saveState(); }
         curTab = 'lib'; buildUI();
-        alertMsg(L(`匯入完成：商品新增 ${r.added} 個、更新 ${r.updated} 個；類目新增 ${Math.max(n, 0)} 個；圖片新增 ${ni} 張`, `Imported: ${r.added} products added, ${r.updated} updated; ${Math.max(n, 0)} categories, ${ni} images added`));
+        bk(L(`匯入完成：商品新增 ${r.added} 個、更新 ${r.updated} 個；類目新增 ${Math.max(n, 0)} 個；圖片新增 ${ni} 張`, `Imported: ${r.added} products added, ${r.updated} updated; ${Math.max(n, 0)} categories, ${ni} images added`));
         return;
       }
       catInfo(); renderLib();
