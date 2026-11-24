@@ -93,3 +93,8 @@ TikTok 通知付款失敗時，那一單會標紅色「付款失敗」（評論�
 - 面板底部可輸入授權碼。免費版每天可上架 1 個 listing，評論窗／置頂小窗／自動公告需要授權。
 - 管理者請看 `license-server/README.md`（Cloudflare Workers 免費部署、發碼、轉私有倉庫）。
 - 授權網址（LIC_API）留空時，腳本所有功能免費開放。
+
+## v7.25
+- 建 listing 時自動切到 **Auction** 分頁（TikTok 彈窗有時會停在 Buy now）。
+- 名稱格式改成完全自定義的範本：`{name}` 商品名、`{session}` 場次（自由文字）、`{date}` 日期，位置、符號、文字隨你寫，例如 `{date} {name} #{session}`。
+- 評論 / 付款 / 得標自動按「日期 + 場次」保存 7 天（需要打開評論窗），可在「直播檢測」下載成 CSV，檔名如 `TikTokLive_1124_PT2.csv`（付費功能）。

@@ -3,7 +3,7 @@
 // @namespace    lok.laliquidation
 // @author       Lok
 // @copyright    2026 Lok. All rights reserved.
-// @version      7.24
+// @version      7.25
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -164,8 +164,8 @@ function ttfillMain() {
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const VER = '7.24'; // 要和上面的 @version 一致
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚", "雲": "云", "報": "报", "順": "顺", "圓": "圆", "須": "须", "費": "费", "鑰": "钥", "證": "证", "權": "权", "藍": "蓝", "膠": "胶", "達": "达", "離": "离", "簽": "签", "驗": "验", "風": "风", "買": "买", "絡": "络", "質": "质", "觸": "触", "強": "强"};
+  const VER = '7.25'; // 要和上面的 @version 一致
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚", "雲": "云", "報": "报", "順": "顺", "圓": "圆", "須": "须", "費": "费", "鑰": "钥", "證": "证", "權": "权", "藍": "蓝", "膠": "胶", "達": "达", "離": "离", "簽": "签", "驗": "验", "風": "风", "買": "买", "絡": "络", "質": "质", "觸": "触", "強": "强", "範": "范", "義": "义"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   let langOverride = null; // 評論窗可以用自己的語言
@@ -398,7 +398,23 @@ function ttfillMain() {
     return await waitFor(formReady, 12000);
   }
 
+  // 彈窗預設可能停在 Buy now：一定要切到 Auction 分頁（已經是 Auction 時再點一次也無害）
+  async function ensureAuction(d) {
+    const dlg = getDialog() || d;
+    if (!dlg) return;
+    const buy = findByText(dlg, 'Buy now')[0];
+    if (!buy) return; // 沒有分頁的版本
+    const tab = findByText(dlg, 'Auction').find((e) => !/guide/i.test(e.innerText || '') && (e.closest('[role="tablist"]') || e.parentElement === buy.parentElement || e.parentElement.parentElement === buy.parentElement.parentElement || e.parentElement.contains(buy)));
+    if (!tab) return;
+    realClick(clickable(tab));
+    await sleep(700);
+  }
   async function openDialog() {
+    const d = await openDialog0();
+    await ensureAuction(d);
+    return getDialog() || d;
+  }
+  async function openDialog0() {
     if (getDialog()) {
       const r = await waitFor(formReady, 10000);
       if (r) return r;
@@ -1398,7 +1414,7 @@ function ttfillMain() {
   state.pt = state.pt || 'PT1';
   if (state.qty == null || state.qty === '') state.qty = '500'; // 預設數量真的存起來（以前只是顯示）
   const today = () => { const d = new Date(); return String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0'); };
-  const ptLabel = () => { const v = String(state.pt || '').trim(); return /^\d+$/.test(v) ? 'PT' + v : v.toUpperCase(); };
+  const ptLabel = () => String(state.pt == null ? '' : state.pt).trim(); // 場次是自定義文字，不再自動加 PT / 轉大寫
   // 去掉名稱結尾的場次和日期（例如「 - PT1 - 1027」「 -  - 1022」「 - PT2」），再統一接上 {PT} 和 {DATE}
   const stripPtDate = (name) => {
     let n = String(name).trim();
@@ -1408,26 +1424,36 @@ function ttfillMain() {
     return n.trim();
   };
   const toTemplate = (name) => stripPtDate(name) + '  - {PT} - {DATE}';
-  // 名稱格式：場次（PT）和日期各自可以「加在最後 / 加在最前 / 不加」，順序和分隔符號也能選
-  const NAMEFMT_DEF = { pt: 'after', date: 'after', order: 'pt-date', sep: '-' };
-  const nameFmt = () => ({ ...NAMEFMT_DEF, ...(state.nameFmt || {}) });
-  function composeName(base, pt, date) {
-    const f = nameFmt();
-    const parts = f.order === 'date-pt' ? [['date', date], ['pt', pt]] : [['pt', pt], ['date', date]];
-    const pick = (side) => parts.filter(([k, v]) => f[k] === side && v).map(([, v]) => v);
-    const d = f.sep === 'space' ? '' : f.sep, j = d ? ` ${d} ` : ' ';
-    const pre = pick('before'), suf = pick('after');
-    let out = String(base).trim();
-    if (pre.length) out = pre.join(j) + j + out;
-    if (suf.length) out += (f.sep === '-' ? '  - ' : j) + suf.join(j);
-    return out.trim();
+  // 名稱格式是一個完全自定義的範本：{name} 商品名、{session} 場次、{date} 日期（也可寫 {名稱} {場次} {日期}）
+  const NAMETPL_DEF = '{name}  - {session} - {date}';
+  if (state.nameTpl == null) { // 從舊版「加在前/後」設定轉成範本
+    const f = state.nameFmt;
+    if (f) {
+      const sep = f.sep === 'space' ? ' ' : ` ${f.sep || '-'} `;
+      const pts = f.order === 'date-pt' ? [['date', '{date}'], ['pt', '{session}']] : [['pt', '{session}'], ['date', '{date}']];
+      const pick = (side) => pts.filter(([k]) => f[k] === side).map(([, v]) => v);
+      state.nameTpl = [...pick('before'), '{name}', ...pick('after')].join(sep);
+    } else state.nameTpl = NAMETPL_DEF;
+    saveState();
+  }
+  const TOK = { name: /\{(?:name|名稱)\}/gi, session: /\{(?:session|pt|場次)\}/gi, date: /\{(?:date|日期)\}/gi };
+  function renderName(base, session, date) {
+    let tpl = String(state.nameTpl || NAMETPL_DEF);
+    if (!TOK.name.test(tpl)) tpl = '{name} ' + tpl;
+    TOK.name.lastIndex = 0;
+    const SEP = '(?:\\s*[-_|·,，/]+\\s*)?';
+    for (const [k, v] of [['session', session], ['date', date]]) {
+      if (v) tpl = tpl.replace(TOK[k], () => v);
+      else tpl = tpl.replace(new RegExp(SEP + TOK[k].source, 'gi'), '');
+    }
+    return tpl.replace(TOK.name, () => String(base).trim()).replace(/\s+$/, '').trim();
   }
   // 商品名稱裡自己寫了 {PT} / {DATE}（放在中間）的，照原樣替換，不再另外加；其他的按「名稱格式」加
   function applyTpl(tpl) {
     const pt = ptLabel(), date = ($('ttf-date') && $('ttf-date').value.trim()) || today();
     const base = baseName(tpl);
     if (/\{(PT|DATE)\}/.test(base)) return base.replace(/\{PT\}/g, pt).replace(/\{DATE\}/g, date).trim();
-    return composeName(base, pt, date);
+    return renderName(base, pt, date);
   }
 
   /* ================= 直播檢測：得標 + 客人回覆 ================= */
@@ -2223,6 +2249,10 @@ function ttfillMain() {
     .lic{border-top:.5px solid var(--line)}.lic .st.pro{color:var(--ok)}
     .ft{border-top:.5px solid var(--line);color:var(--muted);font-weight:400}.ft1{font-weight:500}
     .gallery img,.thumb{border-radius:10px}
+    .tpl{display:flex;flex-direction:column;gap:6px;margin:8px 0 4px}.tpl .inp{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace}
+    .chips{display:flex;gap:6px;flex-wrap:wrap}.chips .btn{height:26px;padding:0 10px;font-size:12px}
+    .logcard{margin-top:10px;background:rgba(255,255,255,.72);border:.5px solid var(--line);border-radius:14px;padding:10px 12px}
+    .logrow{display:flex;gap:6px;align-items:center;padding:6px 0;border-top:.5px solid var(--line)}.logrow:first-of-type{border-top:0}.logrow .btn{height:28px;padding:0 10px;font-size:12px}
 `;
 
   function escapeHtml(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
@@ -2268,15 +2298,14 @@ function ttfillMain() {
     <div class="bd" id="tab-go">
       <div id="view-setup">
         <div class="fields f3" style="margin-top:4px">
-          <label class="field"><span>${L('場次', 'Session (PT)')}</span><input class="inp" type="text" id="ttf-pt" placeholder="PT1"></label>
+          <label class="field"><span>${L('場次（自由文字）', 'Session (free text)')}</span><input class="inp" type="text" id="ttf-pt" placeholder="PT1"></label>
           <label class="field"><span>${L('日期 (MMDD)', 'Date (MMDD)')}</span><input class="inp" type="text" id="ttf-date" placeholder="1027"></label>
           <label class="field"><span>${L('預設數量', 'Default qty')}</span><input class="inp" type="text" inputmode="numeric" id="ttf-qty" placeholder="500"></label>
         </div>
-        <div class="fmt"><b>${L('名稱格式', 'Name format')}</b>
-          <span>PT</span><select id="ttf-fpt"><option value="after">${L('加在最後', 'At the end')}</option><option value="before">${L('加在最前', 'At the start')}</option><option value="off">${L('不加', 'Off')}</option></select>
-          <span>${L('日期', 'Date')}</span><select id="ttf-fdate"><option value="after">${L('加在最後', 'At the end')}</option><option value="before">${L('加在最前', 'At the start')}</option><option value="off">${L('不加', 'Off')}</option></select>
-          <select id="ttf-ford"><option value="pt-date">${L('PT 在前', 'PT first')}</option><option value="date-pt">${L('日期在前', 'Date first')}</option></select>
-          <select id="ttf-fsep"><option value="-">${L('分隔 -', 'Separator -')}</option><option value="_">${L('分隔 _', 'Separator _')}</option><option value="space">${L('分隔 空格', 'Separator space')}</option></select></div>
+        <div class="tpl"><b>${L('名稱格式（可自由編輯）', 'Name format (fully editable)')}</b>
+          <input class="inp" type="text" id="ttf-ftpl" spellcheck="false" placeholder="{name}  - {session} - {date}">
+          <div class="chips"><button class="btn ghost" data-tok="{name}">${L('＋商品名', '+ Name')}</button><button class="btn ghost" data-tok="{session}">${L('＋場次', '+ Session')}</button><button class="btn ghost" data-tok="{date}">${L('＋日期', '+ Date')}</button><button class="btn ghost" id="ttf-ftplreset">${L('還原預設', 'Reset')}</button></div>
+          <div class="meta">${L('{name}=商品名　{session}=上面「場次」欄的文字　{date}=日期。位置、符號、文字都隨你寫，例如：{date} {name} #{session}', '{name}=product name · {session}=the Session box above · {date}=date. Put them anywhere with any text, e.g. {date} {name} #{session}')}</div></div>
         <div class="fmtprev" id="ttf-fmtprev"></div>
         <div class="sec">${L('商品', 'Products')} <span class="grow" id="ttf-selcount"></span><button class="link" id="ttf-all">${L('全選', 'All')}</button><button class="link" id="ttf-none">${L('清空', 'None')}</button></div>
         <input class="inp search" type="text" id="ttf-q" placeholder="${L('搜尋商品…', 'Search products…')}">
@@ -2321,6 +2350,7 @@ function ttfillMain() {
         <button class="btn dark" id="ttf-feedwin">${L('⧉ 彈出評論窗', '⧉ Pop out comments')}</button>
         <button class="btn ghost" id="ttf-feedpip">${L('📌 置頂小窗', '📌 Always-on-top')}</button>
       </div>
+      <div class="logcard"><div class="sec" style="margin:0 0 4px">${L('📁 評論記錄（按日期 + 場次保存，保留 7 天）', '📁 Chat logs (saved by date + session, kept 7 days)')}</div><div id="ttf-loglist"></div></div>
       <input class="inp search" type="text" id="ttf-liveq" placeholder="${L('搜尋編號 / 客人 / listing…', 'Search no. / customer / listing…')}" style="margin-top:10px">
       <div class="msg" id="ttf-livemsg"></div>
       <div id="ttf-livelist"></div>
@@ -2731,10 +2761,75 @@ function ttfillMain() {
     if (feed.items.length > FEED_KEEP) feed.items.splice(0, feed.items.length - FEED_KEEP);
     return true;
   }
+  /* ---- 評論記錄：按「日期 + 場次」保存 7 天（IndexedDB），可下載成 CSV ---- */
+  const LOG_DAYS = 7;
+  let logDb = null, logBusy = false, logTimer = null;
+  const logCache = new Map(), logDirty = new Set(), logPending = [];
+  const logOpen = () => (logDb ? Promise.resolve(logDb) : new Promise((res) => {
+    try { const r = indexedDB.open('ttfill_logs', 1); r.onupgradeneeded = () => r.result.createObjectStore('log', { keyPath: 'key' }); r.onsuccess = () => { logDb = r.result; res(logDb); }; r.onerror = () => res(null); } catch (e) { res(null); }
+  }));
+  const logTx = async (mode, fn) => {
+    const db = await logOpen(); if (!db) return null;
+    return new Promise((res) => { try { const tx = db.transaction('log', mode); const rq = fn(tx.objectStore('log')); tx.oncomplete = () => res(rq ? rq.result : true); tx.onerror = tx.onabort = () => res(null); } catch (e) { res(null); } });
+  };
+  const ymd = (t) => { const d = new Date(t); return d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0'); };
+  const logKey = (t) => ymd(t) + '|' + (ptLabel() || '-');
+  async function logEntry(key, t) {
+    let e = logCache.get(key); if (e) return e;
+    e = await logTx('readonly', (st) => st.get(key));
+    if (!e) { const [d, ses] = key.split('|'); e = { key, date: d, session: ses, rows: [], at: t }; }
+    logCache.set(key, e); return e;
+  }
+  async function logPump() {
+    if (logBusy) return; logBusy = true;
+    try {
+      while (logPending.length) {
+        const r = logPending.shift(), key = logKey(r.t), e = await logEntry(key, r.t);
+        const row = [r.t, r.k, r.n, r.m, r.no, r.h];
+        if (!r.wr && e.rows.slice(-200).some((x) => x[1] === row[1] && x[2] === row[2] && x[3] === row[3] && Math.abs(x[0] - row[0]) < 600000)) continue;
+        e.rows.push(row); e.at = Date.now(); logDirty.add(key);
+      }
+      for (const key of [...logDirty]) { logDirty.delete(key); await logTx('readwrite', (st) => st.put(logCache.get(key))); }
+    } catch (e) { LOG('log save fail', e); } finally { logBusy = false; }
+  }
+  function logFlush() { // 評論窗每秒呼叫：把新出現的評論 / 付款 / 得標寫進記錄（付費功能）
+    if (!isPro()) return;
+    for (const it of feed.items.slice(-300)) { if (it.lg) continue; it.lg = 1; logPending.push({ t: it.t, k: it.kind, n: it.name, m: it.msg, no: it.no || '', h: it.host ? 1 : 0, wr: !!it.wire }); }
+    for (const w of feedWins) { if (w.lg) continue; w.lg = 1; logPending.push({ t: w.at, k: 'w', n: w.winner, m: (w.listing || '') + (w.price ? '  ' + w.price : ''), no: w.no, h: 0, wr: false }); }
+    if (logPending.length) logPump();
+  }
+  async function logPrune() {
+    const db = await logOpen(); if (!db) return;
+    try { const tx = db.transaction('log', 'readwrite'), cut = Date.now() - LOG_DAYS * 864e5; tx.objectStore('log').openCursor().onsuccess = (ev) => { const c = ev.target.result; if (!c) return; if ((c.value.at || 0) < cut) c.delete(); c.continue(); }; } catch (e) { /* 空 */ }
+  }
+  async function logList() { await logPump(); const a = (await logTx('readonly', (st) => st.getAll())) || []; return a.sort((x, y) => (y.date + y.at).localeCompare(x.date + x.at)); }
+  function logCsv(e) {
+    const K = { c: L('評論', 'Comment'), s: L('付款', 'Paid'), f: L('付款失敗', 'Payment failed'), w: L('得標', 'Won') };
+    const esc = (v) => { v = String(v == null ? '' : v); if (/^[=+\-@\t\r]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; };
+    const lines = [[L('時間', 'Time'), L('類型', 'Type'), L('客人', 'Customer'), L('內容', 'Message'), L('訂單號', 'Order no.'), L('主播', 'Host')].map(esc).join(',')];
+    for (const r of e.rows) lines.push([new Date(r[0]).toLocaleString('sv'), K[r[1]] || r[1], r[2], r[3], r[4], r[5] ? L('是', 'Yes') : ''].map(esc).join(','));
+    return '﻿' + lines.join('\r\n');
+  }
+  const logFile = (e) => 'TikTokLive_' + e.date.slice(4) + '_' + String(e.session).replace(/[^\w一-鿿-]+/g, '_') + '.csv'; // 例：TikTokLive_1124_PT2.csv
+  async function paintLogs() {
+    const box = $('ttf-loglist'); if (!box) return;
+    if (!isPro()) { box.innerHTML = `<div class="meta">${proLock()}</div>`; return; }
+    const list = await logList();
+    box.innerHTML = list.length ? '' : `<div class="meta">${L('還沒有記錄。打開評論窗後，評論、付款、得標會自動按「日期 + 場次」保存。', 'Nothing yet. Once the comment window is open, comments, payments and wins are saved automatically by date + session.')}</div>`;
+    for (const e of list) {
+      const row = document.createElement('div'); row.className = 'logrow';
+      row.innerHTML = `<div class="grow"><b>${e.date.slice(4, 6)}/${e.date.slice(6)} · ${escapeHtml(e.session)}</b><div class="meta">${L(e.rows.length + ' 條', e.rows.length + ' rows')} · ${logFile(e)}</div></div><button class="btn dark">${L('⬇ 下載', '⬇ Download')}</button><button class="btn ghost" title="${L('刪除', 'Delete')}">🗑</button>`;
+      const [dl, del] = row.querySelectorAll('button');
+      dl.onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([logCsv(e)], { type: 'text/csv;charset=utf-8' })); a.download = logFile(e); document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); };
+      del.onclick = async () => { if (!confirm(L('刪除這個場次的記錄？', 'Delete this session\'s log?'))) return; logCache.delete(e.key); await logTx('readwrite', (st) => st.delete(e.key)); paintLogs(); };
+      box.appendChild(row);
+    }
+  }
   function feedTick() {
     if (!feed.win || feed.win.closed) { feedStop(); return; }
     try { timed('feed', feedTick2); } catch (e) { tickErr.feed = (e && e.message) || String(e); console.warn('[TTFill] feed', e); }
     timed('feed', feedStatus);
+    try { logFlush(); } catch (e) { LOG('logFlush', e); }
   }
   // 窗口頂部的狀態：最後更新時間，TikTok 頁面被遮住時提醒
   function feedStatus() { return inFeedLang(feedStatus0)(); }
@@ -3542,7 +3637,7 @@ function ttfillMain() {
     } finally { updBusy = false; paintUpd(); }
   }
   const updTick = () => { if (!state.updAt || Date.now() - state.updAt > 6 * 3600e3) checkUpdate(false); };
-  licLoad();
+  licLoad(); setTimeout(logPrune, 6000);
   setTimeout(updTick, 8000);
   setInterval(updTick, 30 * 60e3);
   function paintLic() {
@@ -3602,7 +3697,7 @@ function ttfillMain() {
 
     // 今天上架
     $('ttf-pt').value = state.pt;
-    $('ttf-pt').onchange = (e) => { state.pt = e.target.value.trim() || 'PT1'; e.target.value = ptLabel(); saveState(); updFmtPrev(); };
+    $('ttf-pt').onchange = (e) => { state.pt = e.target.value.trim(); saveState(); updFmtPrev(); };
     $('ttf-date').value = dateVal;
     $('ttf-qty').value = state.qty;
     $('ttf-qty').onchange = (e) => {
@@ -3611,11 +3706,15 @@ function ttfillMain() {
       state.qty = v; saveState();
     };
     $('ttf-date').oninput = (e) => { dateVal = e.target.value; updFmtPrev(); };
-    for (const [id, k] of [['ttf-fpt', 'pt'], ['ttf-fdate', 'date'], ['ttf-ford', 'order'], ['ttf-fsep', 'sep']]) {
-      $(id).value = nameFmt()[k];
-      $(id).onchange = (e) => { state.nameFmt = { ...nameFmt(), [k]: e.target.value }; saveState(); updFmtPrev(); };
-    }
+    const tplEl = $('ttf-ftpl');
+    tplEl.value = state.nameTpl;
+    tplEl.oninput = () => { state.nameTpl = tplEl.value; saveState(); updFmtPrev(); };
+    root.querySelectorAll('[data-tok]').forEach((bt) => {
+      bt.onclick = () => { const i = tplEl.selectionStart == null ? tplEl.value.length : tplEl.selectionStart, j = tplEl.selectionEnd == null ? i : tplEl.selectionEnd; tplEl.value = tplEl.value.slice(0, i) + bt.dataset.tok + tplEl.value.slice(j); tplEl.focus(); const c = i + bt.dataset.tok.length; tplEl.setSelectionRange(c, c); tplEl.oninput(); };
+    });
+    $('ttf-ftplreset').onclick = () => { tplEl.value = NAMETPL_DEF; tplEl.oninput(); };
     updFmtPrev();
+    paintLogs(); if (!logTimer) logTimer = setInterval(() => { if ($('ttf-loglist') && $('ttf-loglist').offsetParent) paintLogs(); }, 10000);
     const inFilter = (x) => { const q = norm($('ttf-q').value); return !q || norm(x.name + ' ' + x.cat).includes(q); };
     $('ttf-all').onclick = () => { state.lib.filter(inFilter).forEach((x) => (x.sel = true)); saveState(); renderPick(); };
     $('ttf-none').onclick = () => { state.lib.filter(inFilter).forEach((x) => (x.sel = false)); saveState(); renderPick(); };
