@@ -3,7 +3,7 @@
 // @namespace    lok.laliquidation
 // @author       Lok
 // @copyright    2026 Lok. All rights reserved.
-// @version      7.23
+// @version      7.24
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -164,14 +164,84 @@ function ttfillMain() {
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const VER = '7.23'; // 要和上面的 @version 一致
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚", "雲": "云", "報": "报", "順": "顺"};
+  const VER = '7.24'; // 要和上面的 @version 一致
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚", "雲": "云", "報": "报", "順": "顺", "圓": "圆", "須": "须", "費": "费", "鑰": "钥", "證": "证", "權": "权", "藍": "蓝", "膠": "胶", "達": "达", "離": "离", "簽": "签", "驗": "验", "風": "风", "買": "买", "絡": "络", "質": "质", "觸": "触", "強": "强"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   let langOverride = null; // 評論窗可以用自己的語言
   const lang = () => langOverride || state.lang || 'hant';
   const L = (hant, en) => (lang() === 'en' ? en : lang() === 'hans' ? toHans(hant) : hant);
   const E = (hant, en, retry) => Object.assign(new Error(L(hant, en)), { retry: !!retry });
+
+
+  /* ---------------- 授權 / License ----------------
+     LIC_API、LIC_PUB 兩個都填了才會啟用授權；留空 = 全部功能免費開放（開發用）。
+     TikTok 頁面的 CSP 擋掉所有外部 fetch，所以用「彈出小視窗到授權伺服器 → postMessage 傳回簽名令牌」。
+     令牌用公鑰離線驗證，48 小時有效，期間不需要網絡。 */
+  const LIC_API = ''; // 例：'https://ttf-license.你的子域.workers.dev'
+  const LIC_PUB = null; // gen-keys.mjs 產生的公鑰 JSON，例：{"kty":"EC","crv":"P-256","x":"…","y":"…"}
+  const LIC_ON = !!(LIC_API && LIC_PUB);
+  const FREE_PER_DAY = 1;
+  const licDev = (() => { try { let d = localStorage.getItem('ttf_dev'); if (!d) { d = (crypto.randomUUID ? crypto.randomUUID() : uid0() + uid0() + uid0()); localStorage.setItem('ttf_dev', d); } return d; } catch (e) { return 'nodev-' + uid0() + uid0(); } })();
+  function uid0() { return Math.random().toString(36).slice(2, 10).padEnd(8, '0'); }
+  const b64uBytes = (x) => Uint8Array.from(atob(x.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
+  let licInfo = null; // {plan, exp(令牌到期), lic(授權到期，0=永久)}
+  let licMsg = '', licPop = null, licPopAt = 0, licListeners = [];
+  async function licVerify(token) {
+    try {
+      const [b, sg] = String(token).split('.');
+      const key = await crypto.subtle.importKey('jwk', LIC_PUB, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify']);
+      if (!(await crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, key, b64uBytes(sg), new TextEncoder().encode(b)))) return null;
+      const p = JSON.parse(new TextDecoder().decode(b64uBytes(b)));
+      return p && p.dev === licDev && p.exp > Date.now() ? p : null;
+    } catch (e) { return null; }
+  }
+  const isPro = () => !LIC_ON || !!(licInfo && licInfo.exp > Date.now());
+  const licPaint = () => { licListeners.forEach((f) => { try { f(); } catch (e) { /* 空 */ } }); };
+  async function licLoad() { if (!LIC_ON) return; licInfo = state.licTok ? await licVerify(state.licTok) : null; licPaint(); }
+  function licOpen(mode) { // 必須在使用者點擊的當下呼叫，不然會被擋
+    if (!LIC_ON) return;
+    const code = mode === 'activate' ? (arguments[1] || '') : (state.licCode || '');
+    if (!code) { licMsg = L('先輸入授權碼', 'Enter your license code first'); licPaint(); return; }
+    const q = new URLSearchParams({ code, dev: licDev, name: navigator.platform + ' · ' + (navigator.userAgent.match(/(Chrome|Edg|Firefox)\/\d+/) || [''])[0], mode, o: location.origin });
+    licPop = window.open(LIC_API.replace(/\/$/, '') + '/auth.html#' + q, 'ttf_lic', 'width=360,height=320');
+    licPopAt = Date.now();
+    if (!licPop) { licMsg = L('瀏覽器擋住了彈出窗口：請允許 shop.tiktok.com 彈出窗口再按一次', 'Pop-up blocked — allow pop-ups for shop.tiktok.com and try again'); licPaint(); }
+    else { licMsg = L('驗證中…', 'Verifying…'); licPaint(); }
+  }
+  window.addEventListener('message', async (ev) => {
+    if (!LIC_ON || !ev.data || ev.data.ttf !== 'lic') return;
+    let o = ''; try { o = new URL(LIC_API).origin; } catch (e) { /* 空 */ }
+    if (ev.origin !== o) return;
+    const d = ev.data;
+    if (d.mode === 'deactivate') { state.licTok = ''; state.licCode = ''; licInfo = null; saveState(); licMsg = L('已解除此設備', 'This device was released'); licPaint(); return; }
+    if (d.ok && d.token) {
+      const p = await licVerify(d.token);
+      if (!p) { licMsg = L('令牌驗證失敗', 'Token check failed'); licPaint(); return; }
+      state.licTok = d.token; state.licPlan = d.plan; state.licExp = d.exp || 0; saveState(); licInfo = p;
+      licMsg = L('✓ 授權成功', '✓ Licensed');
+    } else {
+      const M = { invalid_code: ['授權碼不正確', 'Invalid code'], revoked: ['授權碼已被停用', 'Code was revoked'], expired: ['授權已到期', 'License expired'], device_limit: ['已達設備上限（最多 10 台），請先在其他設備解除，或等 48 小時', 'Device limit reached (10) — release another device or wait 48h'] }[d.err];
+      licMsg = M ? L(M[0], M[1]) : L('授權失敗：', 'License failed: ') + (d.err || '');
+      if (d.err && d.err !== 'network') { state.licTok = ''; licInfo = null; saveState(); }
+    }
+    licPaint();
+  });
+  // 令牌剩不到 24 小時：在使用者下一次點擊時順便彈出續期窗口（瀏覽器只允許點擊觸發彈窗）
+  document.addEventListener('click', () => {
+    if (!LIC_ON || !state.licCode || Date.now() - licPopAt < 10 * 60e3) return;
+    if (!licInfo || licInfo.exp - Date.now() < 24 * 3600e3) licOpen('refresh');
+  }, true);
+  // 免費版：每天 FREE_PER_DAY 個 listing（計數放兩個地方，取較大者）
+  const dayKey = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
+  function freeUsed() {
+    const a = state.freeUse && state.freeUse.d === dayKey() ? state.freeUse.n : 0;
+    let b = 0; try { const v = (localStorage.getItem('ttf_q') || '').split('|'); if (v[0] === dayKey()) b = +v[1] || 0; } catch (e) { /* 空 */ }
+    return Math.max(a, b);
+  }
+  function freeCount() { const n = freeUsed() + 1; state.freeUse = { d: dayKey(), n }; try { localStorage.setItem('ttf_q', dayKey() + '|' + n); } catch (e) { /* 空 */ } saveState(); }
+  const freeLeft = () => (isPro() ? Infinity : Math.max(0, FREE_PER_DAY - freeUsed()));
+  const proLock = () => L('🔒 這是付費功能：到面板底部輸入授權碼解鎖', '🔒 Paid feature — enter a license code at the bottom of the panel to unlock');
 
   /* ---------------- 頁面操作 ---------------- */
   function setVal(input, val, { blur = true } = {}) {
@@ -1117,7 +1187,7 @@ function ttfillMain() {
     const i = state.rows.indexOf(row);
     let out;
     if (res === 'closed' && (await waitFor(toastSeen, 3000))) {
-      row.status = '✅ 已提交';
+      row.status = '✅ 已提交'; if (!isPro()) freeCount();
       if (state.idx === i) state.idx = nextPending(i + 1);
       out = 'ok';
     } else if (res === 'closed') {
@@ -1172,6 +1242,7 @@ function ttfillMain() {
     const row = state.rows[i];
     if (!row) return 'fail';
     if (row.status.startsWith('✅')) return 'ok'; // 已提交過的不重複上
+    if (freeLeft() <= 0) { setMsg(L(`🔒 免費版每天只能上架 ${FREE_PER_DAY} 個 listing，今天已用完。輸入授權碼解鎖不限數量。`, `🔒 Free plan: ${FREE_PER_DAY} listing per day — used up today. Enter a license code to unlock unlimited.`), 'warn'); return 'fail'; }
     const CONT = () => L('已提交，按「上架剩下的」繼續', 'Submitted — press “Upload remaining” to continue');
     const skip = async (status, msg, type) => {
       row.status = status; saveState(); render();
@@ -1853,6 +1924,7 @@ function ttfillMain() {
   }
   let annBusy = false;
   async function sendAnnouncement(item, manual) {
+    if (!isPro()) { annLog(proLock(), 'warn'); return 'locked'; }
     if (annBusy) return false;
     const input = chatInput();
     if (input && document.activeElement === input && input.value && !manual) return 'typing'; // 你正在打字，晚點再發
@@ -1885,9 +1957,10 @@ function ttfillMain() {
   }
   let annNext = 0;
   const annInterval = () => Math.max(1, +ann.mins || 5) * 60000 * (ann.backoff || 1) * (ann.jitter ? 0.85 + Math.random() * 0.3 : 1);
-  function annStart() { ann.on = true; ann.backoff = 1; ann.okStreak = 0; annNext = Date.now() + 3000; saveState(); renderAnn(); }
+  function annStart() { if (!isPro()) { annLog(proLock(), 'warn'); return; } ann.on = true; ann.backoff = 1; ann.okStreak = 0; annNext = Date.now() + 3000; saveState(); renderAnn(); }
   function annStop() { ann.on = false; saveState(); renderAnn(); }
   async function annTick() {
+    if (ann.on && !isPro()) { annStop(); annLog(proLock(), 'warn'); return; }
     if (!ann.on || annBusy || Date.now() < annNext) return;
     const it = pickNext();
     if (!it) { annLog(L('沒有開啟的公告', 'No announcements switched on'), 'warn'); annNext = Date.now() + 30000; return; }
@@ -1930,6 +2003,9 @@ function ttfillMain() {
     .logo{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#25f4ee 0 45%,#fe2c55 55%);flex:none}
     .ttl{font-weight:650;font-size:14px;letter-spacing:.2px}
     .sub{font-size:11px;color:#a9aab0}
+    .lic{flex:none;border-top:1px solid var(--line,#e8e8ec);padding:7px 14px;font-size:12px;display:none;gap:6px;flex-wrap:wrap;align-items:center}
+    .lic.on{display:flex}.lic .st{font-weight:700;flex:1 1 100%}.lic .st.pro{color:#1a9d4a}.lic input{flex:1 1 120px;min-width:0;border:1px solid var(--line,#d6d8de);border-radius:8px;padding:5px 8px;font:12px ui-monospace,monospace;text-transform:uppercase}
+    .lic .btn{padding:5px 10px;font-size:12px}.lic .lm{flex:1 1 100%;color:#8a8d96;font-size:11px}
     .ft{flex:none;border-top:1px solid var(--line,#e8e8ec);padding:6px 14px 8px;font-size:11px;color:#8a8d96;line-height:1.5}
     .ft1{display:flex;justify-content:space-between;align-items:center;font-weight:700}
     .ft1 i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
@@ -2111,6 +2187,42 @@ function ttfillMain() {
     .langsel:hover{background:rgba(255,255,255,.2)}
     .langsel option{color:#161823}
     .langsel:disabled{opacity:.4}
+
+    /* ===== Apple 風格層：系統字體、半透明材質、藍色強調、圓角膠囊按鈕、分段控制 ===== */
+    .card{--ink:#1d1d1f;--muted:#86868b;--line:rgba(60,60,67,.16);--soft:rgba(118,118,128,.12);--accent:#007aff;--accent-soft:rgba(0,122,255,.16);
+      --ok:#248a3d;--ok-soft:rgba(52,199,89,.16);--warn:#9a5b00;--warn-soft:rgba(255,159,10,.16);--err:#d70015;--err-soft:rgba(255,59,48,.12);--info:#0062cc;--info-soft:rgba(0,122,255,.1);
+      background:rgba(250,250,252,.86);-webkit-backdrop-filter:saturate(180%) blur(30px);backdrop-filter:saturate(180%) blur(30px);
+      border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.24),0 0 0 .5px rgba(0,0,0,.14);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang TC","Helvetica Neue",sans-serif;letter-spacing:-.003em}
+    .hd{background:transparent;color:var(--ink);border-bottom:.5px solid var(--line);padding:12px 14px}
+    .logo{width:24px;height:24px;border-radius:7px}
+    .ttl{font-weight:600;font-size:15px;letter-spacing:-.01em}
+    .sub{color:var(--muted)}
+    .pill{background:var(--soft);color:var(--ink)}
+    .iconbtn{color:var(--muted);border-radius:99px;width:28px;height:28px}
+    .iconbtn:hover{background:var(--soft);color:var(--ink)}
+    .langsel{background:var(--soft);color:var(--ink);border-radius:99px}.langsel:hover{background:rgba(118,118,128,.2)}
+    .bar{background:transparent;height:2px}.bar i{background:var(--accent)}
+    .tabs{background:var(--soft);border-radius:10px;padding:2px;gap:2px}
+    .tabs button{border-radius:8px;font-weight:500;font-size:12.5px}
+    .tabs button.on{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 .5px 1px rgba(0,0,0,.12),0 3px 8px rgba(0,0,0,.08)}
+    .sec{font-size:11px;font-weight:600;letter-spacing:.02em;color:var(--muted)}
+    .inp,textarea,.lic input,.fields select,select{background:rgba(255,255,255,.75);border:.5px solid var(--line);border-radius:10px}
+    .inp:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3.5px var(--accent-soft)}
+    .list,.tools,.item,.catcard{background:rgba(255,255,255,.72);border:.5px solid var(--line);border-radius:14px}
+    .row{border-top:.5px solid var(--line)}
+    .btn{border-radius:99px;font-weight:500;height:32px}
+    .primary{background:var(--accent);color:#fff;font-weight:600}.primary:hover:not(:disabled){background:#0a84ff}
+    .dark{background:var(--accent-soft);color:var(--accent);font-weight:600}.dark:hover:not(:disabled){background:rgba(0,122,255,.24)}
+    .ghost{background:var(--soft);color:var(--ink)}.ghost:hover:not(:disabled){background:rgba(118,118,128,.2)}
+    .btn.stop{background:#ff3b30;color:#fff}
+    .big{height:44px;font-size:15px;font-weight:600}
+    .link{color:var(--accent)}
+    .switch input:checked{background:#34c759}
+    .msg{border-radius:12px}
+    .lic{border-top:.5px solid var(--line)}.lic .st.pro{color:var(--ok)}
+    .ft{border-top:.5px solid var(--line);color:var(--muted);font-weight:400}.ft1{font-weight:500}
+    .gallery img,.thumb{border-radius:10px}
 `;
 
   function escapeHtml(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
@@ -2275,6 +2387,7 @@ function ttfillMain() {
       <input class="inp search" type="text" id="ttf-lq" placeholder="${L('搜尋商品庫…', 'Search library…')}" style="margin-top:10px">
       <div id="ttf-lib"></div>
     </div>
+    <div class="lic" id="ttf-lic"></div>
     <div class="ft"><div class="ft1"><span id="ttf-src"></span><span><button class="link" id="ttf-upd"></button> v${VER}</span></div><div>${L('作者', 'Author')} Lok · © 2026 Lok. All rights reserved.</div></div>
     </div></div>
   </div>`;
@@ -2846,7 +2959,25 @@ function ttfillMain() {
     .mutep textarea{width:100%;min-height:70px;font:inherit;font-size:14px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;margin-top:4px;resize:vertical}
     .c .mu{font-size:max(11px,calc(var(--fs) * .4));border:1px solid var(--line);background:transparent;color:var(--mute);border-radius:5px;padding:0 6px;cursor:pointer;margin-left:6px;opacity:0;font-family:inherit}
     .c:hover .mu{opacity:1}
-    .off{position:fixed;inset:0;background:rgba(0,0,0,.75);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;text-align:center;padding:20px}`;
+    .off{position:fixed;inset:0;background:rgba(0,0,0,.75);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;text-align:center;padding:20px}
+    /* ===== Apple 風格層 ===== */
+    body{--bg:#000;--fg:#f5f5f7;--mute:#98989d;--line:rgba(84,84,88,.55);--card:#1c1c1e;--host:rgba(10,132,255,.2);--ac:#0a84ff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang TC","Microsoft JhengHei",sans-serif;letter-spacing:-.003em}
+    body.light{--bg:#fff;--fg:#1d1d1f;--mute:#6e6e73;--line:rgba(60,60,67,.18);--card:#f2f2f7;--host:rgba(0,122,255,.12);--ac:#007aff}
+    .tp{border-bottom:0;padding:5px 12px 0;font-weight:500}
+    .bar{border-bottom:0;padding:6px 10px;gap:6px}
+    .bar button,.bar input[type=search],.bar select{border:0;background:var(--card);color:var(--fg);border-radius:99px;padding:3px 10px}
+    .bar input[type=search]{padding:4px 12px;outline:none}.bar input[type=search]:focus{box-shadow:0 0 0 3px rgba(10,132,255,.3)}
+    .bar button:hover{filter:brightness(1.15)}
+    .mutep{background:var(--card);border-radius:14px;margin:0 10px 6px;border:0}
+    .mutep select{border:0;background:var(--bg);border-radius:99px}
+    .ab{margin:2px 10px 6px;border-radius:16px;border:0;background:var(--card);color:var(--fg);box-shadow:0 0 0 .5px var(--line)}
+    body.light .ab{background:var(--card);color:var(--fg)}
+    .ab .ano,.no{background:var(--ac);border-radius:.4em}
+    .c{border-bottom:.5px solid var(--line);border-left-width:3px}
+    .c.host{border-left-color:var(--ac)}.c.host .n::after{background:var(--ac);border-radius:99px;padding:1px 7px}
+    .auc{border-bottom:0;margin:0 10px 6px;border-radius:16px;box-shadow:0 0 0 .5px var(--line)}
+    #more{background:var(--ac);border-radius:99px}
+`;
   const inFeedLang = (fn) => function (...a) { const o = langOverride; langOverride = fset.lang || null; try { return fn.apply(this, a); } finally { langOverride = o; } };
   const feedSetup = inFeedLang(function (w) {
     const d = w.document;
@@ -3032,6 +3163,7 @@ function ttfillMain() {
     if (scroll || !feed.histAll) hb.scrollTop = hb.scrollHeight;
   });
   async function feedOpen(kind) {
+    if (!isPro()) return 'locked';
     if (feed.win && !feed.win.closed) { try { feed.win.focus(); } catch (e) { /* 空 */ } return true; }
     let w = null;
     if (kind === 'pip') {
@@ -3410,15 +3542,33 @@ function ttfillMain() {
     } finally { updBusy = false; paintUpd(); }
   }
   const updTick = () => { if (!state.updAt || Date.now() - state.updAt > 6 * 3600e3) checkUpdate(false); };
+  licLoad();
   setTimeout(updTick, 8000);
   setInterval(updTick, 30 * 60e3);
+  function paintLic() {
+    const el = $('ttf-lic'); if (!el) return;
+    if (!LIC_ON) { el.className = 'lic'; el.innerHTML = ''; return; }
+    el.className = 'lic on';
+    const d = (t) => new Date(t).toLocaleDateString();
+    if (licInfo && licInfo.exp > Date.now()) {
+      const life = !state.licExp;
+      el.innerHTML = `<div class="st pro">✓ ${L('已授權', 'Licensed')} · ${life ? L('買斷（永久）', 'Lifetime') : L('月費 · 到期 ', 'Monthly · expires ') + d(state.licExp)}</div>
+        <button class="btn ghost" id="ttf-licre">${L('立即續期', 'Renew now')}</button><button class="btn ghost" id="ttf-licoff">${L('解除此設備', 'Release this device')}</button><div class="lm">${licMsg}</div>`;
+      $('ttf-licre').onclick = () => licOpen('refresh');
+      $('ttf-licoff').onclick = () => { if (confirm(L('解除後這台設備需要重新輸入授權碼。確定？', 'This device will need the code again. Continue?'))) licOpen('deactivate'); };
+    } else {
+      el.innerHTML = `<div class="st">${L('免費版', 'Free plan')} · ${L(`今天還可上架 ${freeLeft()} 個 · 評論區功能已鎖定`, `${freeLeft()} listing left today · comment tools locked`)}</div>
+        <input id="ttf-liccode" placeholder="XXXX-XXXX-XXXX" value="${state.licCode || ''}" spellcheck="false"><button class="btn dark" id="ttf-licgo">${L('啟用授權碼', 'Activate')}</button><div class="lm">${licMsg}</div>`;
+      $('ttf-licgo').onclick = () => { const c = $('ttf-liccode').value.trim(); if (!c) { licMsg = L('先輸入授權碼', 'Enter your license code first'); paintLic(); return; } state.licCode = c; saveState(); licOpen('activate', c); };
+    }
+  }
   /* ---- 建立整個面板（切換語言時重建） ---- */
   function buildUI() {
     root.innerHTML = html();
     $('ttf-lang').value = lang();
     $('card').classList.toggle('min', !!state.min);
     $('ttf-min').textContent = state.min ? '+' : '–';
-    paintSrc(); paintUpd();
+    paintSrc(); paintUpd(); licListeners = [paintLic]; paintLic();
     $('ttf-upd').onclick = () => { if (state.updRemote && verCmp(state.updRemote, VER) > 0) { window.open(UPDATE_URL, '_blank'); } else checkUpdate(true); };
 
     // 分頁
@@ -3657,6 +3807,7 @@ function ttfillMain() {
       const r = await feedOpen(kind);
       const el = $('ttf-livemsg');
       if (r === 'blocked') { el.textContent = L('瀏覽器擋住了彈出窗口：請在網址列右邊允許 shop.tiktok.com 彈出窗口，再按一次', 'The browser blocked the pop-up — allow pop-ups for shop.tiktok.com (right side of the address bar) and press again'); el.className = 'msg warn'; }
+      else if (r === 'locked') { el.textContent = proLock(); el.className = 'msg warn'; }
       else if (r === 'nopip') { el.textContent = L('這個 Chrome 版本不支援置頂小窗，請用「彈出評論窗」或更新 Chrome', 'This Chrome version can’t do an always-on-top window — use “Pop out comments” or update Chrome'); el.className = 'msg warn'; }
       else { el.textContent = ''; el.className = 'msg'; }
     };

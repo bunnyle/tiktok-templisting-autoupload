@@ -1,0 +1,4 @@
+license-server/public/ttf.user.js
+license-server/node_modules
+license-server/.wrangler
+*.key.json

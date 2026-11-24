@@ -1,0 +1,35 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TikTok Live 小助手 · 授權</title>
+<style>
+:root{color-scheme:light dark;--bg:#f5f5f7;--card:#fff;--tx:#1d1d1f;--sub:#6e6e73;--ok:#34c759;--bad:#ff3b30;--ac:#0071e3}
+@media(prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--tx:#f5f5f7;--sub:#98989d}}
+body{margin:0;font:15px -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--tx);display:grid;place-items:center;min-height:100vh}
+.c{background:var(--card);border-radius:18px;padding:28px 26px;width:min(320px,86vw);text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.12)}
+.i{font-size:40px;margin-bottom:6px}h1{font-size:17px;margin:4px 0 6px;font-weight:600}p{margin:0;color:var(--sub);font-size:13px;line-height:1.5}
+textarea{width:100%;box-sizing:border-box;margin-top:12px;border-radius:10px;border:1px solid #8884;background:transparent;color:var(--tx);font:11px ui-monospace,monospace;height:70px}
+</style></head><body><div class="c"><div class="i" id="i">⏳</div><h1 id="t">連接授權伺服器…</h1><p id="s"></p><textarea id="tk" hidden readonly></textarea></div>
+<script>
+(async()=>{
+const $=id=>document.getElementById(id),h=new URLSearchParams(location.hash.slice(1));
+const code=h.get('code')||'',dev=h.get('dev')||'',name=h.get('name')||'',mode=h.get('mode')||'refresh',o=h.get('o')||'';
+const okO=/^https:\/\/([a-z0-9-]+\.)*tiktok\.com$/.test(o)?o:null;
+history.replaceState(null,'',location.pathname);
+const show=(i,t,s)=>{$('i').textContent=i;$('t').textContent=t;$('s').textContent=s||''};
+const MSG={invalid_code:'授權碼不正確',revoked:'這個授權碼已被停用',expired:'授權已到期，請續費',device_limit:'已有最多台設備在使用，請先在其他設備「解除此設備」，或等 48 小時',bad_request:'資料不完整',server_error:'伺服器錯誤，請稍後再試'};
+let res;
+try{
+  const r=await fetch('/api/'+(mode==='deactivate'?'deactivate':mode==='activate'?'activate':'refresh'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({code,dev,name})});
+  res=await r.json();
+}catch(e){res={err:'network'}}
+if(res.ok||res.err){}
+const send=()=>{try{if(window.opener&&okO)window.opener.postMessage(Object.assign({ttf:'lic',mode},res),okO)}catch(e){}};
+send();
+if(res.ok){
+  show('✅',mode==='deactivate'?'已解除此設備':'授權成功','視窗會自動關閉');
+  if(res.token&&!(window.opener&&okO)){ $('tk').hidden=false;$('tk').value=res.token;$('s').textContent='無法自動回傳：請複製下面的令牌貼回腳本'; }
+  else setTimeout(()=>window.close(),900);
+}else{
+  show('⚠️',MSG[res.err]||('失敗：'+(res.err||'')),res.err==='network'?'連不上伺服器':'');
+  setTimeout(()=>window.close(),6000);
+}
+})();
+</script></body></html>

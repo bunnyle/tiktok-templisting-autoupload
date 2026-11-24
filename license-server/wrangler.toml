@@ -1,0 +1,18 @@
+name = "ttf-license"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# 靜態檔案（腳本下載頁）：免費且不限次數
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api/*", "/admin/*"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ttf-license"
+database_id = "貼上 wrangler d1 create 後得到的 id"
+
+# 秘密（用 wrangler secret put 設定，不要寫在這裡）：
+#   SIGN_KEY  = 私鑰 JWK（gen-keys.mjs 產生）
+#   ADMIN_KEY = 你自己的管理密碼（長一點）
