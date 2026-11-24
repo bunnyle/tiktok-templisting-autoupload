@@ -3,7 +3,7 @@
 // @namespace    lok.laliquidation
 // @author       Lok
 // @copyright    2026 Lok. All rights reserved.
-// @version      7.25
+// @version      7.26
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -164,8 +164,8 @@ function ttfillMain() {
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const VER = '7.25'; // 要和上面的 @version 一致
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚", "雲": "云", "報": "报", "順": "顺", "圓": "圆", "須": "须", "費": "费", "鑰": "钥", "證": "证", "權": "权", "藍": "蓝", "膠": "胶", "達": "达", "離": "离", "簽": "签", "驗": "验", "風": "风", "買": "买", "絡": "络", "質": "质", "觸": "触", "強": "强", "範": "范", "義": "义"};
+  const VER = '7.26'; // 要和上面的 @version 一致
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚", "雲": "云", "報": "报", "順": "顺", "圓": "圆", "須": "须", "費": "费", "鑰": "钥", "證": "证", "權": "权", "藍": "蓝", "膠": "胶", "達": "达", "離": "离", "簽": "签", "驗": "验", "風": "风", "買": "买", "絡": "络", "質": "质", "觸": "触", "強": "强", "範": "范", "義": "义", "與": "与", "優": "优"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   let langOverride = null; // 評論窗可以用自己的語言
@@ -1414,7 +1414,7 @@ function ttfillMain() {
   state.pt = state.pt || 'PT1';
   if (state.qty == null || state.qty === '') state.qty = '500'; // 預設數量真的存起來（以前只是顯示）
   const today = () => { const d = new Date(); return String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0'); };
-  const ptLabel = () => String(state.pt == null ? '' : state.pt).trim(); // 場次是自定義文字，不再自動加 PT / 轉大寫
+  const ptLabel = () => fieldVal('session'); // 場次是自定義文字，不再自動加 PT / 轉大寫
   // 去掉名稱結尾的場次和日期（例如「 - PT1 - 1027」「 -  - 1022」「 - PT2」），再統一接上 {PT} 和 {DATE}
   const stripPtDate = (name) => {
     let n = String(name).trim();
@@ -1436,24 +1436,41 @@ function ttfillMain() {
     } else state.nameTpl = NAMETPL_DEF;
     saveState();
   }
-  const TOK = { name: /\{(?:name|名稱)\}/gi, session: /\{(?:session|pt|場次)\}/gi, date: /\{(?:date|日期)\}/gi };
-  function renderName(base, session, date) {
-    let tpl = String(state.nameTpl || NAMETPL_DEF);
-    if (!TOK.name.test(tpl)) tpl = '{name} ' + tpl;
-    TOK.name.lastIndex = 0;
-    const SEP = '(?:\\s*[-_|·,，/]+\\s*)?';
-    for (const [k, v] of [['session', session], ['date', date]]) {
-      if (v) tpl = tpl.replace(TOK[k], () => v);
-      else tpl = tpl.replace(new RegExp(SEP + TOK[k].source, 'gi'), '');
+  // 欄位（場次 / 日期 / 自訂…，名稱可改、可增刪）和「名稱元素」（商品名、欄位、文字，可拖動排序）
+  const tplToEls = (tpl) => String(tpl).split(/(\{(?:name|名稱)\}|\{(?:session|pt|場次)\}|\{(?:date|日期)\})/i).filter(Boolean).map((x) => {
+    if (/^\{(name|名稱)\}$/i.test(x)) return { t: 'name' };
+    if (/^\{(session|pt|場次)\}$/i.test(x)) return { t: 'f', id: 'session' };
+    if (/^\{(date|日期)\}$/i.test(x)) return { t: 'f', id: 'date' };
+    return { t: 'text', v: x };
+  });
+  if (!Array.isArray(state.fields)) { state.fields = [{ id: 'session' }, { id: 'date' }]; saveState(); }
+  if (!Array.isArray(state.nameEls)) { state.nameEls = tplToEls(state.nameTpl || NAMETPL_DEF); saveState(); }
+  let dateVal = today();
+  const hasField = (id) => state.fields.some((f) => f.id === id);
+  function fieldVal(id) {
+    if (!hasField(id)) return '';
+    if (id === 'session') return String(state.pt == null ? '' : state.pt).trim();
+    if (id === 'date') return String(dateVal || '').trim() || today();
+    return String((state.fields.find((f) => f.id === id) || {}).v || '').trim();
+  }
+  const dateStr = () => fieldVal('date');
+  function renderName(base) {
+    const els = state.nameEls.some((e) => e.t === 'name') ? state.nameEls : [{ t: 'name' }, ...state.nameEls];
+    let out = '', pend = '';
+    for (const e of els) {
+      if (e.t === 'text') { pend += e.v; continue; }
+      const v = e.t === 'name' ? String(base).trim() : fieldVal(e.id);
+      if (!v) { pend = ''; continue; }
+      out += pend + v; pend = '';
     }
-    return tpl.replace(TOK.name, () => String(base).trim()).replace(/\s+$/, '').trim();
+    return (out + pend).trim();
   }
   // 商品名稱裡自己寫了 {PT} / {DATE}（放在中間）的，照原樣替換，不再另外加；其他的按「名稱格式」加
   function applyTpl(tpl) {
-    const pt = ptLabel(), date = ($('ttf-date') && $('ttf-date').value.trim()) || today();
+    const pt = ptLabel(), date = dateStr();
     const base = baseName(tpl);
     if (/\{(PT|DATE)\}/.test(base)) return base.replace(/\{PT\}/g, pt).replace(/\{DATE\}/g, date).trim();
-    return renderName(base, pt, date);
+    return renderName(base);
   }
 
   /* ================= 直播檢測：得標 + 客人回覆 ================= */
@@ -2249,6 +2266,17 @@ function ttfillMain() {
     .lic{border-top:.5px solid var(--line)}.lic .st.pro{color:var(--ok)}
     .ft{border-top:.5px solid var(--line);color:var(--muted);font-weight:400}.ft1{font-weight:500}
     .gallery img,.thumb{border-radius:10px}
+    .frow{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;align-items:flex-end}.frow .fld{flex:1 1 84px;min-width:0}
+    .fl{display:flex;align-items:center;gap:2px}.flabel{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:11px;color:var(--muted);padding:2px 0;outline:none;border-bottom:1px dashed transparent}
+    .flabel:hover,.flabel:focus{border-bottom-color:var(--accent);color:var(--ink)}.flabel.fixed{border:0}
+    .fdel{border:0;background:var(--soft);color:var(--muted);width:16px;height:16px;border-radius:99px;line-height:14px;font-size:13px;cursor:pointer;padding:0}.fdel:hover{background:#ff3b30;color:#fff}
+    .addwrap{position:relative;display:inline-block}.addbtn{width:28px;height:28px;padding:0;font-size:16px;line-height:1}
+    .addm{position:absolute;z-index:20;top:100%;left:0;min-width:130px;background:#fff;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.22),0 0 0 .5px rgba(0,0,0,.12);padding:4px;display:flex;flex-direction:column}
+    .addm button{border:0;background:none;text-align:left;padding:6px 10px;border-radius:8px;font:inherit;font-size:12.5px;cursor:pointer;color:var(--ink)}.addm button:hover{background:var(--accent-soft);color:var(--accent)}
+    .els{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:34px;padding:6px;background:rgba(255,255,255,.72);border:.5px solid var(--line);border-radius:12px}
+    .chip2{display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 10px;border-radius:99px;font-size:12.5px;font-weight:600;cursor:grab;user-select:none;background:var(--soft);color:var(--ink)}
+    .chip2.name{background:var(--accent-soft);color:var(--accent)}.chip2.f{background:var(--ok-soft);color:var(--ok)}.chip2.text{background:var(--soft);font-weight:500;font-family:ui-monospace,Menlo,monospace}
+    .chip2.drag{opacity:.4}.chip2.over{outline:2px solid var(--accent)}.chip2 .cx{border:0;background:rgba(0,0,0,.12);color:inherit;width:16px;height:16px;border-radius:99px;font-size:12px;line-height:14px;cursor:pointer;padding:0}.chip2 .cx:hover{background:#ff3b30;color:#fff}
     .tpl{display:flex;flex-direction:column;gap:6px;margin:8px 0 4px}.tpl .inp{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace}
     .chips{display:flex;gap:6px;flex-wrap:wrap}.chips .btn{height:26px;padding:0 10px;font-size:12px}
     .logcard{margin-top:10px;background:rgba(255,255,255,.72);border:.5px solid var(--line);border-radius:14px;padding:10px 12px}
@@ -2277,7 +2305,6 @@ function ttfillMain() {
   let editing = null; // 正在編輯的商品 id，或 'new'
   let showSetup = false;
   let curTab = 'go';
-  let dateVal = today();
 
   function html() {
     return `<style>${CSS}</style>
@@ -2297,15 +2324,9 @@ function ttfillMain() {
 
     <div class="bd" id="tab-go">
       <div id="view-setup">
-        <div class="fields f3" style="margin-top:4px">
-          <label class="field"><span>${L('場次（自由文字）', 'Session (free text)')}</span><input class="inp" type="text" id="ttf-pt" placeholder="PT1"></label>
-          <label class="field"><span>${L('日期 (MMDD)', 'Date (MMDD)')}</span><input class="inp" type="text" id="ttf-date" placeholder="1027"></label>
-          <label class="field"><span>${L('預設數量', 'Default qty')}</span><input class="inp" type="text" inputmode="numeric" id="ttf-qty" placeholder="500"></label>
-        </div>
-        <div class="tpl"><b>${L('名稱格式（可自由編輯）', 'Name format (fully editable)')}</b>
-          <input class="inp" type="text" id="ttf-ftpl" spellcheck="false" placeholder="{name}  - {session} - {date}">
-          <div class="chips"><button class="btn ghost" data-tok="{name}">${L('＋商品名', '+ Name')}</button><button class="btn ghost" data-tok="{session}">${L('＋場次', '+ Session')}</button><button class="btn ghost" data-tok="{date}">${L('＋日期', '+ Date')}</button><button class="btn ghost" id="ttf-ftplreset">${L('還原預設', 'Reset')}</button></div>
-          <div class="meta">${L('{name}=商品名　{session}=上面「場次」欄的文字　{date}=日期。位置、符號、文字都隨你寫，例如：{date} {name} #{session}', '{name}=product name · {session}=the Session box above · {date}=date. Put them anywhere with any text, e.g. {date} {name} #{session}')}</div></div>
+        <div class="frow" id="ttf-fieldrow"></div>
+        <div class="sec" style="margin:8px 0 4px">${L('名稱格式（拖動調整順序）', 'Name format (drag to reorder)')}</div>
+        <div class="els" id="ttf-els"></div>
         <div class="fmtprev" id="ttf-fmtprev"></div>
         <div class="sec">${L('商品', 'Products')} <span class="grow" id="ttf-selcount"></span><button class="link" id="ttf-all">${L('全選', 'All')}</button><button class="link" id="ttf-none">${L('清空', 'None')}</button></div>
         <input class="inp search" type="text" id="ttf-q" placeholder="${L('搜尋商品…', 'Search products…')}">
@@ -2341,6 +2362,7 @@ function ttfillMain() {
       </div>
       <button class="btn primary block big" id="ttf-livego"></button>
       <div class="btnrow">
+        <button class="btn dark" id="ttf-logdl" title="${L('下載目前場次的評論 / 付款 / 得標記錄（CSV）', 'Download this session\'s comments / payments / wins (CSV)')}">${L('⬇ 下載評論', '⬇ Download chat')}</button>
         <button class="btn ghost" id="ttf-livecsv">${L('⬇ 匯出並清空', '⬇ Export & clear')}</button>
         <button class="btn ghost" id="ttf-liveclr">${L('清空記錄', 'Clear records')}</button>
         <button class="btn ghost" id="ttf-livediag">${L('直播診斷', 'Live diagnostics')}</button>
@@ -2515,6 +2537,96 @@ function ttfillMain() {
     draw();
   }
 
+  /* ---- 欄位（可改名、可增刪）與名稱元素（可拖動排序）---- */
+  const FLD_DEF = () => ({ session: L('場次', 'Session'), date: L('日期 (MMDD)', 'Date (MMDD)') });
+  function popMenu(anchor, items) {
+    root.querySelectorAll('.addm').forEach((m) => m.remove());
+    const m = document.createElement('div'); m.className = 'addm';
+    for (const [lab, fn] of items) { const b = document.createElement('button'); b.textContent = lab; b.onclick = (e) => { e.stopPropagation(); m.remove(); fn(); }; m.appendChild(b); }
+    anchor.parentElement.appendChild(m);
+    setTimeout(() => root.addEventListener('click', () => m.remove(), { once: true }), 0);
+  }
+  function paintFields() {
+    const box = $('ttf-fieldrow'); if (!box) return;
+    box.innerHTML = '';
+    state.fields.forEach((f, i) => {
+      const w = document.createElement('div'); w.className = 'field fld';
+      w.innerHTML = `<div class="fl"><input class="flabel" spellcheck="false" title="${L('點一下可以改名稱', 'Click to rename')}"><button class="fdel" title="${L('刪除這個欄位', 'Remove this field')}">−</button></div><input class="inp" type="text">`;
+      const li = w.querySelector('.flabel'), vi = w.querySelector('.inp');
+      li.value = f.label != null ? f.label : (FLD_DEF()[f.id] || '');
+      li.onchange = () => { f.label = li.value.trim() || FLD_DEF()[f.id] || L('自訂', 'Custom'); li.value = f.label; saveState(); paintEls(); };
+      if (f.id === 'session') { vi.id = 'ttf-pt'; vi.value = state.pt == null ? '' : state.pt; vi.placeholder = 'PT1'; vi.oninput = () => { state.pt = vi.value.trim(); saveState(); updFmtPrev(); }; }
+      else if (f.id === 'date') { vi.id = 'ttf-date'; vi.value = dateVal; vi.placeholder = '1027'; vi.oninput = () => { dateVal = vi.value; updFmtPrev(); }; }
+      else { vi.value = f.v || ''; vi.oninput = () => { f.v = vi.value; saveState(); updFmtPrev(); }; }
+      w.querySelector('.fdel').onclick = () => { state.fields.splice(i, 1); for (let k = state.nameEls.length - 1; k >= 0; k--) if (state.nameEls[k] && state.nameEls[k].t === 'f' && state.nameEls[k].id === f.id) dropEl(k); saveState(); paintFields(); paintEls(); updFmtPrev(); };
+      box.appendChild(w);
+    });
+    const q = document.createElement('div'); q.className = 'field fld';
+    q.innerHTML = `<div class="fl"><span class="flabel fixed">${L('預設數量', 'Default qty')}</span></div><input class="inp" type="text" inputmode="numeric" id="ttf-qty" placeholder="500">`;
+    const qi = q.querySelector('input'); qi.value = state.qty;
+    qi.onchange = () => { const v = qi.value.trim(); if (!/^\d+$/.test(v) || +v < 1) { qi.value = state.qty; return; } state.qty = v; saveState(); };
+    box.appendChild(q);
+    const add = document.createElement('div'); add.className = 'addwrap';
+    add.innerHTML = `<button class="btn ghost addbtn" title="${L('增加欄位', 'Add a field')}">＋</button>`;
+    add.firstChild.onclick = (e) => {
+      e.stopPropagation();
+      const items = [];
+      if (!hasField('session')) items.push([FLD_DEF().session, () => addField({ id: 'session' })]);
+      if (!hasField('date')) items.push([FLD_DEF().date, () => addField({ id: 'date' })]);
+      items.push([L('自訂欄位', 'Custom field'), () => addField({ id: 'c' + Date.now().toString(36), label: L('自訂', 'Custom'), v: '' })]);
+      popMenu(add.firstChild, items);
+    };
+    box.appendChild(add);
+  }
+  function addField(f) {
+    state.fields.push(f);
+    state.nameEls.push({ t: 'text', v: ' - ' }, { t: 'f', id: f.id });
+    saveState(); paintFields(); paintEls(); updFmtPrev();
+  }
+  let dragI = null;
+  // 移除一個元素時，順便把它旁邊的分隔文字一起拿掉（優先拿前面那個），避免留下孤單的「 - 」
+  function dropEl(i) {
+    const els = state.nameEls, e = els[i]; if (!e) return;
+    if (e.t === 'text') { els.splice(i, 1); return; }
+    if (i > 0 && els[i - 1].t === 'text') { els.splice(i - 1, 2); return; }
+    if (els[i + 1] && els[i + 1].t === 'text') { els.splice(i, 2); return; }
+    els.splice(i, 1);
+  }
+  function paintEls() {
+    const box = $('ttf-els'); if (!box) return;
+    box.innerHTML = '';
+    const els = state.nameEls;
+    const redo = () => { saveState(); paintEls(); updFmtPrev(); };
+    const labelOf = (e) => (e.t === 'name' ? L('商品名', 'Name') : e.t === 'f' ? ((state.fields.find((f) => f.id === e.id) || {}).label || FLD_DEF()[e.id] || '?') : '「' + e.v.replace(/ /g, '␣') + '」');
+    els.forEach((e, i) => {
+      const c = document.createElement('span'); c.className = 'chip2 ' + e.t; c.draggable = true;
+      c.innerHTML = '<span class="cl"></span><button class="cx" title="' + L('移除', 'Remove') + '">×</button>';
+      c.querySelector('.cl').textContent = labelOf(e);
+      c.querySelector('.cx').onclick = (ev) => { ev.stopPropagation(); dropEl(i); redo(); };
+      if (e.t === 'text') c.querySelector('.cl').onclick = () => { const v = prompt(L('文字（可以有空格、符號）', 'Text (spaces and symbols allowed)'), e.v); if (v == null) return; if (v === '') els.splice(i, 1); else e.v = v; redo(); };
+      c.ondragstart = (ev) => { dragI = i; ev.dataTransfer.effectAllowed = 'move'; try { ev.dataTransfer.setData('text/plain', String(i)); } catch (x) { /* 空 */ } c.classList.add('drag'); };
+      c.ondragend = () => { c.classList.remove('drag'); box.querySelectorAll('.over').forEach((x) => x.classList.remove('over')); };
+      c.ondragover = (ev) => { ev.preventDefault(); c.classList.add('over'); };
+      c.ondragleave = () => c.classList.remove('over');
+      c.ondrop = (ev) => { ev.preventDefault(); ev.stopPropagation(); if (dragI == null || dragI === i) return; const [m] = els.splice(dragI, 1); els.splice(i, 0, m); dragI = null; redo(); };
+      box.appendChild(c);
+    });
+    box.ondragover = (ev) => ev.preventDefault();
+    box.ondrop = (ev) => { ev.preventDefault(); if (dragI == null) return; const [m] = els.splice(dragI, 1); els.push(m); dragI = null; redo(); };
+    const add = document.createElement('span'); add.className = 'addwrap';
+    add.innerHTML = `<button class="btn ghost addbtn" title="${L('增加元素', 'Add element')}">＋</button>`;
+    add.firstChild.onclick = (e) => {
+      e.stopPropagation();
+      const items = [];
+      if (!els.some((x) => x.t === 'name')) items.push([L('商品名', 'Name'), () => { els.push({ t: 'name' }); redo(); }]);
+      for (const f of state.fields) if (!els.some((x) => x.t === 'f' && x.id === f.id)) items.push([f.label != null ? f.label : FLD_DEF()[f.id], () => { els.push({ t: 'f', id: f.id }); redo(); }]);
+      for (const sep of [' - ', ' ', '_', '#']) items.push(['「' + sep.replace(/ /g, '␣') + '」', () => { els.push({ t: 'text', v: sep }); redo(); }]);
+      items.push([L('自訂文字…', 'Custom text…'), () => { const v = prompt(L('文字（可以有空格、符號）', 'Text (spaces and symbols allowed)'), ''); if (v) { els.push({ t: 'text', v }); redo(); } }]);
+      items.push([L('還原預設', 'Reset to default'), () => { state.nameEls = tplToEls(NAMETPL_DEF); redo(); }]);
+      popMenu(add.firstChild, items);
+    };
+    box.appendChild(add);
+  }
   function updFmtPrev() {
     const el = $('ttf-fmtprev'); if (!el) return;
     const it = state.lib.find((x) => x.sel) || state.lib[0];
@@ -2811,6 +2923,19 @@ function ttfillMain() {
     return '﻿' + lines.join('\r\n');
   }
   const logFile = (e) => 'TikTokLive_' + e.date.slice(4) + '_' + String(e.session).replace(/[^\w一-鿿-]+/g, '_') + '.csv'; // 例：TikTokLive_1124_PT2.csv
+  function logSave(e, doc) {
+    const a = doc.createElement('a'); a.href = URL.createObjectURL(new Blob([logCsv(e)], { type: 'text/csv;charset=utf-8' })); a.download = logFile(e);
+    doc.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }
+  // 一鍵下載「目前場次」的記錄；回傳要顯示的提示文字
+  async function logDownloadNow(doc) {
+    if (!isPro()) return proLock();
+    logFlush(); await logPump();
+    const key = logKey(Date.now()), e = logCache.get(key) || await logTx('readonly', (st) => st.get(key));
+    if (!e || !e.rows.length) return L('這個場次還沒有記錄（要先打開評論窗，之後的評論才會被記下來）', 'No records for this session yet (open the comment window first — it only records while open)');
+    logSave(e, doc);
+    return L('已下載 ', 'Downloaded ') + logFile(e) + L(`（${e.rows.length} 條）`, ` (${e.rows.length} rows)`);
+  }
   async function paintLogs() {
     const box = $('ttf-loglist'); if (!box) return;
     if (!isPro()) { box.innerHTML = `<div class="meta">${proLock()}</div>`; return; }
@@ -2820,7 +2945,7 @@ function ttfillMain() {
       const row = document.createElement('div'); row.className = 'logrow';
       row.innerHTML = `<div class="grow"><b>${e.date.slice(4, 6)}/${e.date.slice(6)} · ${escapeHtml(e.session)}</b><div class="meta">${L(e.rows.length + ' 條', e.rows.length + ' rows')} · ${logFile(e)}</div></div><button class="btn dark">${L('⬇ 下載', '⬇ Download')}</button><button class="btn ghost" title="${L('刪除', 'Delete')}">🗑</button>`;
       const [dl, del] = row.querySelectorAll('button');
-      dl.onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([logCsv(e)], { type: 'text/csv;charset=utf-8' })); a.download = logFile(e); document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); };
+      dl.onclick = () => logSave(e, document);
       del.onclick = async () => { if (!confirm(L('刪除這個場次的記錄？', 'Delete this session\'s log?'))) return; logCache.delete(e.key); await logTx('readwrite', (st) => st.delete(e.key)); paintLogs(); };
       box.appendChild(row);
     }
@@ -3086,7 +3211,8 @@ function ttfillMain() {
         <label title="${L('字體大小', 'Font size')}">A<input type="range" id="fs" min="14" max="64" step="1"><b id="fsv"></b></label>
         <input type="search" id="q" placeholder="${L('🔍 搜尋', '🔍 Search')}" title="${L('搜尋客人 / 留言 / #編號', 'Search customer / comment / #no.')}">
         <button id="mb" title="${L('設定 / 過濾', 'Settings / filter')}">⚙<span id="mc"></span></button>
-        <button id="th" title="${L('深色 / 淺色', 'Dark / Light')}">◐</button>
+        <button id="dlg" title="${L('下載這個場次的評論記錄 (CSV)', 'Download this session\'s chat log (CSV)')}">⬇</button>
+        <button id="th" title=""${L('深色 / 淺色', 'Dark / Light')}">◐</button>
         <button id="fsc" title="${L('全螢幕', 'Full screen')}">⛶</button>
       </div>
       <div class="ab" id="ab"><div class="al" id="al"></div></div>
@@ -3114,6 +3240,11 @@ function ttfillMain() {
     $$('nt').checked = !!fset.newTop; $$('nt').onchange = (e) => { fset.newTop = e.target.checked; saveState(); d.body.classList.toggle('newtop', fset.newTop); moreTxt(); feed.stick = true; d.getElementById('more').style.display = 'none'; feedRender(null, 0, true); };
     $$('ow').checked = !!fset.onlyWin; $$('ow').onchange = (e) => { fset.onlyWin = e.target.checked; saveState(); feedRender(null, 0, true); };
     $$('sy').checked = !!fset.sys; $$('sy').onchange = (e) => { fset.sys = e.target.checked; saveState(); feedRender(null, 0, true); };
+    $$('dlg').onclick = async () => {
+      const m = await logDownloadNow(d); let t = d.getElementById('toast');
+      if (!t) { t = d.createElement('div'); t.id = 'toast'; t.style.cssText = 'position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(40,40,44,.94);color:#fff;padding:8px 14px;border-radius:99px;font:600 13px -apple-system,sans-serif;z-index:99;max-width:90%;text-align:center'; d.body.appendChild(t); }
+      t.textContent = m; t.style.display = 'block'; clearTimeout(t._h); t._h = setTimeout(() => { t.style.display = 'none'; }, 3500);
+    };
     $$('th').onclick = () => { fset.theme = fset.theme === 'light' ? 'dark' : 'light'; saveState(); applyTheme(); feedRender(null, 0, true); };
     $$('fsc').onclick = () => { try { if (d.fullscreenElement) d.exitFullscreen(); else d.documentElement.requestFullscreen(); } catch (e) { /* 小窗不支援全螢幕 */ } };
     if (feed.kind === 'pip') $$('fsc').style.display = 'none';
@@ -3696,23 +3827,8 @@ function ttfillMain() {
     hd.addEventListener('dblclick', (e) => { if (!e.target.closest('button, select')) setMin(!state.min); });
 
     // 今天上架
-    $('ttf-pt').value = state.pt;
-    $('ttf-pt').onchange = (e) => { state.pt = e.target.value.trim(); saveState(); updFmtPrev(); };
-    $('ttf-date').value = dateVal;
-    $('ttf-qty').value = state.qty;
-    $('ttf-qty').onchange = (e) => {
-      const v = e.target.value.trim();
-      if (!/^\d+$/.test(v) || +v < 1) { e.target.value = state.qty; return; }
-      state.qty = v; saveState();
-    };
-    $('ttf-date').oninput = (e) => { dateVal = e.target.value; updFmtPrev(); };
-    const tplEl = $('ttf-ftpl');
-    tplEl.value = state.nameTpl;
-    tplEl.oninput = () => { state.nameTpl = tplEl.value; saveState(); updFmtPrev(); };
-    root.querySelectorAll('[data-tok]').forEach((bt) => {
-      bt.onclick = () => { const i = tplEl.selectionStart == null ? tplEl.value.length : tplEl.selectionStart, j = tplEl.selectionEnd == null ? i : tplEl.selectionEnd; tplEl.value = tplEl.value.slice(0, i) + bt.dataset.tok + tplEl.value.slice(j); tplEl.focus(); const c = i + bt.dataset.tok.length; tplEl.setSelectionRange(c, c); tplEl.oninput(); };
-    });
-    $('ttf-ftplreset').onclick = () => { tplEl.value = NAMETPL_DEF; tplEl.oninput(); };
+    paintFields(); paintEls();
+    $('ttf-logdl').onclick = async () => { const el = $('ttf-livemsg'); el.textContent = await logDownloadNow(document); el.className = 'msg'; };
     updFmtPrev();
     paintLogs(); if (!logTimer) logTimer = setInterval(() => { if ($('ttf-loglist') && $('ttf-loglist').offsetParent) paintLogs(); }, 10000);
     const inFilter = (x) => { const q = norm($('ttf-q').value); return !q || norm(x.name + ' ' + x.cat).includes(q); };
@@ -3725,7 +3841,7 @@ function ttfillMain() {
       const sel = state.lib.filter((x) => x.sel);
       if (!sel.length) { $('ttf-selcount').textContent = L('⚠️ 先勾選要上的商品', '⚠️ Select products first'); return; }
       if (busy) return;
-      state.runPt = ptLabel(); state.runDate = $('ttf-date').value.trim() || today();
+      state.runPt = ptLabel(); state.runDate = dateStr();
       showSetup = false;
       const dq = String(state.qty || '').trim();
       state.rows = sel.map((x) => ({ name: applyTpl(x.name), cat: x.cat, weight: x.weight, h: x.h, w: x.w, l: x.l, battery: !!x.battery, qty: x.qty || dq, img: x.img || '', libId: x.id, tpl: x.name, status: '待填' }));
