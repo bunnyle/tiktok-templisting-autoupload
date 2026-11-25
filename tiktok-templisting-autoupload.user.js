@@ -957,21 +957,30 @@ function ttfillMain() {
 
   /* ---------------- 圖片庫：圖片存在瀏覽器的 IndexedDB ---------------- */
   state.imgs = state.imgs || []; // [{ id, name, w, h }]
-  function idb() {
-    return new Promise((res, rej) => {
+  let idbP = null;
+  function idb() { // 連線只開一次並重複使用（以前每次讀寫都開新連線，匯入很多圖片會越來越慢甚至卡住）
+    if (idbP) return idbP;
+    idbP = new Promise((res, rej) => {
       const r = indexedDB.open('ttfill_images', 1);
       r.onupgradeneeded = () => r.result.createObjectStore('img');
-      r.onsuccess = () => res(r.result);
-      r.onerror = () => rej(r.error);
+      r.onsuccess = () => { const db = r.result; db.onversionchange = () => { db.close(); idbP = null; }; db.onclose = () => { idbP = null; }; res(db); };
+      r.onerror = () => { idbP = null; rej(r.error || new Error('IndexedDB error')); };
+      r.onblocked = () => { idbP = null; rej(new Error(L('圖片資料庫被其他分頁佔用，請關掉其他 TikTok 分頁再試', 'The image database is in use by another tab — close other TikTok tabs and retry'))); };
     });
+    return idbP;
   }
-  async function idbDo(mode, fn) {
+  async function idbDo(mode, fn, retry = true) {
     const db = await idb();
     return new Promise((res, rej) => {
-      const t = db.transaction('img', mode);
-      const out = fn(t.objectStore('img'));
+      let t, out;
+      try { t = db.transaction('img', mode); out = fn(t.objectStore('img')); } catch (e) {
+        idbP = null; // 連線被關掉了：重連一次
+        if (retry) idbDo(mode, fn, false).then(res, rej); else rej(e);
+        return;
+      }
       t.oncomplete = () => res(out && out.result);
-      t.onerror = () => rej(t.error);
+      t.onerror = () => rej(t.error || new Error('IndexedDB error'));
+      t.onabort = () => rej(t.error || new Error(L('寫入被中止（瀏覽器儲存空間可能不夠）', 'Write aborted (browser storage may be full)')));
     });
   }
   const imgPut = (id, blob) => idbDo('readwrite', (st) => st.put(blob, id));
@@ -1090,8 +1099,13 @@ function ttfillMain() {
     saveState();
     return true;
   }
-  const blobToDataURL = (b) => new Promise((r) => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(b); });
-  const dataURLToBlob = async (u) => (await fetch(u)).blob();
+  const blobToDataURL = (b) => new Promise((r, j) => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.onerror = () => j(fr.error || new Error('read error')); fr.readAsDataURL(b); });
+  const dataURLToBlob = async (u) => { // 不用 fetch（TikTok 頁面的 CSP 可能擋 data: 的 fetch），自己解碼
+    const i = String(u).indexOf(','); if (i < 0) throw new Error('bad data URL');
+    const bin = atob(u.slice(i + 1)), a = new Uint8Array(bin.length);
+    for (let k = 0; k < bin.length; k++) a[k] = bin.charCodeAt(k);
+    return new Blob([a], { type: (u.slice(5, i).split(';')[0]) || 'image/png' });
+  };
 
   // 上架時：類目要求圖片（或商品有指定圖片）就自動上傳
   async function setImage(dlg, row) {
@@ -4123,10 +4137,12 @@ function ttfillMain() {
       btn.disabled = false;
     };
     $('ttf-fullimp').onclick = () => { if (!busy) pickFile('full'); };
-    $('ttf-file').onchange = async (e) => {
+    const doImport = async (e) => {
       const f = e.target.files && e.target.files[0];
       if (!f) return;
       let data;
+      (fileMode === 'cats' ? catMsg : bk)(L(`讀取檔案… (${(f.size / 1048576).toFixed(1)} MB，大檔案要等一會兒)`, `Reading file… (${(f.size / 1048576).toFixed(1)} MB — large files take a moment)`), 'warn');
+      await new Promise((r) => setTimeout(r, 30)); // 讓提示先畫出來
       try { data = JSON.parse(await f.text()); } catch (err) { (fileMode === 'cats' ? catMsg : bk)(L('這個檔案讀不了（不是備份檔）', 'Can’t read this file (not a backup file)'), 'err'); return; }
       const c = data.type === 'ttfill-categories' ? data : data.cats;
       const lib = data.type === 'ttfill-backup' ? data.lib : Array.isArray(data) ? data : null;
@@ -4136,21 +4152,28 @@ function ttfillMain() {
         catMsg(L(`匯入完成：新增 ${n} 個類目，已有的跳過，共 ${cats.paths.length} 個`, `Imported: ${n} new categories (existing ones skipped), ${cats.paths.length} total`), 'ok');
       } else {
         if (!lib && !c) { bk(L('這個檔案裡沒有可匯入的資料', 'Nothing to import in this file'), 'err'); return; }
-        let ni = 0, k = 0; const imgsIn = data.images || [];
+        let ni = 0, k = 0, nf = 0, lastErr = null; const imgsIn = Array.isArray(data.images) ? data.images : [];
         for (const m of imgsIn) {
           bk(L(`匯入圖片… ${++k} / ${imgsIn.length}`, `Importing images… ${k} / ${imgsIn.length}`), 'warn');
           if (!m || !m.id || !m.data || state.imgs.some((x) => x.id === m.id)) continue;
-          await imgPut(m.id, await dataURLToBlob(m.data));
-          state.imgs.push({ id: m.id, name: m.name, w: m.w, h: m.h }); ni++;
+          try { await imgPut(m.id, await dataURLToBlob(m.data)); state.imgs.push({ id: m.id, name: m.name, w: m.w, h: m.h }); ni++; } catch (err) { LOG('圖片匯入失敗', m.id, err); nf++; lastErr = err; }
+          if (k % 4 === 0) await new Promise((r) => setTimeout(r, 0));
         }
+        if (nf && ni === 0 && imgsIn.length) throw new Error(L('圖片全部寫入失敗：', 'All images failed to save: ') + (lastErr && lastErr.message || ''));
         const r = mergeLib(lib);
         const n = c ? mergeCats(c) : 0;
         if (data.settings) { for (const k of ['pt', 'qty', 'lang', 'auto', 'defImg']) if (data.settings[k] !== undefined && (k !== 'defImg' || !state.defImg)) state[k] = data.settings[k]; saveState(); }
         curTab = 'lib'; buildUI();
-        bk(L(`匯入完成：商品新增 ${r.added} 個、更新 ${r.updated} 個；類目新增 ${Math.max(n, 0)} 個；圖片新增 ${ni} 張`, `Imported: ${r.added} products added, ${r.updated} updated; ${Math.max(n, 0)} categories, ${ni} images added`));
+        bk(L(`匯入完成：商品新增 ${r.added} 個、更新 ${r.updated} 個；類目新增 ${Math.max(n, 0)} 個；圖片新增 ${ni} 張${nf ? `（${nf} 張失敗）` : ''}`, `Imported: ${r.added} products added, ${r.updated} updated; ${Math.max(n, 0)} categories, ${ni} images added`));
         return;
       }
       catInfo(); renderLib();
+    };
+    $('ttf-file').onchange = async (e) => {
+      try { await doImport(e); } catch (err) {
+        LOG('匯入失敗', err);
+        (fileMode === 'cats' ? catMsg : bk)(L('匯入失敗：', 'Import failed: ') + (err && err.message || err), 'err');
+      }
     };
 
     $('ttf-imgadd').onclick = () => { $('ttf-imgfile').value = ''; $('ttf-imgfile').click(); };
