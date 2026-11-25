@@ -3,7 +3,7 @@
 // @namespace    lok.laliquidation
 // @author       Lok
 // @copyright    2026 Lok. All rights reserved.
-// @version      7.27
+// @version      7.28
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -164,8 +164,8 @@ function ttfillMain() {
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const VER = '7.27'; // 要和上面的 @version 一致
-  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚", "雲": "云", "報": "报", "順": "顺", "圓": "圆", "須": "须", "費": "费", "鑰": "钥", "證": "证", "權": "权", "藍": "蓝", "膠": "胶", "達": "达", "離": "离", "簽": "签", "驗": "验", "風": "风", "買": "买", "絡": "络", "質": "质", "觸": "触", "強": "强", "範": "范", "義": "义", "與": "与", "優": "优", "兒": "儿", "佔": "占"};
+  const VER = '7.28'; // 要和上面的 @version 一致
+  const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚", "雲": "云", "報": "报", "順": "顺", "圓": "圆", "須": "须", "費": "费", "鑰": "钥", "證": "证", "權": "权", "藍": "蓝", "膠": "胶", "達": "达", "離": "离", "簽": "签", "驗": "验", "風": "风", "買": "买", "絡": "络", "質": "质", "觸": "触", "強": "强", "範": "范", "義": "义", "與": "与", "優": "优", "兒": "儿", "佔": "占", "決": "决", "總": "总", "規": "规"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
   let langOverride = null; // 評論窗可以用自己的語言
@@ -538,6 +538,72 @@ function ttfillMain() {
     return res.exact ? true : option.innerText.trim();
   }
 
+  /* ---- 填完後的總核對：把彈窗裡每一格重新讀一遍，跟商品資料比對 ---- */
+  const numSame = (v, w) => Math.abs(parseFloat(v) - parseFloat(w)) < 1e-6;
+  function complianceOk(dd, target) {
+    const box = fieldBox(dd, 'Does your product contain the following?');
+    if (!box) return target === 'None of the above';
+    const t = norm(box.innerText), T = norm(target);
+    if (!t.includes(T.slice(0, 40))) return false;
+    return target === 'None of the above' || !t.includes('none of the above');
+  }
+  const FORM_LABEL = { name: ['商品名稱', 'Product name'], cat: ['類目', 'Category'], weight: ['重量', 'Weight'], l: ['長', 'Length'], w: ['寬', 'Width'], h: ['高', 'Height'], qty: ['數量', 'Quantity'], comp: ['電池/合規選項', 'Battery/compliance'], img: ['圖片', 'Image'] };
+  function checkForm(dlg, row, wantCat) {
+    const dd = getDialog() || dlg, bad = [];
+    const nb = fieldBox(dd, 'Product name'), ni = nb && textInputs(nb)[0];
+    if (!ni || norm(ni.value) !== norm(row.name)) bad.push('name');
+    if (row.cat) {
+      const b = fieldBox(dd, 'Category'), c = b ? norm(cascaderView(b).innerText) : '';
+      if (!c || !(c === wantCat || (wantCat.startsWith(c.replace(/(\.\.\.|…)$/, '')) && c.length > 10))) bad.push('cat');
+    }
+    const wb = fieldBox(dd, 'Package weight'), wi = wb && textInputs(wb).pop();
+    if (!wi || !numSame(wi.value, row.weight)) bad.push('weight');
+    if (row.cat) {
+      const db = fieldBox(dd, 'Package dimensions'), ins = db ? textInputs(db).slice(-3) : [];
+      const byPh = (re) => ins.find((i) => re.test(i.placeholder || '') || re.test(i.getAttribute('aria-label') || ''));
+      const dim = { l: byPh(/length|長|长/i) || ins[0], w: byPh(/width|寬|宽/i) || ins[1], h: byPh(/height|高/i) || ins[2] };
+      for (const k of ['l', 'w', 'h']) if (!dim[k] || !numSame(dim[k].value, row[k])) bad.push(k);
+      if (row.qty) { const qb = fieldBox(dd, 'Quantity'), qi = qb && textInputs(qb)[0]; if (!qi || !numSame(qi.value, row.qty)) bad.push('qty'); }
+    }
+    if (!complianceOk(dd, row.battery ? BATTERY_OPT : 'None of the above')) bad.push('comp');
+    if (row.img) {
+      const m = (dd.innerText || '').match(/Image\s*\(\s*(\d+)\s*\/\s*(\d+)\s*\)/i);
+      const thumb = [...dd.querySelectorAll('img')].some((i) => visible(i) && (i.naturalWidth || i.width) > 40) || [...dd.querySelectorAll('[style*="background-image"]')].some((e) => visible(e));
+      if (m ? +m[1] < 1 && !thumb : false) bad.push('img');
+    }
+    return bad;
+  }
+  async function fixForm(dlg, row, bad) {
+    const dd = () => getDialog() || dlg;
+    for (const k of bad) {
+      try {
+        if (k === 'name') { const b = fieldBox(dd(), 'Product name'), i = b && textInputs(b)[0]; if (i) setVal(i, row.name); await sleep(900); }
+        else if (k === 'weight') { const b = fieldBox(dd(), 'Package weight'), i = b && textInputs(b).pop(); if (i) setVal(i, row.weight); }
+        else if (k === 'l' || k === 'w' || k === 'h') {
+          const b = fieldBox(dd(), 'Package dimensions'), ins = b ? textInputs(b).slice(-3) : [];
+          const i = k === 'l' ? ins[0] : k === 'w' ? ins[1] : ins[2]; if (i) setVal(i, row[k]);
+        }
+        else if (k === 'qty') { const b = fieldBox(dd(), 'Quantity'), i = b && textInputs(b)[0]; if (i) setVal(i, row.qty); }
+        else if (k === 'comp') await setCompliance(dd(), row.battery ? BATTERY_OPT : 'None of the above');
+        else if (k === 'img') await setImage(dd(), row);
+      } catch (e) { LOG('核對修正失敗', k, e.message); }
+      await sleep(250);
+    }
+  }
+  // 核對；有問題先自動補一次（最多 2 輪），回傳還沒解決的欄位
+  async function verifyRow(dlg, row, wantCat) {
+    let bad = checkForm(dlg, row, wantCat);
+    for (let t = 0; t < 2 && bad.length; t++) {
+      LOG('填寫後核對發現問題，補填', bad);
+      setMsg(L('核對發現 ' + bad.map((k) => FORM_LABEL[k][0]).join('、') + ' 不對，補填中…', 'Check found a mismatch in ' + bad.map((k) => FORM_LABEL[k][1]).join(', ') + ' — fixing…'), 'warn');
+      await fixForm(dlg, row, bad.filter((k) => k !== 'cat'));
+      await sleep(900);
+      bad = checkForm(dlg, row, wantCat);
+    }
+    return bad;
+  }
+  const badMsg = (bad) => [L('填完後核對發現資料不完整：' + bad.map((k) => FORM_LABEL[k][0]).join('、'), 'Post-fill check failed: ' + bad.map((k) => FORM_LABEL[k][1]).join(', '))];
+
   async function fillRow(row) {
     const dlg = await openDialog();
 
@@ -635,12 +701,22 @@ function ttfillMain() {
       const li = state.lib.find((x) => x.id === row.libId) || state.lib.find((x) => row.tpl && norm(x.name) === norm(row.tpl));
       if (li) row.img = li.img || '';
       await setImage(getDialog() || d2, row);
-      if (!row.cat) return getDialog() || d2;
+      if (!row.cat) {
+        const left0 = await verifyRow(d2, row, '');
+        if (left0.length) throw E(badMsg(left0)[0], badMsg(left0)[0], true);
+        return getDialog() || d2;
+      }
       // 連續確認約 1 秒：類目沒有被清空才算成功
       const want = row._catView;
       let stable = true;
       for (let k = 0; k < 4 && stable; k++) { if (!catOk(want)) stable = false; else await sleep(250); }
-      if (stable) return getDialog() || d2;
+      if (stable) {
+        // 最後總核對：名稱、類目、重量、尺寸、數量、電池選項、圖片全部重新讀一遍
+        const left = await verifyRow(d2, row, want);
+        if (!left.length) { row.verified = true; setMsg(L('✓ 已核對：名稱、類目、重量、尺寸、數量、電池選項、圖片都正確', '✓ Checked: name, category, weight, dimensions, quantity, battery option and image are all correct'), 'ok'); return getDialog() || d2; }
+        if (left.includes('cat') && pass < 2) { LOG('核對時類目不對，重來', left); await sleep(500); continue; }
+        throw E(badMsg(left)[0], badMsg(left)[0], true);
+      }
       LOG('類目被清空或改掉了，重新選擇', { want, now: catNow(), pass });
       setMsg(L(`類目被清空了，重新選擇（第 ${pass + 2} 次）…`, `Category was cleared — selecting again (try ${pass + 2})…`), 'warn');
       await sleep(800);
