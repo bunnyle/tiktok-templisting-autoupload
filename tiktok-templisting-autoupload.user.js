@@ -3,7 +3,7 @@
 // @namespace    lok.laliquidation
 // @author       Lok
 // @copyright    2026 Lok. All rights reserved.
-// @version      7.28
+// @version      7.29
 // @description  TikTok LIVE Manager：商品庫 + 一鍵自動上架 temporary listing（繁/简/EN）
 // @match        https://shop.tiktok.com/streamer/live/*
 // @updateURL    https://raw.githubusercontent.com/bunnyle/tiktok-templisting-autoupload/main/tiktok-templisting-autoupload.user.js
@@ -164,7 +164,7 @@ function ttfillMain() {
 
   /* ---------------- 語言 / Language ----------------
      L('繁體', 'English')：简体由繁體自動轉換 */
-  const VER = '7.28'; // 要和上面的 @version 一致
+  const VER = '7.29'; // 要和上面的 @version 一致
   const T2S = {"並": "并", "併": "并", "來": "来", "個": "个", "備": "备", "傳": "传", "價": "价", "儲": "储", "內": "内", "兩": "两", "別": "别", "刪": "删", "剛": "刚", "動": "动", "匯": "汇", "區": "区", "問": "问", "啟": "启", "單": "单", "嗎": "吗", "嚴": "严", "圖": "图", "場": "场", "壓": "压", "夠": "够", "實": "实", "寫": "写", "寬": "宽", "尋": "寻", "對": "对", "層": "层", "帳": "帐", "帶": "带", "幟": "帜", "幾": "几", "庫": "库", "張": "张", "彈": "弹", "後": "后", "徑": "径", "從": "从", "態": "态", "憶": "忆", "應": "应", "掃": "扫", "換": "换", "擇": "择", "擊": "击", "擋": "挡", "據": "据", "擠": "挤", "擬": "拟", "敗": "败", "數": "数", "斷": "断", "於": "于", "時": "时", "暫": "暂", "會": "会", "東": "东", "桿": "杆", "條": "条", "構": "构", "標": "标", "樣": "样", "機": "机", "橫": "横", "檔": "档", "檢": "检", "欄": "栏", "歷": "历", "殘": "残", "殼": "壳", "氣": "气", "沒": "没", "淺": "浅", "測": "测", "準": "准", "濾": "滤", "瀏": "浏", "為": "为", "無": "无", "狀": "状", "獨": "独", "現": "现", "產": "产", "畫": "画", "當": "当", "發": "发", "監": "监", "盤": "盘", "確": "确", "碼": "码", "種": "种", "稱": "称", "穩": "稳", "簡": "简", "籤": "签", "紀": "纪", "約": "约", "紅": "红", "級": "级", "組": "组", "結": "结", "絕": "绝", "給": "给", "統": "统", "經": "经", "網": "网", "緊": "紧", "線": "线", "編": "编", "縮": "缩", "繼": "继", "續": "续", "腦": "脑", "腳": "脚", "舊": "旧", "蓋": "盖", "處": "处", "號": "号", "螢": "萤", "補": "补", "裝": "装", "裡": "里", "製": "制", "複": "复", "見": "见", "視": "视", "覽": "览", "訂": "订", "計": "计", "訊": "讯", "記": "记", "設": "设", "許": "许", "診": "诊", "評": "评", "詢": "询", "試": "试", "話": "话", "該": "该", "認": "认", "語": "语", "誤": "误", "誰": "谁", "調": "调", "請": "请", "論": "论", "謂": "谓", "譯": "译", "議": "议", "讀": "读", "變": "变", "讓": "让", "讚": "赞", "貼": "贴", "資": "资", "賣": "卖", "較": "较", "載": "载", "輪": "轮", "輯": "辑", "輸": "输", "轉": "转", "這": "这", "連": "连", "進": "进", "過": "过", "遠": "远", "遲": "迟", "選": "选", "還": "还", "邊": "边", "鈕": "钮", "鋰": "锂", "錄": "录", "錢": "钱", "錨": "锚", "錯": "错", "鍵": "键", "鎖": "锁", "鐘": "钟", "長": "长", "閃": "闪", "閉": "闭", "開": "开", "間": "间", "關": "关", "隨": "随", "雙": "双", "電": "电", "響": "响", "頁": "页", "頂": "顶", "項": "项", "預": "预", "領": "领", "頭": "头", "頻": "频", "題": "题", "顏": "颜", "類": "类", "顯": "显", "飾": "饰", "餘": "余", "馬": "马", "體": "体", "麵": "面", "點": "点", "齊": "齐", "綠": "绿", "競": "竞", "獲": "获", "滾": "滚", "雲": "云", "報": "报", "順": "顺", "圓": "圆", "須": "须", "費": "费", "鑰": "钥", "證": "证", "權": "权", "藍": "蓝", "膠": "胶", "達": "达", "離": "离", "簽": "签", "驗": "验", "風": "风", "買": "买", "絡": "络", "質": "质", "觸": "触", "強": "强", "範": "范", "義": "义", "與": "与", "優": "优", "兒": "儿", "佔": "占", "決": "决", "總": "总", "規": "规"};
   const T2S_PHRASES = [['搜尋', '搜索'], ['滑鼠', '鼠标'], ['資料', '数据'], ['點選', '点击'], ['全螢幕', '全屏'], ['螢幕', '屏幕']];
   const toHans = (t) => { let r = String(t); for (const [a, b] of T2S_PHRASES) r = r.split(a).join(b); return r.replace(/[\u3400-\u9fff]/g, (c) => T2S[c] || c); };
@@ -2369,6 +2369,10 @@ function ttfillMain() {
     .chip2.drag{opacity:.4}.chip2.over{outline:2px solid var(--accent)}.chip2 .cx{border:0;background:rgba(0,0,0,.12);color:inherit;width:16px;height:16px;border-radius:99px;font-size:12px;line-height:14px;cursor:pointer;padding:0}.chip2 .cx:hover{background:#ff3b30;color:#fff}
     .tpl{display:flex;flex-direction:column;gap:6px;margin:8px 0 4px}.tpl .inp{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace}
     .chips{display:flex;gap:6px;flex-wrap:wrap}.chips .btn{height:26px;padding:0 10px;font-size:12px}
+    .seg3{display:flex;gap:2px;background:var(--soft);border-radius:10px;padding:2px;margin:8px 0 6px}
+    .seg3 button{flex:1;border:0;background:transparent;border-radius:8px;padding:6px 4px;font:inherit;font-size:12.5px;font-weight:500;color:var(--ink);cursor:pointer}
+    .seg3 button.on{background:#fff;font-weight:600;box-shadow:0 .5px 1px rgba(0,0,0,.12),0 3px 8px rgba(0,0,0,.08)}
+    .subv{margin-bottom:6px}
     .logcard{margin-top:10px;background:rgba(255,255,255,.72);border:.5px solid var(--line);border-radius:14px;padding:10px 12px}
     .logrow{display:flex;gap:6px;align-items:center;padding:6px 0;border-top:.5px solid var(--line)}.logrow:first-of-type{border-top:0}.logrow .btn{height:28px;padding:0 10px;font-size:12px}
 `;
@@ -2451,18 +2455,32 @@ function ttfillMain() {
         <label class="field" style="width:86px"><span>${L('回覆時間(分)', 'Reply window (min)')}</span><input class="inp" type="text" inputmode="decimal" id="ttf-livemins"></label>
       </div>
       <button class="btn primary block big" id="ttf-livego"></button>
-      <div class="btnrow">
-        <button class="btn dark" id="ttf-logdl" title="${L('下載目前場次的評論 / 付款 / 得標記錄（CSV）', 'Download this session\'s comments / payments / wins (CSV)')}">${L('⬇ 下載評論', '⬇ Download chat')}</button>
-        <button class="btn ghost" id="ttf-livecsv">${L('⬇ 匯出並清空', '⬇ Export & clear')}</button>
-        <button class="btn ghost" id="ttf-liveclr">${L('清空記錄', 'Clear records')}</button>
-        <button class="btn ghost" id="ttf-livediag">${L('直播診斷', 'Live diagnostics')}</button>
-        <button class="btn ghost" id="ttf-netdiag">${L('網路診斷', 'Network diagnostics')}</button>
-      </div>
       <div class="btnrow" title="${L('評論大窗（給主播看）：可拖到第二個螢幕或全螢幕，設定都在窗口上方', 'Big comment window for the host — drag to a second screen; settings are at the top of the window')}">
         <button class="btn dark" id="ttf-feedwin">${L('⧉ 彈出評論窗', '⧉ Pop out comments')}</button>
         <button class="btn ghost" id="ttf-feedpip">${L('📌 置頂小窗', '📌 Always-on-top')}</button>
       </div>
-      <div class="logcard"><div class="sec" style="margin:0 0 4px">${L('📁 評論記錄（按日期 + 場次保存，保留 7 天）', '📁 Chat logs (saved by date + session, kept 7 days)')}</div><div id="ttf-loglist"></div></div>
+      <div class="seg3" id="ttf-seg">
+        <button data-v="orders">${L('📦 訂單記錄', '📦 Orders')}</button>
+        <button data-v="chat">${L('💬 評論記錄', '💬 Chat logs')}</button>
+        <button data-v="diag">${L('🩺 診斷', '🩺 Diagnostics')}</button>
+      </div>
+      <div class="subv hide" data-v="orders">
+        <div class="btnrow">
+          <button class="btn dark" id="ttf-livecsv">${L('⬇ 匯出訂單並清空', '⬇ Export orders & clear')}</button>
+          <button class="btn ghost" id="ttf-liveclr">${L('清空記錄', 'Clear records')}</button>
+        </div>
+      </div>
+      <div class="subv hide" data-v="chat">
+        <button class="btn dark block" id="ttf-logdl" title="${L('下載目前場次的所有評論（CSV）', 'Download all comments of the current session (CSV)')}">${L('⬇ 下載目前場次的所有評論', '⬇ Download this session\'s chat')}</button>
+        <div class="meta" style="margin:8px 0 2px">${L('各場次記錄（按日期 + 場次，保留 7 天，自動記錄）', 'All sessions (by date + session, kept 7 days, recorded automatically)')}</div>
+        <div id="ttf-loglist"></div>
+      </div>
+      <div class="subv hide" data-v="diag">
+        <div class="btnrow">
+          <button class="btn ghost" id="ttf-livediag">${L('直播診斷', 'Live diagnostics')}</button>
+          <button class="btn ghost" id="ttf-netdiag">${L('網路診斷', 'Network diagnostics')}</button>
+        </div>
+      </div>
       <input class="inp search" type="text" id="ttf-liveq" placeholder="${L('搜尋編號 / 客人 / listing…', 'Search no. / customer / listing…')}" style="margin-top:10px">
       <div class="msg" id="ttf-livemsg"></div>
       <div id="ttf-livelist"></div>
@@ -3022,7 +3040,7 @@ function ttfillMain() {
     if (!isPro()) return proLock();
     logFlush(); await logPump();
     const key = logKey(Date.now()), e = logCache.get(key) || await logTx('readonly', (st) => st.get(key));
-    if (!e || !e.rows.length) return L('這個場次還沒有記錄（要先打開評論窗，之後的評論才會被記下來）', 'No records for this session yet (open the comment window first — it only records while open)');
+    if (!e || !e.rows.length) return L('這個場次還沒有記錄（要在直播控制台頁面開著，評論才會被自動記下來）', 'No records for this session yet (comments are recorded automatically while the LIVE console page is open)');
     logSave(e, doc);
     return L('已下載 ', 'Downloaded ') + logFile(e) + L(`（${e.rows.length} 條）`, ` (${e.rows.length} rows)`);
   }
@@ -3030,7 +3048,7 @@ function ttfillMain() {
     const box = $('ttf-loglist'); if (!box) return;
     if (!isPro()) { box.innerHTML = `<div class="meta">${proLock()}</div>`; return; }
     const list = await logList();
-    box.innerHTML = list.length ? '' : `<div class="meta">${L('還沒有記錄。打開評論窗後，評論、付款、得標會自動按「日期 + 場次」保存。', 'Nothing yet. Once the comment window is open, comments, payments and wins are saved automatically by date + session.')}</div>`;
+    box.innerHTML = list.length ? '' : `<div class="meta">${L('還沒有記錄。直播時評論、付款、得標會自動按「日期 + 場次」保存。', 'Nothing yet. During a LIVE, comments, payments and wins are saved automatically by date + session.')}</div>`;
     for (const e of list) {
       const row = document.createElement('div'); row.className = 'logrow';
       row.innerHTML = `<div class="grow"><b>${e.date.slice(4, 6)}/${e.date.slice(6)} · ${escapeHtml(e.session)}</b><div class="meta">${L(e.rows.length + ' 條', e.rows.length + ' rows')} · ${logFile(e)}</div></div><button class="btn dark">${L('⬇ 下載', '⬇ Download')}</button><button class="btn ghost" title="${L('刪除', 'Delete')}">🗑</button>`;
@@ -3113,7 +3131,8 @@ function ttfillMain() {
     st.style.transition = 'none'; st.style.transform = 'translateY(0)'; st.style.filter = 'blur(2.5px)'; void st.offsetHeight;
     st.style.transition = 'transform 2.2s cubic-bezier(.12,.8,.2,1), filter .5s ease 1.5s'; st.style.transform = `translateY(-${(rows.length - 1) * 1.5}em)`; st.style.filter = 'blur(0px)';
   }
-  function feedTick2() {
+  // 收集評論 / 付款 / 得標（不需要評論窗）。評論窗沒開時由背景計時器呼叫，所以記錄不用開窗也會存
+  function feedCollect() {
     const now = Date.now();
     const domDue = feed.first || !wireAlive() || now - (feed.domAt || 0) >= 4000; // 直接讀取正常時，每 4 秒才掃一次畫面
     if (domDue) feed.domAt = now;
@@ -3173,9 +3192,19 @@ function ttfillMain() {
       if (m && feedPush({ kind: 's', name: cleanName(m[1]), msg: '#' + m[2] + (m[4] ? '  $' + m[4] : ''), no: m[2], t: now, old: feed.first })) added++;
     }
     feed.first = false;
+    return { card, added };
+  }
+  function feedTick2() {
+    const { card, added } = feedCollect();
     feedAucBar();
     feedRender(card || undefined, added);
   }
+  // 背景自動記錄：評論窗沒開時每 2.5 秒收集一次並寫進記錄（付費功能）
+  setInterval(() => {
+    if (feed.win && !feed.win.closed) return; // 窗口開著由 feedTick 處理
+    if (!isPro()) return;
+    try { timed('feed', feedCollect); logFlush(); } catch (e) { LOG('背景記錄', e); }
+  }, 2500);
   function feedHTML() {
     return `<!doctype html><html><head><meta charset="utf-8"><title>TikTok Live ${L('評論', 'Comments')}</title></head><body></body></html>`;
   }
@@ -3918,6 +3947,14 @@ function ttfillMain() {
 
     // 今天上架
     paintFields(); paintEls();
+    $('ttf-seg').querySelectorAll('button').forEach((bt) => {
+      bt.onclick = () => {
+        const on = !bt.classList.contains('on');
+        $('ttf-seg').querySelectorAll('button').forEach((x) => x.classList.toggle('on', on && x === bt));
+        root.querySelectorAll('.subv').forEach((v) => v.classList.toggle('hide', !(on && v.dataset.v === bt.dataset.v)));
+        if (on && bt.dataset.v === 'chat') paintLogs();
+      };
+    });
     $('ttf-logdl').onclick = async () => { const el = $('ttf-livemsg'); el.textContent = await logDownloadNow(document); el.className = 'msg'; };
     updFmtPrev();
     paintLogs(); if (!logTimer) logTimer = setInterval(() => { if ($('ttf-loglist') && $('ttf-loglist').offsetParent) paintLogs(); }, 10000);
